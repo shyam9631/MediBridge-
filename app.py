@@ -83,7 +83,7 @@ if "user_type" in st.session_state:
         st.markdown("## 👴 Senior Citizen Dashboard")
 
         # Tabs for different sections
-        tab1, tab2, tab3 = st.tabs(["💊 Medicines", "📋 Prescription", "📊 History"])
+        tab1, tab2, tab3, tab4 = st.tabs(["💊 Medicines", "📋 Prescription", "📊 History", "🤖 MediBot"])
 
         # =====================
         # TAB 1 - MEDICINES
@@ -294,6 +294,101 @@ if "user_type" in st.session_state:
                             </p>
                         </div>
                     """, unsafe_allow_html=True)
+        # =====================
+        # TAB 4 - AI CHATBOT
+        # =====================
+        with tab4:
+            st.markdown("### 🤖 MediBot — Your Medicine Assistant")
+            st.info("Ask me anything about your medicines!")
+
+            # Chat history
+            if "chat_history" not in st.session_state:
+                st.session_state.chat_history = []
+
+            # Show chat history
+            for chat in st.session_state.chat_history:
+                if chat["role"] == "user":
+                    st.markdown(f"""
+                        <div style='
+                            background: #2C3E50;
+                            padding: 10px 15px;
+                            border-radius: 10px;
+                            margin-bottom: 8px;
+                            text-align: right;'>
+                            <p style='color: white; margin: 0;'>
+                                👴 {chat['message']}
+                            </p>
+                        </div>
+                    """, unsafe_allow_html=True)
+                else:
+                    st.markdown(f"""
+                        <div style='
+                            background: #1e2130;
+                            padding: 10px 15px;
+                            border-radius: 10px;
+                            border-left: 4px solid #667eea;
+                            margin-bottom: 8px;'>
+                            <p style='color: white; margin: 0;'>
+                                🤖 {chat['message']}
+                            </p>
+                        </div>
+                    """, unsafe_allow_html=True)
+
+            # Quick question buttons
+            st.markdown("#### Quick Questions:")
+            qcol1, qcol2 = st.columns(2)
+            with qcol1:
+                if st.button("💊 What are my medicines?", use_container_width=True):
+                    st.session_state.quick_question = "What medicines am I taking?"
+            with qcol2:
+                if st.button("⏰ When to take medicines?", use_container_width=True):
+                    st.session_state.quick_question = "When should I take my medicines?"
+
+            qcol3, qcol4 = st.columns(2)
+            with qcol3:
+                if st.button("⚠️ Side effects?", use_container_width=True):
+                    st.session_state.quick_question = "What are the side effects of my medicines?"
+            with qcol4:
+                if st.button("📦 Stock status?", use_container_width=True):
+                    st.session_state.quick_question = "How many medicines do I have left?"
+
+            # User input
+            user_input = st.text_input(
+                "💬 Ask MediBot anything:",
+                value=st.session_state.get("quick_question", ""),
+                placeholder="e.g. What is Paracetamol for?"
+            )
+
+            if st.button("📤 Send", use_container_width=True):
+                if user_input:
+                    st.session_state.chat_history.append({
+                        "role": "user",
+                        "message": user_input
+                    })
+
+                    with st.spinner("MediBot is thinking... 🤔"):
+                        try:
+                            from chatbot import get_medicine_response
+                            response = get_medicine_response(
+                                user_input,
+                                st.session_state.medicines
+                            )
+                        except Exception as e:
+                            response = f"Sorry, I am having trouble connecting. Error: {str(e)}"
+
+                    st.session_state.chat_history.append({
+                        "role": "bot",
+                        "message": response
+                    })
+
+                    if "quick_question" in st.session_state:
+                        del st.session_state.quick_question
+
+                    st.rerun()
+
+            if st.button("🗑️ Clear Chat", use_container_width=True):
+                st.session_state.chat_history = []
+                st.rerun()
 
     # =====================
     # FAMILY DASHBOARD

@@ -1,0 +1,42 @@
+[
+    {
+        "name": "crena",
+        "dosage": "15",
+        "timing": "Morning",
+        "total": 30,
+        "remaining": 30,
+        "taken_today": false
+    },
+    {
+        "name": "Paracatamol",
+        "dosage": "500",
+        "timing": "Morning",
+        "total": 30,
+        "remaining": 30,
+        "taken_today": false
+    },
+    {
+        "name": "Paracetamol",
+        "dosage": "500",
+        "timing": "Morning",
+        "total": 30,
+        "remaining": 30,
+        "taken_today": false
+    },
+    {
+        "name": "Paracetomal ",
+        "dosage": "500",
+        "timing": "Morning",
+        "total": 30,
+        "remaining": 30,
+        "taken_today": false
+    },
+    {
+        "name": "para",
+        "dosage": "22",
+        "timing": "Morning",
+        "total": 30,
+        "remaining": 29,
+        "taken_today": true
+    }
+]
