@@ -1,5 +1,7 @@
 import streamlit as st
-from whatsapp import send_medicine_taken, send_low_stock_alert
+from whatsapp import send_medicine_taken, send_low_stock_alert, send_missed_medicine
+from database import save_medicines, load_medicines, reset_daily_status, save_history, load_history
+import datetime
 
 # Page Configuration
 st.set_page_config(
@@ -12,10 +14,10 @@ st.set_page_config(
 st.markdown("""
     <style>
     .stApp {
-       background-color: #0e1117;
+        background-color: #0e1117;
     }
     h1 {
-        color: #2C3E50;
+        color: #ffffff;
         text-align: center;
     }
     .stButton > button {
@@ -30,11 +32,11 @@ st.markdown("""
         transform: scale(1.05);
     }
     .stTextInput > div > div > input {
-    border-radius: 8px;
-    border: 2px solid #667eea;
-    background-color: #1e2130;
-    color: white;
-}
+        border-radius: 8px;
+        border: 2px solid #667eea;
+        background-color: #1e2130;
+        color: white;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -54,6 +56,10 @@ st.markdown("""
 
 st.divider()
 
+# Load medicines from database on startup
+if "medicines" not in st.session_state:
+    st.session_state.medicines = reset_daily_status()
+
 # Login Selection
 st.markdown("### Who are you?")
 col1, col2 = st.columns(2)
@@ -70,134 +76,270 @@ with col2:
 if "user_type" in st.session_state:
     st.divider()
 
+    # =====================
     # SENIOR CITIZEN DASHBOARD
+    # =====================
     if st.session_state.user_type == "senior":
         st.markdown("## 👴 Senior Citizen Dashboard")
 
-        # Add Medicine Form
-        st.markdown("### ➕ Add New Medicine")
-        with st.form("add_medicine_form"):
-            med_name = st.text_input("💊 Medicine Name")
-            dosage = st.text_input("📏 Dosage (e.g. 500mg)")
-            timing = st.selectbox("⏰ Timing", [
-                "Morning", "Afternoon", "Evening", "Night",
-                "Morning & Night", "Morning, Afternoon & Night"
-            ])
-            total_count = st.number_input(
-                "📦 Total Tablets/Capsules",
-                min_value=1,
-                max_value=500,
-                value=30
-            )
-            submitted = st.form_submit_button(
-                "➕ Add Medicine",
-                use_container_width=True
-            )
+        # Tabs for different sections
+        tab1, tab2, tab3 = st.tabs(["💊 Medicines", "📋 Prescription", "📊 History"])
 
-            if submitted:
-                if med_name and dosage:
-                    if "medicines" not in st.session_state:
-                        st.session_state.medicines = []
-                    st.session_state.medicines.append({
-                        "name": med_name,
-                        "dosage": dosage,
-                        "timing": timing,
-                        "total": total_count,
-                        "remaining": total_count,
-                        "taken_today": False
-                    })
-                    st.success(f"✅ {med_name} added successfully!")
-                else:
-                    st.error("❌ Please fill all fields!")
+        # =====================
+        # TAB 1 - MEDICINES
+        # =====================
+        with tab1:
+            # Add Medicine Form
+            st.markdown("### ➕ Add New Medicine")
+            with st.form("add_medicine_form"):
+                med_name = st.text_input("💊 Medicine Name")
+                dosage = st.text_input("📏 Dosage (e.g. 500mg)")
+                timing = st.selectbox("⏰ Timing", [
+                    "Morning", "Afternoon", "Evening", "Night",
+                    "Morning & Night", "Morning, Afternoon & Night"
+                ])
+                total_count = st.number_input(
+                    "📦 Total Tablets/Capsules",
+                    min_value=1,
+                    max_value=500,
+                    value=30
+                )
+                submitted = st.form_submit_button(
+                    "➕ Add Medicine",
+                    use_container_width=True
+                )
 
-        # Show Medicine List
-        st.markdown("### 📋 Your Medicines Today")
-        if "medicines" not in st.session_state or len(st.session_state.medicines) == 0:
-            st.info("No medicines added yet. Add your first medicine above!")
-        else:
-            for i, med in enumerate(st.session_state.medicines):
+                if submitted:
+                    if med_name and dosage:
+                        st.session_state.medicines.append({
+                            "name": med_name,
+                            "dosage": dosage,
+                            "timing": timing,
+                            "total": total_count,
+                            "remaining": total_count,
+                            "taken_today": False
+                        })
+                        # Save to database
+                        save_medicines(st.session_state.medicines)
+                        # Save to history
+                        save_history(med_name, "Added")
+                        st.success(f"✅ {med_name} added successfully!")
+                    else:
+                        st.error("❌ Please fill all fields!")
+
+            # Show Medicine List
+            st.markdown("### 📋 Your Medicines Today")
+            if len(st.session_state.medicines) == 0:
+                st.info("No medicines added yet. Add your first medicine above!")
+            else:
+                for i, med in enumerate(st.session_state.medicines):
+                    st.markdown(f"""
+                        <div style='
+                            background: #1e2130;
+                            padding: 15px;
+                            border-radius: 12px;
+                            border-left: 5px solid {"#2ECC71" if med["taken_today"] else "#3498DB"};
+                            box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+                            margin-bottom: 10px;'>
+                            <h3 style='color: white;'>
+                                💊 {med['name']} — {med['dosage']}
+                            </h3>
+                            <p style='color: #aaaaaa;'>⏰ {med['timing']}</p>
+                            <p style='color: #E74C3C; font-weight: bold;'>
+                                📦 Remaining: {med['remaining']} tablets
+                            </p>
+                        </div>
+                    """, unsafe_allow_html=True)
+
+                    col1, col2 = st.columns([3, 1])
+                    with col2:
+                        if not med["taken_today"]:
+                            if st.button(f"✅ Took it!", key=f"took_{i}", use_container_width=True):
+                                st.session_state.medicines[i]["taken_today"] = True
+                                st.session_state.medicines[i]["remaining"] -= 1
+
+                                # Save to database
+                                save_medicines(st.session_state.medicines)
+
+                                # Save to history
+                                save_history(med['name'], "Taken")
+
+                                # Send WhatsApp notification
+                                try:
+                                    send_medicine_taken(
+                                        med['name'],
+                                        med['dosage'],
+                                        st.session_state.medicines[i]["remaining"]
+                                    )
+                                    st.success(f"✅ {med['name']} taken! Family notified on WhatsApp! 📱")
+                                except:
+                                    st.success(f"✅ {med['name']} marked as taken!")
+
+                                # Low stock WhatsApp alert
+                                if st.session_state.medicines[i]["remaining"] <= 5:
+                                    try:
+                                        send_low_stock_alert(
+                                            med['name'],
+                                            st.session_state.medicines[i]["remaining"]
+                                        )
+                                        st.warning(f"⚠️ Low stock alert sent to family!")
+                                    except:
+                                        st.warning(f"⚠️ Only {med['remaining']} tablets left!")
+
+                                st.rerun()
+                        else:
+                            st.success("✅ Taken!")
+
+                    if med["remaining"] <= 5:
+                        st.warning(f"⚠️ Low Stock! Only {med['remaining']} tablets left!")
+                    st.divider()
+
+            # Check missed medicines button
+            st.markdown("### ⚠️ Check Missed Medicines")
+            if st.button("🔍 Check Now", use_container_width=True):
+                current_hour = datetime.datetime.now().hour
+                missed_any = False
+                for med in st.session_state.medicines:
+                    if not med["taken_today"]:
+                        if med["timing"] == "Morning" and current_hour >= 11:
+                            try:
+                                send_missed_medicine(med['name'], med['timing'])
+                                save_history(med['name'], "Missed")
+                            except:
+                                pass
+                            st.error(f"❌ {med['name']} was missed! Family notified!")
+                            missed_any = True
+                        elif med["timing"] == "Night" and current_hour >= 23:
+                            try:
+                                send_missed_medicine(med['name'], med['timing'])
+                                save_history(med['name'], "Missed")
+                            except:
+                                pass
+                            st.error(f"❌ {med['name']} was missed! Family notified!")
+                            missed_any = True
+                if not missed_any:
+                    st.success("✅ No missed medicines!")
+
+        # =====================
+        # TAB 2 - PRESCRIPTION
+        # =====================
+        with tab2:
+            st.markdown("### 📋 Add Prescription Details")
+            with st.form("prescription_form"):
+                patient_name = st.text_input("👴 Patient Name")
+                doctor_name = st.text_input("👨‍⚕️ Doctor Name")
+                hospital_name = st.text_input("🏥 Hospital Name")
+                date = st.date_input("📅 Prescription Date")
+                notes = st.text_area("📝 Doctor Notes")
+                prescription_submitted = st.form_submit_button(
+                    "💾 Save Prescription",
+                    use_container_width=True
+                )
+
+                if prescription_submitted:
+                    if patient_name and doctor_name:
+                        st.session_state.prescription = {
+                            "patient_name": patient_name,
+                            "doctor_name": doctor_name,
+                            "hospital_name": hospital_name,
+                            "date": str(date),
+                            "notes": notes
+                        }
+                        st.success("✅ Prescription saved successfully!")
+                    else:
+                        st.error("❌ Please fill patient and doctor name!")
+
+            # Show saved prescription
+            if "prescription" in st.session_state:
+                st.markdown("### 📄 Current Prescription")
+                p = st.session_state.prescription
                 st.markdown(f"""
                     <div style='
-                        background: white;
-                        padding: 15px;
+                        background: #1e2130;
+                        padding: 20px;
                         border-radius: 12px;
-                        border-left: 5px solid #3498DB;
-                        box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
-                        margin-bottom: 10px;'>
-                        <h3 style='color: #2C3E50;'>
-                            💊 {med['name']} — {med['dosage']}
-                        </h3>
-                        <p style='color: #7F8C8D;'>⏰ {med['timing']}</p>
-                        <p style='color: #E74C3C; font-weight: bold;'>
-                            📦 Remaining: {med['remaining']} tablets
-                        </p>
+                        border-left: 5px solid #667eea;'>
+                        <h3 style='color: white;'>👴 {p['patient_name']}</h3>
+                        <p style='color: #aaaaaa;'>👨‍⚕️ Dr. {p['doctor_name']}</p>
+                        <p style='color: #aaaaaa;'>🏥 {p['hospital_name']}</p>
+                        <p style='color: #aaaaaa;'>📅 {p['date']}</p>
+                        <p style='color: white;'>📝 {p['notes']}</p>
                     </div>
                 """, unsafe_allow_html=True)
 
-                col1, col2 = st.columns([3, 1])
-                with col2:
-                    if not med["taken_today"]:
-                        if st.button(f"✅ Took it!", key=f"took_{i}", use_container_width=True):
-                            st.session_state.medicines[i]["taken_today"] = True
-                            st.session_state.medicines[i]["remaining"] -= 1
+        # =====================
+        # TAB 3 - HISTORY
+        # =====================
+        with tab3:
+            st.markdown("### 📊 Medicine History")
+            history = load_history()
+            if len(history) == 0:
+                st.info("No history yet!")
+            else:
+                for record in reversed(history):
+                    color = "#2ECC71" if record["action"] == "Taken" else "#E74C3C" if record["action"] == "Missed" else "#3498DB"
+                    icon = "✅" if record["action"] == "Taken" else "❌" if record["action"] == "Missed" else "➕"
+                    st.markdown(f"""
+                        <div style='
+                            background: #1e2130;
+                            padding: 10px 15px;
+                            border-radius: 10px;
+                            border-left: 4px solid {color};
+                            margin-bottom: 8px;'>
+                            <p style='color: white; margin: 0;'>
+                                {icon} <b>{record['medicine']}</b> — {record['action']}
+                            </p>
+                            <p style='color: #aaaaaa; margin: 0; font-size: 0.8em;'>
+                                🕐 {record['time']}
+                            </p>
+                        </div>
+                    """, unsafe_allow_html=True)
 
-                            # Send WhatsApp notification
-                            try:
-                                send_medicine_taken(
-                                    med['name'],
-                                    med['dosage'],
-                                    st.session_state.medicines[i]["remaining"]
-                                )
-                                st.success(f"✅ {med['name']} taken! Family notified on WhatsApp! 📱")
-                            except:
-                                st.success(f"✅ {med['name']} marked as taken!")
-
-                            # Low stock WhatsApp alert
-                            if st.session_state.medicines[i]["remaining"] <= 5:
-                                try:
-                                    send_low_stock_alert(
-                                        med['name'],
-                                        st.session_state.medicines[i]["remaining"]
-                                    )
-                                    st.warning(f"⚠️ Low stock alert sent to family on WhatsApp!")
-                                except:
-                                    st.warning(f"⚠️ Only {med['remaining']} tablets left!")
-
-                            st.rerun()
-                    else:
-                        st.success("✅ Taken!")
-
-                if med["remaining"] <= 5:
-                    st.warning(f"⚠️ Low Stock! Only {med['remaining']} tablets left!")
-                st.divider()
-
+    # =====================
     # FAMILY DASHBOARD
+    # =====================
     elif st.session_state.user_type == "family":
         st.markdown("## 👨‍👩‍👧 Family Dashboard")
         st.info("👀 Monitoring your loved one's medicines")
 
-        if "medicines" not in st.session_state or len(st.session_state.medicines) == 0:
+        # Overview stats
+        if len(st.session_state.medicines) > 0:
+            total = len(st.session_state.medicines)
+            taken = sum(1 for m in st.session_state.medicines if m["taken_today"])
+            missed = total - taken
+
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("💊 Total", total)
+            with col2:
+                st.metric("✅ Taken", taken)
+            with col3:
+                st.metric("❌ Remaining", missed)
+
+        st.divider()
+
+        if len(st.session_state.medicines) == 0:
             st.warning("No medicines added yet by senior citizen!")
         else:
             st.markdown("### 📊 Medicine Status")
             for med in st.session_state.medicines:
                 st.markdown(f"""
                     <div style='
-                        background: white;
+                        background: #1e2130;
                         padding: 15px;
                         border-radius: 12px;
-                        border-left: 5px solid {'#2ECC71' if med['taken_today'] else '#E74C3C'};
-                        box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+                        border-left: 5px solid {"#2ECC71" if med["taken_today"] else "#E74C3C"};
+                        box-shadow: 2px 2px 8px rgba(0,0,0,0.3);
                         margin-bottom: 10px;'>
-                        <h3 style='color: #2C3E50;'>
+                        <h3 style='color: white;'>
                             💊 {med['name']} — {med['dosage']}
                         </h3>
-                        <p style='color: #7F8C8D;'>⏰ {med['timing']}</p>
-                        <p style='color: {'#2ECC71' if med['taken_today'] else '#E74C3C'};
+                        <p style='color: #aaaaaa;'>⏰ {med['timing']}</p>
+                        <p style='color: {"#2ECC71" if med["taken_today"] else "#E74C3C"};
                         font-weight: bold; font-size: 1.2em;'>
-                            {'✅ Medicine Taken!' if med['taken_today'] else '❌ Not Taken Yet!'}
+                            {"✅ Medicine Taken!" if med["taken_today"] else "❌ Not Taken Yet!"}
                         </p>
-                        <p style='color: #E74C3C;'>
+                        <p style='color: #aaaaaa;'>
                             📦 Remaining: {med['remaining']} tablets
                         </p>
                     </div>
@@ -206,3 +348,28 @@ if "user_type" in st.session_state:
                 if med["remaining"] <= 5:
                     st.warning(f"⚠️ {med['name']} running low! Only {med['remaining']} left!")
                 st.divider()
+
+        # History section for family
+        st.markdown("### 📊 Recent Activity")
+        history = load_history()
+        if len(history) == 0:
+            st.info("No activity yet!")
+        else:
+            for record in reversed(history[-5:]):
+                color = "#2ECC71" if record["action"] == "Taken" else "#E74C3C" if record["action"] == "Missed" else "#3498DB"
+                icon = "✅" if record["action"] == "Taken" else "❌" if record["action"] == "Missed" else "➕"
+                st.markdown(f"""
+                    <div style='
+                        background: #1e2130;
+                        padding: 10px 15px;
+                        border-radius: 10px;
+                        border-left: 4px solid {color};
+                        margin-bottom: 8px;'>
+                        <p style='color: white; margin: 0;'>
+                            {icon} <b>{record['medicine']}</b> — {record['action']}
+                        </p>
+                        <p style='color: #aaaaaa; margin: 0; font-size: 0.8em;'>
+                            🕐 {record['time']}
+                        </p>
+                    </div>
+                """, unsafe_allow_html=True)
