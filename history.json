@@ -1,62 +1,12 @@
 [
     {
-        "medicine": "crena",
+        "medicine": "Cerna",
         "action": "Added",
-        "time": "2026-05-04 14:37"
+        "time": "06 May 2026, 12:33 PM"
     },
     {
-        "medicine": "Paracatamol",
-        "action": "Added",
-        "time": "2026-05-04 14:38"
-    },
-    {
-        "medicine": "Paracetamol",
-        "action": "Added",
-        "time": "2026-05-04 14:43"
-    },
-    {
-        "medicine": "Paracetomal ",
-        "action": "Added",
-        "time": "2026-05-04 15:00"
-    },
-    {
-        "medicine": "para",
-        "action": "Added",
-        "time": "2026-05-04 15:03"
-    },
-    {
-        "medicine": "para",
+        "medicine": "Cerna",
         "action": "Taken",
-        "time": "2026-05-04 15:03"
-    },
-    {
-        "medicine": "crena",
-        "action": "Missed",
-        "time": "2026-05-04 15:03"
-    },
-    {
-        "medicine": "Paracatamol",
-        "action": "Missed",
-        "time": "2026-05-04 15:03"
-    },
-    {
-        "medicine": "crena",
-        "action": "Missed",
-        "time": "2026-05-04 15:03"
-    },
-    {
-        "medicine": "Paracatamol",
-        "action": "Missed",
-        "time": "2026-05-04 15:03"
-    },
-    {
-        "medicine": "Paracetamol",
-        "action": "Missed",
-        "time": "2026-05-04 15:03"
-    },
-    {
-        "medicine": "Paracetomal ",
-        "action": "Missed",
-        "time": "2026-05-04 15:03"
+        "time": "06 May 2026, 12:54 PM"
     }
 ]

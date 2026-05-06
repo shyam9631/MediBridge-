@@ -68,3 +68,17 @@ _Sent by MediBridge_
         to=family_phone
     )
     return message.sid
+def send_emergency():
+    from twilio.rest import Client
+    import os
+    from dotenv import load_dotenv
+    load_dotenv()
+    client = Client(
+        os.getenv("TWILIO_ACCOUNT_SID"),
+        os.getenv("TWILIO_AUTH_TOKEN")
+    )
+    client.messages.create(
+        from_="whatsapp:+14155238886",
+        body="🚨 *EMERGENCY ALERT*\n\nYour loved one needs immediate help!\n\nPlease call or visit them right away!\n\n_Sent by MediBridge_ 🏥",
+        to=os.getenv("FAMILY_PHONE")
+    )

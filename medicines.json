@@ -4,39 +4,41 @@
         "dosage": "15",
         "timing": "Morning",
         "total": 30,
-        "remaining": 30,
-        "taken_today": false
+        "remaining": 28,
+        "taken_today": true
     },
     {
-        "name": "Paracatamol",
-        "dosage": "500",
+        "name": "Cerna",
+        "dosage": "250",
         "timing": "Morning",
         "total": 30,
-        "remaining": 30,
-        "taken_today": false
+        "remaining": 29,
+        "taken_today": true,
+        "notes": ""
     },
     {
         "name": "Paracetamol",
-        "dosage": "500",
-        "timing": "Morning",
-        "total": 30,
-        "remaining": 30,
-        "taken_today": false
-    },
-    {
-        "name": "Paracetomal ",
-        "dosage": "500",
-        "timing": "Morning",
-        "total": 30,
-        "remaining": 30,
-        "taken_today": false
-    },
-    {
-        "name": "para",
-        "dosage": "22",
+        "dosage": "600",
         "timing": "Morning",
         "total": 30,
         "remaining": 29,
         "taken_today": true
+    },
+    {
+        "name": "paracetamol",
+        "dosage": "6650",
+        "timing": "Morning",
+        "total": 30,
+        "remaining": 29,
+        "taken_today": true
+    },
+    {
+        "name": "Cerna",
+        "dosage": "50",
+        "timing": "After Food",
+        "total": 5,
+        "remaining": 4,
+        "taken_today": true,
+        "notes": ""
     }
 ]
