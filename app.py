@@ -17,20 +17,16 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
     .stDeployButton {display: none;}
-    
     .block-container {
         max-width: 420px !important;
         padding: 0 !important;
         margin: 0 auto !important;
     }
-    
     .stApp {
-        background: linear-gradient(180deg, #0a0a0f 0%, #0d0d1a 50%, #0a0a0f 100%);
+        background: linear-gradient(180deg, #0a0a0f 0%, #0a0d1a 50%, #0a0a0f 100%);
     }
-    
-    /* Animated gradient buttons */
     .stButton > button {
-        background: linear-gradient(135deg, #667eea, #764ba2, #667eea) !important;
+        background: linear-gradient(135deg, #0099ff, #00d4ff, #0099ff) !important;
         background-size: 200% 200% !important;
         animation: gradientShift 3s ease infinite !important;
         color: white !important;
@@ -40,143 +36,110 @@ st.markdown("""
         font-size: 15px !important;
         padding: 14px !important;
         width: 100% !important;
-        box-shadow: 0 4px 20px rgba(102,126,234,0.5) !important;
+        box-shadow: 0 4px 20px rgba(0,153,255,0.5) !important;
         transition: all 0.3s ease !important;
         letter-spacing: 0.5px !important;
     }
-    
     .stButton > button:hover {
         transform: translateY(-3px) scale(1.02) !important;
-        box-shadow: 0 10px 30px rgba(102,126,234,0.7) !important;
+        box-shadow: 0 10px 30px rgba(0,153,255,0.7) !important;
     }
-    
     .stButton > button:active {
         transform: translateY(0px) scale(0.98) !important;
     }
-    
-    /* Gradient animation */
     @keyframes gradientShift {
         0% {background-position: 0% 50%;}
         50% {background-position: 100% 50%;}
         100% {background-position: 0% 50%;}
     }
-    
-    /* Glowing pulse animation */
     @keyframes glowPulse {
-        0% {box-shadow: 0 0 10px rgba(102,126,234,0.3);}
-        50% {box-shadow: 0 0 25px rgba(102,126,234,0.7);}
-        100% {box-shadow: 0 0 10px rgba(102,126,234,0.3);}
+        0% {box-shadow: 0 0 10px rgba(0,153,255,0.3);}
+        50% {box-shadow: 0 0 25px rgba(0,153,255,0.7);}
+        100% {box-shadow: 0 0 10px rgba(0,153,255,0.3);}
     }
-    
-    /* Fade in animation */
     @keyframes fadeInUp {
         from {opacity: 0; transform: translateY(20px);}
         to {opacity: 1; transform: translateY(0);}
     }
-    
-    /* Float animation */
     @keyframes float {
         0% {transform: translateY(0px);}
         50% {transform: translateY(-8px);}
         100% {transform: translateY(0px);}
     }
-    
-    /* Input fields */
     .stTextInput > div > div > input {
         border-radius: 15px !important;
-        border: 2px solid #2a2a3e !important;
-        background-color: #13131f !important;
+        border: 2px solid #0a1a2e !important;
+        background-color: #0a0f1f !important;
         color: white !important;
         padding: 14px !important;
         font-size: 15px !important;
         transition: all 0.4s ease !important;
-        animation: fadeInUp 0.5s ease !important;
     }
-    
     .stTextInput > div > div > input:focus {
-        border: 2px solid #667eea !important;
-        box-shadow: 0 0 20px rgba(102,126,234,0.4) !important;
+        border: 2px solid #0099ff !important;
+        box-shadow: 0 0 20px rgba(0,153,255,0.4) !important;
         transform: scale(1.01) !important;
     }
-    
-    /* Select box */
     .stSelectbox > div > div {
-        background-color: #13131f !important;
+        background-color: #0a0f1f !important;
         border-radius: 15px !important;
-        border: 2px solid #2a2a3e !important;
+        border: 2px solid #0a1a2e !important;
         color: white !important;
         transition: all 0.3s ease !important;
     }
-    
-    /* Number input */
     .stNumberInput > div > div > input {
-        background-color: #13131f !important;
+        background-color: #0a0f1f !important;
         border-radius: 15px !important;
-        border: 2px solid #2a2a3e !important;
+        border: 2px solid #0a1a2e !important;
         color: white !important;
     }
-    
-    /* Tabs */
     .stTabs [data-baseweb="tab-list"] {
-        background: linear-gradient(135deg, #13131f, #1a1a2e) !important;
+        background: linear-gradient(135deg, #0a0f1f, #0a1a2e) !important;
         border-radius: 20px !important;
         padding: 5px !important;
         box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
     }
-    
     .stTabs [data-baseweb="tab"] {
         border-radius: 15px !important;
         color: #666 !important;
         font-weight: 600 !important;
         transition: all 0.3s ease !important;
     }
-    
     .stTabs [aria-selected="true"] {
-        background: linear-gradient(135deg, #667eea, #764ba2) !important;
+        background: linear-gradient(135deg, #0099ff, #00d4ff) !important;
         color: white !important;
         border-radius: 15px !important;
-        box-shadow: 0 4px 15px rgba(102,126,234,0.4) !important;
+        box-shadow: 0 4px 15px rgba(0,153,255,0.4) !important;
     }
-    
-    /* Metrics */
     [data-testid="metric-container"] {
-        background: linear-gradient(135deg, #13131f, #1a1a2e) !important;
+        background: linear-gradient(135deg, #0a0f1f, #0a1a2e) !important;
         border-radius: 20px !important;
         padding: 15px !important;
-        border: 1px solid #2a2a3e !important;
+        border: 1px solid #0a1a2e !important;
         animation: glowPulse 3s ease infinite !important;
         transition: all 0.3s ease !important;
     }
-    
     [data-testid="metric-container"]:hover {
         transform: translateY(-3px) !important;
-        border-color: #667eea !important;
+        border-color: #0099ff !important;
     }
-    
-    /* Text area */
     .stTextArea > div > div > textarea {
-        background-color: #13131f !important;
+        background-color: #0a0f1f !important;
         border-radius: 15px !important;
-        border: 2px solid #2a2a3e !important;
+        border: 2px solid #0a1a2e !important;
         color: white !important;
         transition: all 0.3s ease !important;
     }
-    
-    /* Form */
     [data-testid="stForm"] {
-        background: linear-gradient(135deg, #13131f, #1a1a2e) !important;
+        background: linear-gradient(135deg, #0a0f1f, #0a1a2e) !important;
         border-radius: 25px !important;
         padding: 25px !important;
-        border: 1px solid #2a2a3e !important;
+        border: 1px solid #0a1a2e !important;
         box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
         animation: fadeInUp 0.5s ease !important;
     }
-
-    /* Divider */
-    hr {border-color: #1a1a2e !important;}
-
-    /* Spinner */
-    .stSpinner > div {border-top-color: #667eea !important;}
+    hr {border-color: #0a1a2e !important;}
+    .stSpinner > div {border-top-color: #0099ff !important;}
     </style>
 """, unsafe_allow_html=True)
 
@@ -219,50 +182,50 @@ if "chat_history" not in st.session_state:
 
 def show_logo():
     st.markdown("""
-        <div style="text-align: center; padding: 20px 0 10px 0;">
-            <div style="display: inline-block; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 20px; padding: 15px 20px; margin-bottom: 8px;">
+        <div style="text-align: center; padding: 20px 0 10px 0; animation: fadeInUp 0.6s ease;">
+            <div style="display: inline-block; background: linear-gradient(135deg, #0099ff, #00d4ff); border-radius: 20px; padding: 15px 20px; margin-bottom: 8px; box-shadow: 0 8px 25px rgba(0,153,255,0.4); animation: float 3s ease infinite;">
                 <span style="color: white; font-size: 2.5em;">💊</span>
             </div>
-            <h1 style="color: #667eea; margin: 5px 0; font-size: 2em; font-weight: 800;">MediBridge</h1>
+            <h1 style="background: linear-gradient(135deg, #0099ff, #00d4ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 5px 0; font-size: 2em; font-weight: 800;">MediBridge</h1>
             <p style="color: #666; font-size: 0.85em; letter-spacing: 2px; margin: 0;">SMART MEDICINE TRACKER</p>
         </div>
     """, unsafe_allow_html=True)
 
 def make_card(title, subtitle, emoji, color):
     return f"""
-    <div style="background: #13131f; border-radius: 20px; padding: 20px; text-align: center; border: 1px solid #2a2a3e; margin-bottom: 10px;">
-        <div style="font-size: 2.5em;">{emoji}</div>
-        <h3 style="color: white; margin: 8px 0 4px 0; font-size: 1em;">{title}</h3>
-        <p style="color: #666; margin: 0; font-size: 0.8em;">{subtitle}</p>
+    <div style="background: linear-gradient(135deg, #0a0f1f, #0a1a2e); border-radius: 20px; padding: 20px; text-align: center; border: 1px solid #0a1a2e; margin-bottom: 10px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+        <div style="font-size: 2.5em; animation: float 3s ease infinite;">{emoji}</div>
+        <h3 style="color: white; margin: 8px 0 4px 0; font-size: 1em; font-weight: 700;">{title}</h3>
+        <p style="color: #555; margin: 0; font-size: 0.8em;">{subtitle}</p>
     </div>
     """
 
 def landing_page():
     show_logo()
     st.markdown("""
-        <div style="background: #13131f; border-radius: 25px; padding: 25px; margin: 20px 0; border: 1px solid #2a2a3e; text-align: center;">
-            <h2 style="color: white; margin: 0 0 8px 0; font-size: 1.3em;">Welcome to MediBridge</h2>
-            <p style="color: #888; margin: 0; font-size: 0.9em; line-height: 1.6;">Smart medicine tracking for senior citizens with real-time WhatsApp alerts for family</p>
+        <div style="background: linear-gradient(135deg, #0a0f1f, #0a1a2e); border-radius: 25px; padding: 25px; margin: 20px 0; border: 1px solid #0a1a2e; text-align: center; animation: fadeInUp 0.7s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+            <h2 style="color: white; margin: 0 0 8px 0; font-size: 1.3em; font-weight: 700;">Welcome to MediBridge</h2>
+            <p style="color: #555; margin: 0; font-size: 0.9em; line-height: 1.6;">Smart medicine tracking for senior citizens with real-time WhatsApp alerts for family</p>
         </div>
     """, unsafe_allow_html=True)
 
     st.markdown("### 👤 I am a...")
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown(make_card("Senior Citizen", "Track my medicines", "👴", "#667eea"), unsafe_allow_html=True)
+        st.markdown(make_card("Senior Citizen", "Track my medicines", "👴", "#0099ff"), unsafe_allow_html=True)
         if st.button("Select", key="senior_btn", use_container_width=True):
             st.session_state.selected_role = "senior"
             st.session_state.page = "auth"
             st.rerun()
     with col2:
-        st.markdown(make_card("Family Member", "Monitor loved ones", "👨‍👩‍👧", "#2ECC71"), unsafe_allow_html=True)
+        st.markdown(make_card("Family Member", "Monitor loved ones", "👨‍👩‍👧", "#00d4ff"), unsafe_allow_html=True)
         if st.button("Select", key="family_btn", use_container_width=True):
             st.session_state.selected_role = "family"
             st.session_state.page = "auth"
             st.rerun()
 
     st.markdown("""
-        <div style="text-align: center; margin-top: 20px;">
+        <div style="text-align: center; margin-top: 20px; animation: fadeInUp 1s ease;">
             <p style="color: #333; font-size: 0.75em;">Powered by AI • WhatsApp Notifications • Offline Mode</p>
         </div>
     """, unsafe_allow_html=True)
@@ -272,29 +235,12 @@ def auth_page():
     role = st.session_state.get("selected_role", "senior")
     role_emoji = "👴" if role == "senior" else "👨‍👩‍👧"
     role_name = "Senior Citizen" if role == "senior" else "Family Member"
-    role_color = "#667eea" if role == "senior" else "#11998e"
 
     st.markdown(f"""
-        <div style="
-            background: linear-gradient(135deg, {role_color}20, {role_color}10);
-            border-radius: 20px;
-            padding: 20px;
-            text-align: center;
-            border: 1px solid {role_color}50;
-            margin-bottom: 25px;
-            animation: fadeInUp 0.5s ease;
-            box-shadow: 0 8px 25px {role_color}20;">
-            <div style="
-                font-size: 3em;
-                animation: float 3s ease infinite;">
-                {role_emoji}
-            </div>
-            <h2 style="color: {role_color}; margin: 10px 0 5px 0; font-weight: 800;">
-                {role_name}
-            </h2>
-            <p style="color: #666; margin: 0; font-size: 0.85em;">
-                Welcome to MediBridge!
-            </p>
+        <div style="background: linear-gradient(135deg, #0099ff20, #00d4ff10); border-radius: 20px; padding: 20px; text-align: center; border: 1px solid #0099ff50; margin-bottom: 25px; animation: fadeInUp 0.5s ease; box-shadow: 0 8px 25px rgba(0,153,255,0.2);">
+            <div style="font-size: 3em; animation: float 3s ease infinite;">{role_emoji}</div>
+            <h2 style="background: linear-gradient(135deg, #0099ff, #00d4ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 10px 0 5px 0; font-weight: 800;">{role_name}</h2>
+            <p style="color: #555; margin: 0; font-size: 0.85em;">Welcome to MediBridge!</p>
         </div>
     """, unsafe_allow_html=True)
 
@@ -314,23 +260,15 @@ def auth_page():
     if st.session_state.auth_mode == "login":
         st.markdown("""
             <div style="text-align: center; margin-bottom: 20px; animation: fadeInUp 0.6s ease;">
-                <h2 style="color: white; margin: 0; font-size: 1.5em;">
-                    Welcome Back! 👋
-                </h2>
-                <p style="color: #555; margin: 5px 0 0 0; font-size: 0.85em;">
-                    Login to continue
-                </p>
+                <h2 style="color: white; margin: 0; font-size: 1.5em; font-weight: 700;">Welcome Back! 👋</h2>
+                <p style="color: #555; margin: 5px 0 0 0; font-size: 0.85em;">Login to continue</p>
             </div>
         """, unsafe_allow_html=True)
-
         with st.form("login_form"):
             username = st.text_input("👤 Username")
             password = st.text_input("🔒 Password", type="password")
             st.markdown("<br>", unsafe_allow_html=True)
-            login_btn = st.form_submit_button(
-                "🚀 Login to MediBridge",
-                use_container_width=True
-            )
+            login_btn = st.form_submit_button("🚀 Login to MediBridge", use_container_width=True)
             if login_btn:
                 if username and password:
                     success, user_data, msg = login_user(username, password)
@@ -338,38 +276,25 @@ def auth_page():
                         if user_data["role"] != role:
                             st.error(f"❌ Wrong role! This account is for {user_data['role']}!")
                         else:
-                            st.session_state.user = {
-                                "username": username,
-                                "name": user_data["name"],
-                                "role": user_data["role"]
-                            }
+                            st.session_state.user = {"username": username, "name": user_data["name"], "role": user_data["role"]}
                             st.session_state.page = "dashboard"
                             st.rerun()
                     else:
                         st.error(f"❌ {msg}")
                 else:
                     st.error("❌ Please fill all fields!")
-
         st.markdown("""
             <div style="text-align: center; margin-top: 15px;">
-                <p style="color: #444; font-size: 0.8em;">
-                    Don't have an account? Click Register above!
-                </p>
+                <p style="color: #333; font-size: 0.8em;">Don't have an account? Click Register above!</p>
             </div>
         """, unsafe_allow_html=True)
-
     else:
         st.markdown("""
             <div style="text-align: center; margin-bottom: 20px; animation: fadeInUp 0.6s ease;">
-                <h2 style="color: white; margin: 0; font-size: 1.5em;">
-                    Create Account! ✨
-                </h2>
-                <p style="color: #555; margin: 5px 0 0 0; font-size: 0.85em;">
-                    Join MediBridge today
-                </p>
+                <h2 style="color: white; margin: 0; font-size: 1.5em; font-weight: 700;">Create Account! ✨</h2>
+                <p style="color: #555; margin: 5px 0 0 0; font-size: 0.85em;">Join MediBridge today</p>
             </div>
         """, unsafe_allow_html=True)
-
         with st.form("register_form"):
             name = st.text_input("😊 Your Full Name")
             username = st.text_input("👤 Choose Username")
@@ -379,10 +304,7 @@ def auth_page():
             with col2:
                 confirm = st.text_input("🔒 Confirm", type="password")
             st.markdown("<br>", unsafe_allow_html=True)
-            register_btn = st.form_submit_button(
-                "✨ Create My Account",
-                use_container_width=True
-            )
+            register_btn = st.form_submit_button("✨ Create My Account", use_container_width=True)
             if register_btn:
                 if name and username and password and confirm:
                     if password != confirm:
@@ -405,15 +327,14 @@ def auth_page():
         st.session_state.page = "landing"
         st.rerun()
 
-def make_medicine_card(med, index, show_btn=True):
-    border = "#2ECC71" if med["taken_today"] else "#667eea"
+def make_medicine_card(med, index):
+    border = "#2ECC71" if med["taken_today"] else "#0099ff"
     status = "✅ Taken" if med["taken_today"] else "⏳ Pending"
-    status_color = "#2ECC71" if med["taken_today"] else "#667eea"
+    status_color = "#2ECC71" if med["taken_today"] else "#0099ff"
     notes_part = ""
     if med.get("notes"):
         notes_part = "<p style=\"color: #555; margin: 4px 0; font-size: 0.75em;\">📝 " + str(med["notes"]) + "</p>"
-
-    html = "<div style=\"background: linear-gradient(135deg, #13131f, #1a1a2e); border-radius: 20px; padding: 18px; border: 1px solid #2a2a3e; border-left: 4px solid " + border + "; margin-bottom: 14px; box-shadow: 0 8px 25px rgba(0,0,0,0.3); transition: all 0.3s ease;\">"
+    html = "<div style=\"background: linear-gradient(135deg, #0a0f1f, #0a1a2e); border-radius: 20px; padding: 18px; border: 1px solid #0a1a2e; border-left: 4px solid " + border + "; margin-bottom: 14px; box-shadow: 0 8px 25px rgba(0,0,0,0.3); transition: all 0.3s ease;\">"
     html += "<div style=\"display: flex; justify-content: space-between; align-items: center;\">"
     html += "<div>"
     html += "<h3 style=\"color: white; margin: 0; font-size: 1.05em; font-weight: 700;\">💊 " + str(med["name"]) + "</h3>"
@@ -421,21 +342,21 @@ def make_medicine_card(med, index, show_btn=True):
     html += "<p style=\"color: #E74C3C; margin: 4px 0; font-size: 0.8em; font-weight: 700;\">📦 " + str(med["remaining"]) + " tablets left</p>"
     html += notes_part
     html += "</div>"
-    html += "<div style=\"background: linear-gradient(135deg, " + status_color + "30, " + status_color + "10); padding: 8px 14px; border-radius: 20px; border: 1px solid " + status_color + "50; text-align: center;\">"
+    html += "<div style=\"background: linear-gradient(135deg, " + status_color + "30, " + status_color + "10); padding: 8px 14px; border-radius: 20px; border: 1px solid " + status_color + "50;\">"
     html += "<p style=\"color: " + status_color + "; margin: 0; font-size: 0.75em; font-weight: 700;\">" + status + "</p>"
     html += "</div></div></div>"
     st.markdown(html, unsafe_allow_html=True)
-    
+
 def senior_dashboard():
     user = st.session_state.user
     st.markdown(f"""
-        <div style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 15px 20px; border-radius: 0 0 25px 25px; margin-bottom: 20px; box-shadow: 0 8px 25px rgba(102,126,234,0.3);">
+        <div style="background: linear-gradient(135deg, #0099ff, #00d4ff); padding: 15px 20px; border-radius: 0 0 25px 25px; margin-bottom: 20px; box-shadow: 0 8px 25px rgba(0,153,255,0.4);">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
                     <p style="color: rgba(255,255,255,0.7); margin: 0; font-size: 0.75em;">Good day! 👋</p>
                     <h2 style="color: white; margin: 2px 0; font-size: 1.2em; font-weight: 700;">{user['name']}</h2>
                 </div>
-                <div style="text-align: rightdef;">
+                <div style="text-align: right;">
                     <p style="color: rgba(255,255,255,0.7); margin: 0; font-size: 0.75em;">💊 MediBridge</p>
                     <p style="color: white; margin: 0; font-size: 0.8em; font-weight: 600;">Senior Citizen 👴</p>
                 </div>
@@ -456,7 +377,6 @@ def senior_dashboard():
         st.metric("⏳ Left", remaining)
 
     st.markdown("<br>", unsafe_allow_html=True)
-
     tab1, tab2, tab3, tab4, tab5 = st.tabs(["💊 Medicines", "📋 Prescription", "📊 History", "🤖 MediBot", "⚙️ Settings"])
 
     with tab1:
@@ -478,13 +398,9 @@ def senior_dashboard():
             if add_btn:
                 if med_name and dosage:
                     st.session_state.medicines.append({
-                        "name": med_name,
-                        "dosage": dosage,
-                        "timing": timing,
-                        "total": total_count,
-                        "remaining": total_count,
-                        "taken_today": False,
-                        "notes": notes
+                        "name": med_name, "dosage": dosage, "timing": timing,
+                        "total": total_count, "remaining": total_count,
+                        "taken_today": False, "notes": notes
                     })
                     save_medicines(st.session_state.medicines)
                     save_history(med_name, "Added")
@@ -496,7 +412,7 @@ def senior_dashboard():
         st.markdown("### 📋 Today's Medicines")
         if len(st.session_state.medicines) == 0:
             st.markdown("""
-                <div style="background: #13131f; border-radius: 20px; padding: 30px; text-align: center; border: 1px solid #2a2a3e;">
+                <div style="background: linear-gradient(135deg, #0a0f1f, #0a1a2e); border-radius: 20px; padding: 30px; text-align: center; border: 1px solid #0a1a2e;">
                     <p style="font-size: 2em; margin: 0;">💊</p>
                     <h3 style="color: #444; margin: 10px 0 5px 0;">No medicines yet</h3>
                     <p style="color: #333; margin: 0; font-size: 0.85em;">Add your first medicine above</p>
@@ -517,7 +433,7 @@ def senior_dashboard():
                                 from whatsapp import send_medicine_taken, send_low_stock_alert
                                 send_medicine_taken(med['name'], med['dosage'], st.session_state.medicines[i]["remaining"])
                                 st.success("✅ Done! Family notified on WhatsApp! 📱")
-                            except Exception as e:
+                            except:
                                 st.success("✅ Medicine marked as taken!")
                             if st.session_state.medicines[i]["remaining"] <= 5:
                                 try:
@@ -549,15 +465,6 @@ def senior_dashboard():
                             pass
                         st.error(f"❌ {med['name']} missed!")
                         missed_any = True
-                    elif med["timing"] == "Night" and current_hour >= 22:
-                        try:
-                            from whatsapp import send_missed_medicine
-                            send_missed_medicine(med['name'], med['timing'])
-                            save_history(med['name'], "Missed")
-                        except:
-                            pass
-                        st.error(f"❌ {med['name']} missed!")
-                        missed_any = True
             if not missed_any:
                 st.success("✅ All medicines on track!")
 
@@ -565,13 +472,13 @@ def senior_dashboard():
         st.markdown("### 📋 Prescription")
         saved = load_prescription()
         if saved:
-            html = "<div style=\"background: #13131f; border-radius: 20px; padding: 20px; border: 1px solid #2a2a3e; border-left: 4px solid #667eea; margin-bottom: 20px;\">"
+            html = "<div style=\"background: linear-gradient(135deg, #0a0f1f, #0a1a2e); border-radius: 20px; padding: 20px; border: 1px solid #0a1a2e; border-left: 4px solid #0099ff; margin-bottom: 20px;\">"
             html += "<h3 style=\"color: white; margin: 0 0 10px 0;\">👴 " + str(saved['patient_name']) + "</h3>"
             html += "<p style=\"color: #888; margin: 5px 0;\">👨‍⚕️ Dr. " + str(saved['doctor_name']) + "</p>"
             html += "<p style=\"color: #888; margin: 5px 0;\">🏥 " + str(saved.get('hospital_name', 'N/A')) + "</p>"
             html += "<p style=\"color: #888; margin: 5px 0;\">📅 " + str(saved['date']) + "</p>"
             html += "<p style=\"color: #888; margin: 5px 0;\">📅 Next: " + str(saved.get('next_visit', 'N/A')) + "</p>"
-            html += "<p style=\"color: white; margin: 10px 0 0 0; font-size: 0.9em;\">📝 " + str(saved.get('notes', 'None')) + "</p>"
+            html += "<p style=\"color: white; margin: 10px 0 0 0;\">📝 " + str(saved.get('notes', 'None')) + "</p>"
             html += "</div>"
             st.markdown(html, unsafe_allow_html=True)
 
@@ -592,15 +499,7 @@ def senior_dashboard():
             save_btn = st.form_submit_button("💾 Save Prescription", use_container_width=True)
             if save_btn:
                 if name and doctor:
-                    save_prescription({
-                        "patient_name": name,
-                        "doctor_name": doctor,
-                        "hospital_name": hospital,
-                        "date": str(date),
-                        "next_visit": str(next_visit),
-                        "contact": contact,
-                        "notes": notes_rx
-                    })
+                    save_prescription({"patient_name": name, "doctor_name": doctor, "hospital_name": hospital, "date": str(date), "next_visit": str(next_visit), "contact": contact, "notes": notes_rx})
                     st.success("✅ Prescription saved!")
                     st.rerun()
                 else:
@@ -628,8 +527,8 @@ def senior_dashboard():
                 elif record["action"] == "Deleted":
                     color, icon = "#E74C3C", "🗑️"
                 else:
-                    color, icon = "#667eea", "➕"
-                html = "<div style=\"background: #13131f; padding: 12px 15px; border-radius: 15px; border-left: 3px solid " + color + "; margin-bottom: 8px;\">"
+                    color, icon = "#0099ff", "➕"
+                html = "<div style=\"background: linear-gradient(135deg, #0a0f1f, #0a1a2e); padding: 12px 15px; border-radius: 15px; border-left: 3px solid " + color + "; margin-bottom: 8px;\">"
                 html += "<p style=\"color: white; margin: 0; font-size: 0.9em; font-weight: 600;\">" + icon + " " + str(record['medicine']) + " — " + str(record['action']) + "</p>"
                 html += "<p style=\"color: #555; margin: 3px 0 0 0; font-size: 0.75em;\">🕐 " + str(record['time']) + "</p>"
                 html += "</div>"
@@ -643,17 +542,17 @@ def senior_dashboard():
     with tab4:
         st.markdown("### 🤖 MediBot")
         st.markdown("""
-            <div style="background: #13131f; border-radius: 15px; padding: 12px 15px; border-left: 3px solid #667eea; margin-bottom: 15px;">
+            <div style="background: linear-gradient(135deg, #0a0f1f, #0a1a2e); border-radius: 15px; padding: 12px 15px; border-left: 3px solid #0099ff; margin-bottom: 15px;">
                 <p style="color: #888; margin: 0; font-size: 0.85em;">🤖 Hi! Ask me anything about your medicines! 💊</p>
             </div>
         """, unsafe_allow_html=True)
 
         for chat in st.session_state.chat_history:
             if chat["role"] == "user":
-                html = "<div style=\"background: linear-gradient(135deg, #667eea, #764ba2); padding: 10px 14px; border-radius: 18px 18px 4px 18px; margin: 6px 0 6px 20%; text-align: right;\">"
+                html = "<div style=\"background: linear-gradient(135deg, #0099ff, #00d4ff); padding: 10px 14px; border-radius: 18px 18px 4px 18px; margin: 6px 0 6px 20%; text-align: right;\">"
                 html += "<p style=\"color: white; margin: 0; font-size: 0.85em;\">" + str(chat['message']) + "</p></div>"
             else:
-                html = "<div style=\"background: #13131f; padding: 10px 14px; border-radius: 18px 18px 18px 4px; margin: 6px 20% 6px 0; border: 1px solid #2a2a3e;\">"
+                html = "<div style=\"background: linear-gradient(135deg, #0a0f1f, #0a1a2e); padding: 10px 14px; border-radius: 18px 18px 18px 4px; margin: 6px 20% 6px 0; border: 1px solid #0a1a2e;\">"
                 html += "<p style=\"color: white; margin: 0; font-size: 0.85em;\">🤖 " + str(chat['message']) + "</p></div>"
             st.markdown(html, unsafe_allow_html=True)
 
@@ -670,11 +569,7 @@ def senior_dashboard():
             if st.button("📦 Stock check?", use_container_width=True):
                 st.session_state.quick_q = "Which medicines are running low?"
 
-        user_input = st.text_input(
-            "💬 Ask MediBot:",
-            value=st.session_state.get("quick_q", ""),
-            placeholder="e.g. Can I take this with food?"
-        )
+        user_input = st.text_input("💬 Ask MediBot:", value=st.session_state.get("quick_q", ""), placeholder="e.g. Can I take this with food?")
         col1, col2 = st.columns([4, 1])
         with col1:
             send = st.button("📤 Send", use_container_width=True)
@@ -689,7 +584,7 @@ def senior_dashboard():
                 try:
                     from chatbot import get_medicine_response
                     response = get_medicine_response(user_input, st.session_state.medicines)
-                except Exception as e:
+                except:
                     response = "Sorry, having trouble connecting. Try again! 🙏"
             st.session_state.chat_history.append({"role": "bot", "message": response})
             if "quick_q" in st.session_state:
@@ -698,7 +593,7 @@ def senior_dashboard():
 
     with tab5:
         st.markdown("### ⚙️ Settings")
-        html = "<div style=\"background: #13131f; border-radius: 20px; padding: 20px; border: 1px solid #2a2a3e; margin-bottom: 15px;\">"
+        html = "<div style=\"background: linear-gradient(135deg, #0a0f1f, #0a1a2e); border-radius: 20px; padding: 20px; border: 1px solid #0a1a2e; margin-bottom: 15px;\">"
         html += "<h3 style=\"color: white; margin: 0 0 10px 0;\">👤 My Profile</h3>"
         html += "<p style=\"color: #888; margin: 5px 0;\">Name: " + str(user['name']) + "</p>"
         html += "<p style=\"color: #888; margin: 5px 0;\">Username: " + str(user['username']) + "</p>"
@@ -716,14 +611,13 @@ def senior_dashboard():
                     send_daily_report(st.session_state.medicines)
                     st.success("✅ Report sent!")
                 except:
-                    st.error("❌ Failed! Rejoin WhatsApp sandbox!")
+                    st.error("❌ Rejoin WhatsApp sandbox!")
         with col2:
             if st.button("🆘 Emergency!", use_container_width=True):
                 try:
                     from twilio.rest import Client
                     from dotenv import load_dotenv
                     load_dotenv()
-                    import os
                     client = Client(os.getenv("TWILIO_ACCOUNT_SID"), os.getenv("TWILIO_AUTH_TOKEN"))
                     client.messages.create(
                         from_="whatsapp:+14155238886",
@@ -732,7 +626,7 @@ def senior_dashboard():
                     )
                     st.success("🆘 Emergency alert sent!")
                 except:
-                    st.error("❌ Failed! Rejoin WhatsApp sandbox!")
+                    st.error("❌ Rejoin WhatsApp sandbox!")
 
         st.markdown("<br>", unsafe_allow_html=True)
         if st.button("🚪 Logout", use_container_width=True):
@@ -743,7 +637,7 @@ def senior_dashboard():
 def family_dashboard():
     user = st.session_state.user
     st.markdown(f"""
-        <div style="background: linear-gradient(135deg, #11998e, #38ef7d); padding: 15px 20px; border-radius: 0 0 25px 25px; margin-bottom: 20px; box-shadow: 0 8px 25px rgba(17,153,142,0.3);">
+        <div style="background: linear-gradient(135deg, #0099ff, #00d4ff); padding: 15px 20px; border-radius: 0 0 25px 25px; margin-bottom: 20px; box-shadow: 0 8px 25px rgba(0,153,255,0.4);">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
                     <p style="color: rgba(255,255,255,0.7); margin: 0; font-size: 0.75em;">Monitoring 👀</p>
@@ -784,10 +678,10 @@ def family_dashboard():
                 border = "#2ECC71" if med["taken_today"] else "#E74C3C"
                 status = "✅ Taken!" if med["taken_today"] else "❌ Not taken!"
                 status_color = "#2ECC71" if med["taken_today"] else "#E74C3C"
-                html = "<div style=\"background: #13131f; border-radius: 20px; padding: 16px; border: 1px solid #2a2a3e; border-left: 4px solid " + border + "; margin-bottom: 12px;\">"
+                html = "<div style=\"background: linear-gradient(135deg, #0a0f1f, #0a1a2e); border-radius: 20px; padding: 16px; border: 1px solid #0a1a2e; border-left: 4px solid " + border + "; margin-bottom: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);\">"
                 html += "<div style=\"display: flex; justify-content: space-between; align-items: center;\">"
                 html += "<div>"
-                html += "<h3 style=\"color: white; margin: 0; font-size: 1em;\">💊 " + str(med['name']) + "</h3>"
+                html += "<h3 style=\"color: white; margin: 0; font-size: 1em; font-weight: 700;\">💊 " + str(med['name']) + "</h3>"
                 html += "<p style=\"color: #888; margin: 4px 0; font-size: 0.85em;\">" + str(med['dosage']) + " • " + str(med['timing']) + "</p>"
                 html += "<p style=\"color: #E74C3C; margin: 4px 0; font-size: 0.8em;\">📦 " + str(med['remaining']) + " left</p>"
                 html += "</div>"
@@ -803,13 +697,13 @@ def family_dashboard():
         st.markdown("### 📋 Prescription")
         saved = load_prescription()
         if saved:
-            html = "<div style=\"background: #13131f; border-radius: 20px; padding: 20px; border: 1px solid #2a2a3e; border-left: 4px solid #11998e;\">"
+            html = "<div style=\"background: linear-gradient(135deg, #0a0f1f, #0a1a2e); border-radius: 20px; padding: 20px; border: 1px solid #0a1a2e; border-left: 4px solid #0099ff;\">"
             html += "<h3 style=\"color: white; margin: 0 0 10px 0;\">👴 " + str(saved['patient_name']) + "</h3>"
             html += "<p style=\"color: #888; margin: 5px 0;\">👨‍⚕️ Dr. " + str(saved['doctor_name']) + "</p>"
             html += "<p style=\"color: #888; margin: 5px 0;\">🏥 " + str(saved.get('hospital_name', 'N/A')) + "</p>"
             html += "<p style=\"color: #888; margin: 5px 0;\">📅 " + str(saved['date']) + "</p>"
             html += "<p style=\"color: #888; margin: 5px 0;\">📅 Next: " + str(saved.get('next_visit', 'N/A')) + "</p>"
-            html += "<p style=\"color: white; margin: 10px 0 0 0; font-size: 0.9em;\">📝 " + str(saved.get('notes', 'None')) + "</p>"
+            html += "<p style=\"color: white; margin: 10px 0 0 0;\">📝 " + str(saved.get('notes', 'None')) + "</p>"
             html += "</div>"
             st.markdown(html, unsafe_allow_html=True)
         else:
@@ -827,8 +721,8 @@ def family_dashboard():
                 elif record["action"] == "Missed":
                     color, icon = "#E74C3C", "❌"
                 else:
-                    color, icon = "#667eea", "➕"
-                html = "<div style=\"background: #13131f; padding: 10px 14px; border-radius: 12px; border-left: 3px solid " + color + "; margin-bottom: 8px;\">"
+                    color, icon = "#0099ff", "➕"
+                html = "<div style=\"background: linear-gradient(135deg, #0a0f1f, #0a1a2e); padding: 10px 14px; border-radius: 12px; border-left: 3px solid " + color + "; margin-bottom: 8px;\">"
                 html += "<p style=\"color: white; margin: 0; font-size: 0.85em; font-weight: 600;\">" + icon + " " + str(record['medicine']) + " — " + str(record['action']) + "</p>"
                 html += "<p style=\"color: #444; margin: 2px 0 0 0; font-size: 0.75em;\">🕐 " + str(record['time']) + "</p>"
                 html += "</div>"
