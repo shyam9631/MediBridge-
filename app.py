@@ -667,7 +667,7 @@ def family_dashboard():
         st.metric("⚠️", low)
 
     st.markdown("<br>", unsafe_allow_html=True)
-    tab1, tab2, tab3 = st.tabs(["📊 Status", "📋 Prescription", "📝 History"])
+    tab1, tab2, tab3 = st.tabs(["📊 Status", "📋 Prescription", "📝 History"])               
 
     with tab1:
         st.markdown("### 📊 Medicine Status")
