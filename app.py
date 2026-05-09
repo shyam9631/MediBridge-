@@ -181,15 +181,40 @@ if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
 def show_logo():
-    st.markdown("""
-        <div style="text-align: center; padding: 20px 0 10px 0; animation: fadeInUp 0.6s ease;">
-            <div style="display: inline-block; background: linear-gradient(135deg, #0099ff, #00d4ff); border-radius: 20px; padding: 15px 20px; margin-bottom: 8px; box-shadow: 0 8px 25px rgba(0,153,255,0.4); animation: float 3s ease infinite;">
-                <span style="color: white; font-size: 2.5em;">💊</span>
+    import base64
+    
+    logo_path = "Logo.jpeg"
+    if os.path.exists(logo_path):
+        with open(logo_path, "rb") as f:
+            logo_data = base64.b64encode(f.read()).decode()
+        
+        st.markdown(f"""
+            <div style="text-align: center; padding: 20px 0 10px 0; animation: fadeInUp 0.6s ease;">
+                <img src="data:image/jpeg;base64,{logo_data}" 
+                    style="
+                        width: 150px; 
+                        height: 150px; 
+                        border-radius: 50%;
+                        object-fit: cover;
+                        box-shadow: 0 8px 30px rgba(0,153,255,0.5);
+                        border: 3px solid #0099ff;
+                        animation: float 3s ease infinite;
+                    "/>
+                <p style="color: #555; font-size: 0.75em; letter-spacing: 2px; margin: 8px 0 0 0;">
+                    CONNECTING HEALTHCARE SOLUTIONS
+                </p>
             </div>
-            <h1 style="background: linear-gradient(135deg, #0099ff, #00d4ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 5px 0; font-size: 2em; font-weight: 800;">MediBridge</h1>
-            <p style="color: #666; font-size: 0.85em; letter-spacing: 2px; margin: 0;">SMART MEDICINE TRACKER</p>
-        </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
+    else:
+        st.markdown("""
+            <div style="text-align: center; padding: 20px 0 10px 0;">
+                <div style="display: inline-block; background: linear-gradient(135deg, #0099ff, #00d4ff); border-radius: 20px; padding: 15px 20px;">
+                    <span style="color: white; font-size: 2.5em;">💊</span>
+                </div>
+                <h1 style="background: linear-gradient(135deg, #0099ff, #00d4ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 5px 0; font-size: 2em; font-weight: 800;">MediBridge</h1>
+                <p style="color: #555; font-size: 0.75em; letter-spacing: 2px; margin: 0;">CONNECTING HEALTHCARE SOLUTIONS</p>
+            </div>
+        """, unsafe_allow_html=True)
 
 def make_card(title, subtitle, emoji, color):
     return f"""
