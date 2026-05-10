@@ -224,6 +224,23 @@ def make_card(title, subtitle, emoji, color):
         <p style="color: #555; margin: 0; font-size: 0.8em;">{subtitle}</p>
     </div>
     """
+def check_and_send_daily_report():
+    import datetime
+    now = datetime.datetime.now()
+    current_hour = now.hour
+    current_minute = now.minute
+    
+    # Send report at 10 PM every day
+    if current_hour == 22 and current_minute == 0:
+        medicines = st.session_state.medicines
+        missed = [m for m in medicines if not m['taken_today']]
+        
+        if missed:
+            try:
+                from whatsapp import send_missed_daily_report
+                send_missed_daily_report(medicines)
+            except:
+                pass
 
 def landing_page():
     show_logo()
@@ -373,6 +390,7 @@ def make_medicine_card(med, index):
     st.markdown(html, unsafe_allow_html=True)
 
 def senior_dashboard():
+    check_and_send_daily_report()
     user = st.session_state.user
     st.markdown(f"""
         <div style="background: linear-gradient(135deg, #0099ff, #00d4ff); padding: 15px 20px; border-radius: 0 0 25px 25px; margin-bottom: 20px; box-shadow: 0 8px 25px rgba(0,153,255,0.4);">

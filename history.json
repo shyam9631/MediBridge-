@@ -28,5 +28,20 @@
         "medicine": "crena",
         "action": "Taken",
         "time": "2026-05-09 18:51"
+    },
+    {
+        "medicine": "paracetamol",
+        "action": "Taken",
+        "time": "2026-05-10 14:18"
+    },
+    {
+        "medicine": "crena",
+        "action": "Taken",
+        "time": "2026-05-10 14:35"
+    },
+    {
+        "medicine": "Cerna",
+        "action": "Taken",
+        "time": "2026-05-10 14:45"
     }
 ]
