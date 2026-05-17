@@ -1,57 +1,22 @@
 [
     {
-        "medicine": "Cerna",
-        "action": "Added",
-        "time": "06 May 2026, 12:33 PM"
-    },
-    {
-        "medicine": "Cerna",
-        "action": "Taken",
-        "time": "06 May 2026, 12:54 PM"
-    },
-    {
         "medicine": "crena",
-        "action": "Taken",
-        "time": "2026-05-08 13:26"
+        "action": "Deleted",
+        "time": "2026-05-17 12:44"
     },
     {
         "medicine": "Cerna",
-        "action": "Taken",
-        "time": "2026-05-08 13:27"
-    },
-    {
-        "medicine": "Cerna",
-        "action": "Taken",
-        "time": "2026-05-08 13:31"
-    },
-    {
-        "medicine": "crena",
-        "action": "Taken",
-        "time": "2026-05-09 18:51"
+        "action": "Deleted",
+        "time": "2026-05-17 12:44"
     },
     {
         "medicine": "paracetamol",
-        "action": "Taken",
-        "time": "2026-05-10 14:18"
-    },
-    {
-        "medicine": "crena",
-        "action": "Taken",
-        "time": "2026-05-10 14:35"
-    },
-    {
-        "medicine": "Cerna",
-        "action": "Taken",
-        "time": "2026-05-10 14:45"
-    },
-    {
-        "medicine": "Cerna",
-        "action": "Taken",
-        "time": "2026-05-10 19:35"
-    },
-    {
-        "medicine": "Paracetamol",
         "action": "Deleted",
-        "time": "2026-05-10 19:39"
+        "time": "2026-05-17 12:44"
+    },
+    {
+        "medicine": "Cerna",
+        "action": "Deleted",
+        "time": "2026-05-17 12:44"
     }
 ]

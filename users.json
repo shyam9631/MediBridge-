@@ -8,5 +8,10 @@
         "password": "sruu@1300",
         "role": "family",
         "name": "Srushti V"
+    },
+    "Sru": {
+        "password": "sru@123",
+        "role": "senior",
+        "name": "Sru"
     }
 }
