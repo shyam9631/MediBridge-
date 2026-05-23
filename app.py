@@ -187,6 +187,164 @@ def save_rx():
     save_prescription(data)
     return jsonify({'success': True})
 
+# ── Prescription Scanner API ───────────────────────────────────────────────────
+
+@app.route('/api/scan-prescription', methods=['POST'])
+def scan_prescription():
+    data       = request.get_json()
+    image_data = data.get('image_data', '')
+    if not image_data:
+        return jsonify({'success': False, 'error': 'No image provided'}), 400
+
+    # Strip base64 header
+    if ',' in image_data:
+        img_b64 = image_data.split(',')[1]
+        media_type = image_data.split(';')[0].split(':')[1]
+    else:
+        img_b64    = image_data
+        media_type = 'image/jpeg'
+
+    try:
+        from groq import Groq
+        import anthropic
+
+        # Use Anthropic Claude vision to read prescription
+        client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+        message = client.messages.create(
+            model="claude-opus-4-5",
+            max_tokens=1024,
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "image",
+                            "source": {
+                                "type": "base64",
+                                "media_type": media_type,
+                                "data": img_b64,
+                            },
+                        },
+                        {
+                            "type": "text",
+                            "text": """You are a medical prescription reader. 
+Carefully read this prescription image and extract all medicines.
+Return ONLY a valid JSON array, nothing else. No explanation, no markdown.
+Format exactly like this:
+[
+  {"name": "MedicineName", "dosage": "500mg", "timing": "Morning", "total": 30, "notes": "After food"},
+  {"name": "AnotherMedicine", "dosage": "10mg", "timing": "Night", "total": 14, "notes": ""}
+]
+For timing use one of: Morning, Afternoon, Evening, Night, Morning & Night, Morning Afternoon & Night, After Food, Before Food.
+If you cannot read the prescription clearly, return an empty array: []"""
+                        }
+                    ],
+                }
+            ],
+        )
+
+        raw = message.content[0].text.strip()
+        # Clean any markdown if present
+        if '```' in raw:
+            raw = raw.split('```')[1]
+            if raw.startswith('json'):
+                raw = raw[4:]
+        
+        medicines_found = json.loads(raw)
+        
+        if not isinstance(medicines_found, list):
+            return jsonify({'success': False, 'error': 'Could not read prescription'}), 400
+
+        # Auto-add all found medicines
+        medicines = load_medicines()
+        added = []
+        for med in medicines_found:
+            if med.get('name') and med.get('dosage'):
+                new_med = {
+                    'name':          med.get('name', ''),
+                    'dosage':        med.get('dosage', ''),
+                    'timing':        med.get('timing', 'Morning'),
+                    'total':         int(med.get('total', 30)),
+                    'remaining':     int(med.get('total', 30)),
+                    'taken_today':   False,
+                    'notes':         med.get('notes', ''),
+                    'reminder_time': '',
+                    'photo':         ''
+                }
+                medicines.append(new_med)
+                save_history(new_med['name'], 'Added via Prescription Scan')
+                added.append(new_med)
+
+        if added:
+            save_medicines(medicines)
+
+        return jsonify({
+            'success':  True,
+            'found':    len(added),
+            'medicines': added,
+            'all_medicines': medicines
+        })
+
+    except json.JSONDecodeError:
+        return jsonify({'success': False, 'error': 'Could not parse prescription. Please try a clearer image.'}), 400
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+# ── Drug Interaction Checker API ────────────────────────────────────────────────
+
+@app.route('/api/check-interactions', methods=['POST'])
+def check_interactions():
+    medicines = load_medicines()
+    if len(medicines) < 2:
+        return jsonify({'success': True, 'interactions': [], 'message': 'Need at least 2 medicines to check interactions.'})
+
+    med_names = [m['name'] + ' (' + m['dosage'] + ')' for m in medicines]
+    med_list  = ', '.join(med_names)
+
+    try:
+        from groq import Groq
+        client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {
+                    "role": "system",
+                    "content": """You are a pharmacist AI checking drug interactions.
+Be concise, warm, and easy to understand for senior citizens.
+Always end with: "Please consult your doctor before making any changes."
+Return ONLY a JSON object, no markdown, no explanation:
+{
+  "has_interactions": true/false,
+  "interactions": [
+    {
+      "medicines": ["Medicine A", "Medicine B"],
+      "severity": "high/medium/low",
+      "warning": "Short warning message",
+      "advice": "What to do"
+    }
+  ],
+  "safe_message": "Message if no interactions found"
+}"""
+                },
+                {
+                    "role": "user",
+                    "content": f"Check drug interactions for these medicines: {med_list}"
+                }
+            ]
+        )
+        raw = response.choices[0].message.content.strip()
+        if '```' in raw:
+            raw = raw.split('```')[1]
+            if raw.startswith('json'):
+                raw = raw[4:]
+        result = json.loads(raw)
+        return jsonify({'success': True, **result})
+    except json.JSONDecodeError:
+        return jsonify({'success': False, 'error': 'Could not parse response'}), 500
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 # ── Chatbot API ────────────────────────────────────────────────────────────────
 
 @app.route('/api/chat', methods=['POST'])

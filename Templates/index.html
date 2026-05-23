@@ -115,6 +115,34 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .appt-badge.today{background:#ffe8e8;border:1px solid #ffb0b0;color:var(--red)}
 .appt-badge.past{background:var(--bg2);border:1px solid var(--border);color:var(--muted2)}
 
+/* ── Prescription Scanner ───────────────────────────────── */
+.scan-drop{border:3px dashed var(--green);border-radius:20px;padding:32px 20px;text-align:center;cursor:pointer;background:var(--green3);transition:all .25s;margin-bottom:16px}
+.scan-drop:hover{background:#d0f0e0;border-color:var(--green-dark)}
+.scan-drop .icon{font-size:3rem;margin-bottom:10px;display:block}
+.scan-drop p{color:var(--green-dark);font-weight:700;font-size:.95em}
+.scan-drop small{color:var(--muted);font-size:.8em}
+.scan-preview{width:100%;border-radius:16px;margin-bottom:14px;border:2px solid var(--border);display:none}
+.scan-result{background:linear-gradient(135deg,#e8f8ef,#fff);border:1.5px solid var(--mint);border-radius:16px;padding:16px;margin-bottom:10px;animation:fadeUp .3s ease}
+.scan-result h4{color:var(--green-dark);font-weight:800;margin-bottom:6px}
+.scan-result p{color:var(--muted);font-size:.85em;font-weight:600}
+/* ── Drug Interactions ──────────────────────────────────── */
+.interaction-card{border-radius:16px;padding:16px;margin-bottom:12px;animation:fadeUp .3s ease}
+.interaction-high{background:#fff0f0;border:2px solid #ffb0b0}
+.interaction-medium{background:#fff8e8;border:2px solid #f0cc80}
+.interaction-low{background:#f0fff4;border:2px solid var(--mint)}
+.interaction-icon{font-size:1.5rem;margin-bottom:6px;display:block}
+.interaction-meds{font-weight:800;font-size:.95em;color:var(--text);margin-bottom:4px}
+.interaction-warning{font-size:.85em;color:var(--muted);margin-bottom:4px;font-weight:600}
+.interaction-advice{font-size:.82em;font-weight:700}
+.interaction-high .interaction-advice{color:#c23b3b}
+.interaction-medium .interaction-advice{color:#a06010}
+.interaction-low .interaction-advice{color:var(--green-dark)}
+.severity-badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.72em;font-weight:800;margin-bottom:6px}
+.severity-high{background:#ffe0e0;color:#c23b3b}
+.severity-medium{background:#fff0d0;color:#a06010}
+.severity-low{background:#e0f8ec;color:var(--green-dark)}
+
+
 .role-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 16px;margin-bottom:20px}
 .role-card{background:var(--white);border:2px solid var(--border);border-radius:22px;padding:22px 16px;text-align:center;box-shadow:0 3px 14px var(--shadow);transition:all .25s;cursor:pointer}
 .role-card:hover{border-color:var(--green);transform:translateY(-3px);box-shadow:0 8px 24px var(--shadow2)}
@@ -314,6 +342,20 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 
   <!-- Prescription Tab -->
   <div class="tab-content" id="senior-tab-prescription">
+    <!-- Prescription Scanner -->
+    <div class="card" style="border-left:4px solid var(--green);background:linear-gradient(135deg,#f0fff6,#fff);margin-bottom:20px">
+      <p style="color:var(--green-dark);font-weight:800;font-size:.95em;margin-bottom:12px">📄 AI Prescription Scanner</p>
+      <p style="color:var(--muted);font-size:.82em;font-weight:600;margin-bottom:14px">Upload a photo of your prescription and AI will automatically read and add all medicines!</p>
+      <div class="scan-drop" onclick="document.getElementById('rx-scan-input').click()">
+        <span class="icon">📸</span>
+        <p>Tap to take photo or upload prescription</p>
+        <small>Supports JPG, PNG — Works with handwritten & printed</small>
+      </div>
+      <input type="file" id="rx-scan-input" accept="image/*" capture="environment" style="display:none" onchange="handlePrescriptionScan(this)"/>
+      <img id="scan-preview" class="scan-preview" alt="Prescription preview"/>
+      <div id="scan-results"></div>
+      <button class="btn btn-primary" id="scan-btn" style="display:none" onclick="runPrescriptionScan()">🤖 Scan & Add Medicines</button>
+    </div>
     <div id="rx-display"></div>
     <p class="section-title">💾 Save Prescription</p>
     <div class="card">
@@ -355,6 +397,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
       <button class="btn btn-outline btn-sm" onclick="quickQ('When should I take each medicine?')">⏰ When to take?</button>
       <button class="btn btn-outline btn-sm" onclick="quickQ('Which medicines are running low?')">📦 Stock check?</button>
     </div>
+    <div class="divider"></div>
+    <p class="section-title">⚠️ Drug Interaction Checker</p>
+    <div class="card" style="border-left:4px solid var(--yellow);background:linear-gradient(135deg,#fffdf0,#fff);margin-bottom:14px">
+      <p style="color:#a06010;font-size:.88em;font-weight:700;margin-bottom:12px">⚠️ Check if your medicines are safe to take together</p>
+      <button class="btn btn-yellow" id="check-interactions-btn" onclick="checkDrugInteractions()">🔬 Check My Medicines for Interactions</button>
+    </div>
+    <div id="interactions-result"></div>
     <div style="display:flex;gap:8px;margin-bottom:8px">
       <input type="text" id="chat-input" placeholder="Ask MediBot anything..." style="flex:1;padding:13px 16px;background:#fff;border:2px solid var(--border);border-radius:14px;color:var(--text);font-family:var(--font);font-size:14px;font-weight:600;outline:none" onkeydown="if(event.key==='Enter')sendChat()"/>
       <button class="btn btn-primary btn-sm" onclick="sendChat()">📤</button>
@@ -933,6 +982,140 @@ function toast(msg,type='success'){
   clearTimeout(window._toast);window._toast=setTimeout(()=>el.className='',3500);
 }
 
+
+
+// ── 📄 PRESCRIPTION SCANNER ──────────────────────────────
+
+let scanImageData = null;
+
+function handlePrescriptionScan(input){
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    scanImageData = e.target.result;
+    const preview = document.getElementById('scan-preview');
+    preview.src   = scanImageData;
+    preview.style.display = 'block';
+    document.getElementById('scan-btn').style.display = 'block';
+    document.getElementById('scan-results').innerHTML = '';
+    toast('📸 Photo loaded! Tap "Scan & Add Medicines"');
+  };
+  reader.readAsDataURL(file);
+}
+
+async function runPrescriptionScan(){
+  if(!scanImageData){ toast('❌ Please upload a photo first!','error'); return; }
+  const btn = document.getElementById('scan-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>AI is reading prescription...';
+  document.getElementById('scan-results').innerHTML = `
+    <div style="text-align:center;padding:24px;color:var(--muted)">
+      <div style="font-size:2.5rem;margin-bottom:10px">🤖</div>
+      <p style="font-weight:700">AI is reading your prescription...</p>
+      <p style="font-size:.82em;margin-top:6px">This may take a few seconds</p>
+    </div>`;
+  try{
+    const res  = await fetch('/api/scan-prescription',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image_data: scanImageData})});
+    const data = await res.json();
+    if(data.success){
+      if(data.found === 0){
+        document.getElementById('scan-results').innerHTML = `
+          <div style="text-align:center;padding:20px;color:var(--muted)">
+            <div style="font-size:2rem;margin-bottom:8px">😕</div>
+            <p style="font-weight:700">Could not read medicines from this image.</p>
+            <p style="font-size:.82em;margin-top:4px">Try a clearer or better-lit photo.</p>
+          </div>`;
+      } else {
+        const html = data.medicines.map(m=>`
+          <div class="scan-result">
+            <h4>💊 ${m.name}</h4>
+            <p>📏 Dosage: ${m.dosage} &nbsp;|&nbsp; ⏰ ${m.timing} &nbsp;|&nbsp; 📦 ${m.total} tablets</p>
+            ${m.notes?`<p>📝 ${m.notes}</p>`:''}
+          </div>`).join('');
+        document.getElementById('scan-results').innerHTML = `
+          <div style="background:linear-gradient(135deg,var(--green),var(--green2));border-radius:16px;padding:14px 18px;margin-bottom:12px;color:#fff;text-align:center">
+            <div style="font-size:1.8rem;margin-bottom:6px">✅</div>
+            <div style="font-weight:800;font-size:1.1em">Found & Added ${data.found} Medicine${data.found>1?'s':''}!</div>
+            <div style="font-size:.82em;opacity:.9;margin-top:4px">All medicines have been auto-added to your list</div>
+          </div>` + html;
+        toast(`✅ ${data.found} medicine${data.found>1?'s':''} scanned and added!`);
+        // Refresh medicines list
+        if(data.all_medicines) renderMedicines(data.all_medicines);
+        // Reset scanner
+        scanImageData = null;
+        document.getElementById('scan-preview').style.display = 'none';
+        btn.style.display = 'none';
+        document.getElementById('rx-scan-input').value = '';
+      }
+    } else {
+      document.getElementById('scan-results').innerHTML = `<div style="color:var(--red);font-weight:700;text-align:center;padding:16px">❌ ${data.error}</div>`;
+      toast('❌ Scan failed: ' + data.error, 'error');
+    }
+  }catch(e){
+    document.getElementById('scan-results').innerHTML = `<div style="color:var(--red);font-weight:700;text-align:center;padding:16px">❌ Server error. Is Flask running?</div>`;
+    toast('❌ Server error','error');
+  }
+  btn.disabled = false;
+  btn.innerHTML = '🤖 Scan & Add Medicines';
+}
+
+// ── ⚠️ DRUG INTERACTION CHECKER ──────────────────────────
+
+async function checkDrugInteractions(){
+  const btn = document.getElementById('check-interactions-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Checking interactions...';
+  document.getElementById('interactions-result').innerHTML = `
+    <div style="text-align:center;padding:20px;color:var(--muted)">
+      <div style="font-size:2rem;margin-bottom:8px">🔬</div>
+      <p style="font-weight:700">AI is checking your medicines...</p>
+    </div>`;
+  try{
+    const res  = await fetch('/api/check-interactions',{method:'POST'});
+    const data = await res.json();
+    if(data.success){
+      const el = document.getElementById('interactions-result');
+      if(!data.has_interactions){
+        el.innerHTML = `
+          <div style="background:linear-gradient(135deg,#e8f8ef,#fff);border:1.5px solid var(--mint);border-radius:16px;padding:20px;text-align:center">
+            <div style="font-size:2.5rem;margin-bottom:8px">✅</div>
+            <p style="font-weight:800;color:var(--green-dark);font-size:1em">${data.safe_message||'No dangerous interactions found!'}</p>
+            <p style="color:var(--muted);font-size:.82em;margin-top:6px;font-weight:600">Your medicines appear safe to take together.</p>
+          </div>`;
+        toast('✅ No dangerous interactions found! 🌿');
+      } else {
+        const cards = (data.interactions||[]).map(interaction=>{
+          const sev = interaction.severity||'low';
+          const icon = sev==='high'?'🚨':sev==='medium'?'⚠️':'ℹ️';
+          return `
+          <div class="interaction-card interaction-${sev}">
+            <span class="severity-badge severity-${sev}">${sev.toUpperCase()} RISK</span>
+            <div class="interaction-meds">${icon} ${interaction.medicines.join(' + ')}</div>
+            <div class="interaction-warning">⚠️ ${interaction.warning}</div>
+            <div class="interaction-advice">💡 ${interaction.advice}</div>
+          </div>`;
+        }).join('');
+        el.innerHTML = `
+          <div style="background:#fff0f0;border:2px solid #ffb0b0;border-radius:16px;padding:14px 18px;margin-bottom:12px;text-align:center">
+            <div style="font-size:1.8rem;margin-bottom:6px">⚠️</div>
+            <div style="font-weight:800;color:#c23b3b">${data.interactions.length} Interaction${data.interactions.length>1?'s':''} Found!</div>
+            <div style="font-size:.82em;color:#c23b3b;margin-top:4px">Please consult your doctor</div>
+          </div>` + cards + `
+          <div style="background:#fff8e8;border:1px solid #f0cc80;border-radius:12px;padding:12px;text-align:center;margin-top:8px">
+            <p style="color:#a06010;font-size:.82em;font-weight:700">⚕️ Always consult your doctor before making any changes to your medicines.</p>
+          </div>`;
+        toast('⚠️ Drug interactions found! Please check MediBot tab.','error');
+      }
+    } else {
+      document.getElementById('interactions-result').innerHTML = `<div style="color:var(--red);font-weight:700;text-align:center;padding:16px">❌ ${data.error||'Could not check interactions'}</div>`;
+    }
+  }catch(e){
+    document.getElementById('interactions-result').innerHTML = `<div style="color:var(--red);font-weight:700;text-align:center;padding:16px">❌ Server error</div>`;
+  }
+  btn.disabled = false;
+  btn.innerHTML = '🔬 Check My Medicines for Interactions';
+}
 
 // ── 🏆 REWARDS ────────────────────────────────────────────
 
