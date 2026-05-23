@@ -206,28 +206,25 @@ def scan_prescription():
 
     try:
         from groq import Groq
-        import anthropic
 
-        # Use Anthropic Claude vision to read prescription
-        client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-        message = client.messages.create(
-            model="claude-opus-4-5",
+        # Use Groq vision to read prescription
+        client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+        message = client.chat.completions.create(
+            model="meta-llama/llama-4-scout-17b-16e-instruct",
             max_tokens=1024,
             messages=[
                 {
                     "role": "user",
                     "content": [
                         {
-                            "type": "image",
-                            "source": {
-                                "type": "base64",
-                                "media_type": media_type,
-                                "data": img_b64,
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:image/jpeg;base64,{img_b64}"
                             },
                         },
                         {
                             "type": "text",
-                            "text": """You are a medical prescription reader. 
+                            "text": """You are a medical prescription reader.
 Carefully read this prescription image and extract all medicines.
 Return ONLY a valid JSON array, nothing else. No explanation, no markdown.
 Format exactly like this:
@@ -243,8 +240,7 @@ If you cannot read the prescription clearly, return an empty array: []"""
             ],
         )
 
-        raw = message.content[0].text.strip()
-        # Clean any markdown if present
+        raw = message.choices[0].message.content.strip()
         if '```' in raw:
             raw = raw.split('```')[1]
             if raw.startswith('json'):
