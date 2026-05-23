@@ -18,5 +18,30 @@
         "medicine": "Cerna",
         "action": "Deleted",
         "time": "2026-05-17 12:44"
+    },
+    {
+        "medicine": "Metafornin",
+        "action": "Added",
+        "time": "2026-05-17 17:08"
+    },
+    {
+        "medicine": "Metafornin",
+        "action": "Taken",
+        "time": "2026-05-17 17:09"
+    },
+    {
+        "medicine": "Metafornin",
+        "action": "Taken",
+        "time": "2026-05-23 11:43"
+    },
+    {
+        "medicine": "Dolo",
+        "action": "Added",
+        "time": "2026-05-23 14:28"
+    },
+    {
+        "medicine": "Dolo",
+        "action": "Taken",
+        "time": "2026-05-23 14:30"
     }
 ]

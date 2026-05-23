@@ -93,11 +93,12 @@ def get_medicines():
 @app.route('/api/medicines', methods=['POST'])
 def add_medicine():
     data = request.get_json()
-    name  = data.get('name', '').strip()
-    dosage = data.get('dosage', '').strip()
-    timing = data.get('timing', 'Morning')
-    total  = int(data.get('total', 30))
-    notes  = data.get('notes', '')
+    name          = data.get('name', '').strip()
+    dosage        = data.get('dosage', '').strip()
+    timing        = data.get('timing', 'Morning')
+    total         = int(data.get('total', 30))
+    notes         = data.get('notes', '')
+    reminder_time = data.get('reminder_time', '')   # ← NEW: e.g. "08:00"
 
     if not name or not dosage:
         return jsonify({'success': False, 'error': 'Name and dosage required'}), 400
@@ -106,7 +107,8 @@ def add_medicine():
     medicines.append({
         'name': name, 'dosage': dosage, 'timing': timing,
         'total': total, 'remaining': total,
-        'taken_today': False, 'notes': notes
+        'taken_today': False, 'notes': notes,
+        'reminder_time': reminder_time              # ← NEW
     })
     save_medicines(medicines)
     save_history(name, 'Added')
@@ -133,7 +135,7 @@ def take_medicine(index):
         send_medicine_taken(med['name'], med['dosage'], medicines[index]['remaining'])
         whatsapp_status = 'sent'
     except Exception as e:
-        whatsapp_status = f'failed'
+        whatsapp_status = 'failed'
 
     if medicines[index]['remaining'] <= 5:
         low_stock = True
@@ -235,7 +237,26 @@ def check_missed():
                     missed_meds.append(med['name'])
     return jsonify({'success': True, 'missed': missed_meds})
 
-# ── Summary API (family dashboard) ────────────────────────────────────────────
+# ── Refill Request API ─────────────────────────────────────────────────────────
+
+@app.route('/api/whatsapp/refill', methods=['POST'])
+def refill_request():
+    data = request.get_json()
+    medicine_name = data.get('medicine_name', '')
+    remaining     = data.get('remaining', 0)
+    try:
+        from twilio.rest import Client
+        client = Client(os.getenv("TWILIO_ACCOUNT_SID"), os.getenv("TWILIO_AUTH_TOKEN"))
+        client.messages.create(
+            from_="whatsapp:+14155238886",
+            body=f"💊 *MediBridge — Refill Request*\n\n🛒 Please buy medicine:\n• Medicine: {medicine_name}\n• Only {remaining} tablets left!\n\nPlease refill as soon as possible! 🏥\n\n_Sent by MediBridge_",
+            to=os.getenv("FAMILY_PHONE")
+        )
+        return jsonify({'success': True, 'message': 'Refill request sent!'})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+# ── Summary API ────────────────────────────────────────────────────────────────
 
 @app.route('/api/summary', methods=['GET'])
 def summary():

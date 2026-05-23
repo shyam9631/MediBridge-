@@ -1,1 +1,21 @@
-[]
+[
+    {
+        "name": "Metafornin",
+        "dosage": "500",
+        "timing": "Afternoon",
+        "total": 10,
+        "remaining": 8,
+        "taken_today": true,
+        "notes": ""
+    },
+    {
+        "name": "Dolo",
+        "dosage": "300",
+        "timing": "Afternoon",
+        "total": 10,
+        "remaining": 9,
+        "taken_today": true,
+        "notes": "",
+        "reminder_time": "14:28"
+    }
+]
