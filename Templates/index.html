@@ -86,6 +86,35 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 #photo-overlay.show{display:flex}
 #photo-viewer{max-width:90vw;max-height:80vh;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
 #photo-close{position:fixed;top:20px;right:20px;background:#fff;border:none;border-radius:50%;width:44px;height:44px;font-size:1.4rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+
+/* ── Rewards ────────────────────────────────────────────── */
+.reward-summary{background:linear-gradient(135deg,var(--green),var(--green2));border-radius:20px;padding:22px;color:#fff;text-align:center;margin-bottom:16px;box-shadow:0 6px 20px var(--shadow2)}
+.reward-points{font-family:var(--mono);font-size:3em;font-weight:900;line-height:1}
+.reward-streak{font-size:.9em;opacity:.9;margin-top:6px}
+.badge-card{background:var(--white);border:1.5px solid var(--border);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:14px;margin-bottom:10px;box-shadow:0 2px 8px var(--shadow);animation:fadeUp .3s ease}
+.badge-card.locked{opacity:.45;filter:grayscale(.8)}
+.badge-emoji{font-size:2.2rem;flex-shrink:0}
+.badge-name{font-weight:800;font-size:.95em;color:var(--text)}
+.badge-desc{font-size:.78em;color:var(--muted);margin-top:2px}
+.badge-date{font-size:.72em;color:var(--green);font-weight:700;margin-top:3px}
+.badge-pts{background:var(--green3);border:1px solid var(--mint);border-radius:20px;padding:3px 10px;font-size:.72em;font-weight:800;color:var(--green-dark);margin-left:auto;white-space:nowrap;flex-shrink:0}
+/* badge popup */
+@keyframes badgePop{0%{opacity:0;transform:translate(-50%,-50%) scale(.5) rotate(-10deg)}70%{transform:translate(-50%,-50%) scale(1.1) rotate(3deg)}100%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(0)}}
+#badge-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--white);border-radius:28px;padding:36px 28px;text-align:center;z-index:10002;width:300px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.3);display:none;border:3px solid var(--green)}
+#badge-popup.show{display:block;animation:badgePop .5s cubic-bezier(.34,1.56,.64,1)}
+#badge-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:10001;display:none}
+#badge-overlay.show{display:block}
+/* ── Appointments ───────────────────────────────────────── */
+.appt-card{background:var(--white);border:1.5px solid var(--border);border-radius:18px;padding:16px 18px;margin-bottom:12px;border-left:5px solid var(--blue);box-shadow:0 2px 10px var(--shadow);animation:fadeUp .3s ease}
+.appt-card.today{border-left-color:var(--red);background:linear-gradient(135deg,#fff8f8,#fff)}
+.appt-card.past{border-left-color:var(--muted2);opacity:.6}
+.appt-name{font-weight:800;font-size:1em;color:var(--text);margin-bottom:3px}
+.appt-meta{font-size:.82em;color:var(--muted);font-weight:600;margin-bottom:3px}
+.appt-badge{display:inline-block;padding:3px 12px;border-radius:20px;font-size:.75em;font-weight:800}
+.appt-badge.upcoming{background:#e8f0ff;border:1px solid #b0c8ff;color:#2a5fd4}
+.appt-badge.today{background:#ffe8e8;border:1px solid #ffb0b0;color:var(--red)}
+.appt-badge.past{background:var(--bg2);border:1px solid var(--border);color:var(--muted2)}
+
 .role-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 16px;margin-bottom:20px}
 .role-card{background:var(--white);border:2px solid var(--border);border-radius:22px;padding:22px 16px;text-align:center;box-shadow:0 3px 14px var(--shadow);transition:all .25s;cursor:pointer}
 .role-card:hover{border-color:var(--green);transform:translateY(-3px);box-shadow:0 8px 24px var(--shadow2)}
@@ -147,6 +176,16 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 <div id="photo-overlay" onclick="closePhotoViewer()">
   <button id="photo-close" onclick="closePhotoViewer()">✕</button>
   <img id="photo-viewer" src="" alt="Pill Photo"/>
+</div>
+
+<!-- ════════════ BADGE POPUP ════════════ -->
+<div id="badge-overlay" onclick="closeBadgePopup()"></div>
+<div id="badge-popup">
+  <div id="badge-popup-emoji" style="font-size:4rem;margin-bottom:12px">🏆</div>
+  <h2 style="color:var(--green-dark);font-size:1.3em;margin-bottom:6px">New Badge Earned!</h2>
+  <div id="badge-popup-name" style="font-weight:800;font-size:1.1em;color:var(--text);margin-bottom:6px"></div>
+  <div id="badge-popup-desc" style="color:var(--muted);font-size:.88em;margin-bottom:16px"></div>
+  <button class="btn btn-primary" onclick="closeBadgePopup()">🎉 Awesome!</button>
 </div>
 
 <!-- ════════════ PAGE 1 — LANDING ════════════ -->
@@ -237,6 +276,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     <button class="tab-btn" onclick="switchTab('senior','prescription')">📋 Rx</button>
     <button class="tab-btn" onclick="switchTab('senior','history')">📊 History</button>
     <button class="tab-btn" onclick="switchTab('senior','medibot')">🤖 MediBot</button>
+    <button class="tab-btn" onclick="switchTab('senior','rewards')">🏆 Rewards</button>
+    <button class="tab-btn" onclick="switchTab('senior','appointments')">🏥 Appts</button>
     <button class="tab-btn" onclick="switchTab('senior','settings')">⚙️ Settings</button>
   </div>
 
@@ -319,6 +360,36 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
       <button class="btn btn-primary btn-sm" onclick="sendChat()">📤</button>
       <button class="btn btn-outline btn-sm" onclick="clearChat()">🗑️</button>
     </div>
+  </div>
+
+
+  <!-- Rewards Tab -->
+  <div class="tab-content" id="senior-tab-rewards">
+    <div id="rewards-summary"></div>
+    <p class="section-title">🏅 My Badges</p>
+    <div id="badges-list"></div>
+    <p class="section-title">📜 Points History</p>
+    <div id="points-history"></div>
+  </div>
+
+  <!-- Appointments Tab -->
+  <div class="tab-content" id="senior-tab-appointments">
+    <p class="section-title">➕ Add Appointment</p>
+    <div class="card">
+      <div class="input-group"><label>👨‍⚕️ Doctor Name</label><input type="text" id="appt-doctor" placeholder="Dr. Name"/></div>
+      <div class="input-group"><label>🏥 Hospital / Clinic</label><input type="text" id="appt-hospital" placeholder="Hospital name"/></div>
+      <div class="input-row">
+        <div class="input-group"><label>📅 Date</label><input type="date" id="appt-date"/></div>
+        <div class="input-group"><label>🕐 Time</label><input type="time" id="appt-time"/></div>
+      </div>
+      <div class="input-group"><label>📝 Notes</label><input type="text" id="appt-notes" placeholder="Any notes..."/></div>
+      <button class="btn btn-primary" id="add-appt-btn" onclick="addAppointment()">➕ Add Appointment</button>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <p class="section-title" style="margin:0">📅 Upcoming Appointments</p>
+      <button class="btn btn-outline btn-sm" onclick="checkApptReminders()">📱 Send Reminders</button>
+    </div>
+    <div id="appointments-list"></div>
   </div>
 
   <!-- Settings Tab -->
@@ -458,6 +529,8 @@ function switchTab(dashboard,tab){
   if(tab==='history')loadHistory(dashboard);
   if(tab==='prescription')loadPrescription(dashboard);
   if(tab==='status')loadFamilyData();
+  if(tab==='rewards')loadRewards();
+  if(tab==='appointments')loadAppointments();
 }
 
 // ── Senior Dashboard ──────────────────────────────────────
@@ -674,6 +747,8 @@ async function takeMedicine(index){
       toast('✅ Medicine taken!'+(data.whatsapp_status==='sent'?' 📱 Family notified!':''));
       if(data.low_stock)toast('⚠️ Low stock alert sent to family!');
       renderMedicines(data.medicines);
+      // 🏆 Earn points
+      earnPoints('Medicine taken on time', 10);
     }else{toast('❌ '+data.error,'error');}
   }catch(e){toast('❌ Server error','error');}
 }
@@ -856,6 +931,162 @@ function toast(msg,type='success'){
   const el=document.getElementById('toast');
   el.textContent=msg;el.className=type==='error'?'show error':'show';
   clearTimeout(window._toast);window._toast=setTimeout(()=>el.className='',3500);
+}
+
+
+// ── 🏆 REWARDS ────────────────────────────────────────────
+
+async function earnPoints(reason, points){
+  try{
+    const res  = await fetch('/api/rewards/earn', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({reason, points})});
+    const data = await res.json();
+    if(data.success){
+      // Show badge popup if new badges earned
+      if(data.newly_earned && data.newly_earned.length > 0){
+        setTimeout(()=>showBadgePopup(data.newly_earned[0]), 800);
+      }
+    }
+  }catch(e){}
+}
+
+async function loadRewards(){
+  try{
+    const res  = await fetch('/api/rewards');
+    const data = await res.json();
+    const r    = data.rewards;
+    const all  = data.badges;
+    const earnedIds = r.badges.map(b=>b.id);
+
+    // Summary card
+    const levelName = r.points < 50 ? 'Beginner 🌱' : r.points < 100 ? 'Regular 🌿' : r.points < 200 ? 'Champion ⭐' : 'Legend 👑';
+    document.getElementById('rewards-summary').innerHTML = `
+      <div class="reward-summary">
+        <div class="reward-points">${r.points} pts</div>
+        <div class="reward-streak">🔥 ${r.streak}-Day Streak &nbsp;|&nbsp; ${levelName}</div>
+        <div style="margin-top:12px;background:rgba(255,255,255,.2);border-radius:12px;padding:8px 16px;font-size:.85em">
+          ${r.badges.length} / ${all.length} badges earned
+        </div>
+      </div>`;
+
+    // Badges
+    const badgesEl = document.getElementById('badges-list');
+    if(!all.length){badgesEl.innerHTML='<div class="empty"><div class="icon">🏅</div><p>No badges yet!</p></div>';return;}
+    badgesEl.innerHTML = all.map(b=>{
+      const earned = r.badges.find(e=>e.id===b.id);
+      return `<div class="badge-card ${earned?'':'locked'}">
+        <div class="badge-emoji">${b.emoji}</div>
+        <div style="flex:1">
+          <div class="badge-name">${b.name}</div>
+          <div class="badge-desc">${b.desc}</div>
+          ${earned?`<div class="badge-date">✅ Earned on ${earned.date}</div>`:'<div style="color:var(--muted2);font-size:.72em;margin-top:2px">🔒 Not earned yet</div>'}
+        </div>
+        ${b.points?`<div class="badge-pts">+${b.points} pts</div>`:''}
+      </div>`;
+    }).join('');
+
+    // Points history
+    const histEl = document.getElementById('points-history');
+    const hist   = (r.history||[]).slice().reverse().slice(0,15);
+    if(!hist.length){histEl.innerHTML='<div class="empty"><div class="icon">📜</div><p>No history yet!</p></div>';return;}
+    histEl.innerHTML = hist.map(h=>`
+      <div class="history-record taken" style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <p style="color:var(--text);font-size:.88em;font-weight:700">⭐ ${h.reason}</p>
+          <p style="color:var(--muted2);font-size:.76em;margin-top:2px">${h.date}</p>
+        </div>
+        <div style="color:var(--green);font-weight:900;font-family:var(--mono)">+${h.points}</div>
+      </div>`).join('');
+  }catch(e){console.log(e);}
+}
+
+function showBadgePopup(badge){
+  document.getElementById('badge-popup-emoji').textContent = badge.emoji;
+  document.getElementById('badge-popup-name').textContent  = badge.name;
+  document.getElementById('badge-popup-desc').textContent  = badge.desc;
+  document.getElementById('badge-overlay').classList.add('show');
+  document.getElementById('badge-popup').classList.add('show');
+  playAlarmSound();
+  setTimeout(closeBadgePopup, 6000);
+}
+
+function closeBadgePopup(){
+  document.getElementById('badge-overlay').classList.remove('show');
+  document.getElementById('badge-popup').classList.remove('show');
+  stopAlarmSound();
+}
+
+// ── 🏥 APPOINTMENTS ───────────────────────────────────────
+
+async function loadAppointments(){
+  try{
+    const res  = await fetch('/api/appointments');
+    const data = await res.json();
+    renderAppointments(data.appointments||[]);
+  }catch(e){}
+}
+
+function renderAppointments(appts){
+  const el = document.getElementById('appointments-list');
+  if(!appts.length){
+    el.innerHTML='<div class="empty"><div class="icon">🏥</div><p>No appointments yet.<br>Add your first appointment above!</p></div>';return;
+  }
+  el.innerHTML = appts.map(a=>{
+    const statusLabel = a.status==='today'?'Today!':a.status==='past'?'Past':`In ${a.days_left} day${a.days_left===1?'':'s'}`;
+    return `
+    <div class="appt-card ${a.status}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div>
+          <div class="appt-name">👨‍⚕️ Dr. ${a.doctor}</div>
+          <div class="appt-meta">🏥 ${a.hospital||'N/A'} &nbsp;|&nbsp; 📅 ${a.date} ${a.time?'🕐 '+formatTime(a.time):''}</div>
+          ${a.notes?`<div class="appt-meta">📝 ${a.notes}</div>`:''}
+        </div>
+        <span class="appt-badge ${a.status}">${statusLabel}</span>
+      </div>
+      <button class="btn btn-outline btn-sm" onclick="deleteAppointment('${a.id}')" style="padding:7px 14px">🗑️ Remove</button>
+    </div>`;
+  }).join('');
+}
+
+async function addAppointment(){
+  const doctor   = document.getElementById('appt-doctor').value.trim();
+  const hospital = document.getElementById('appt-hospital').value.trim();
+  const date     = document.getElementById('appt-date').value;
+  const time     = document.getElementById('appt-time').value;
+  const notes    = document.getElementById('appt-notes').value.trim();
+  if(!doctor||!date){toast('❌ Fill Doctor name and Date!','error');return;}
+  const btn=document.getElementById('add-appt-btn');
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Adding...';
+  try{
+    const res  = await fetch('/api/appointments',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({doctor,hospital,date,time,notes})});
+    const data = await res.json();
+    if(data.success){
+      toast('✅ Appointment added! 📅');
+      document.getElementById('appt-doctor').value='';
+      document.getElementById('appt-hospital').value='';
+      document.getElementById('appt-date').value='';
+      document.getElementById('appt-time').value='';
+      document.getElementById('appt-notes').value='';
+      renderAppointments(data.appointments);
+    }else{toast('❌ '+data.error,'error');}
+  }catch(e){toast('❌ Server error','error');}
+  btn.disabled=false;btn.innerHTML='➕ Add Appointment';
+}
+
+async function deleteAppointment(id){
+  if(!confirm('Remove this appointment?'))return;
+  try{
+    const res  = await fetch(`/api/appointments/${id}`,{method:'DELETE'});
+    const data = await res.json();
+    if(data.success){toast('🗑️ Appointment removed!');renderAppointments(data.appointments);}
+    else{toast('❌ '+data.error,'error');}
+  }catch(e){toast('❌ Server error','error');}
+}
+
+async function checkApptReminders(){
+  const res  = await fetch('/api/appointments/check-reminders',{method:'POST'});
+  const data = await res.json();
+  if(data.sent&&data.sent.length>0)toast('📱 Reminder sent for: '+data.sent.join(', ')+'!');
+  else toast('No reminders due today!');
 }
 
 // ── Init ──────────────────────────────────────────────────

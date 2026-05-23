@@ -294,6 +294,154 @@ def refill_request():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
+# ── Rewards & Points API ───────────────────────────────────────────────────────
+
+REWARDS_FILE = 'rewards.json'
+
+def load_rewards():
+    if os.path.exists(REWARDS_FILE):
+        with open(REWARDS_FILE, 'r') as f:
+            return json.load(f)
+    return {'points': 0, 'streak': 0, 'last_date': '', 'badges': [], 'history': []}
+
+def save_rewards(data):
+    with open(REWARDS_FILE, 'w') as f:
+        json.dump(data, f, indent=4)
+
+BADGES = [
+    {'id': 'first_dose',  'name': 'First Dose!',      'emoji': '🌱', 'desc': 'Took your first medicine',     'points': 5},
+    {'id': 'streak_3',    'name': '3-Day Streak!',     'emoji': '🔥', 'desc': '3 days all medicines taken',   'points': 10},
+    {'id': 'streak_7',    'name': 'Week Warrior!',     'emoji': '⭐', 'desc': '7-day perfect streak',         'points': 20},
+    {'id': 'streak_14',   'name': 'Fortnight Hero!',   'emoji': '🏅', 'desc': '14-day perfect streak',        'points': 35},
+    {'id': 'streak_30',   'name': 'Monthly Champion!', 'emoji': '🏆', 'desc': '30-day perfect streak',        'points': 60},
+    {'id': 'points_50',   'name': '50 Points Club!',   'emoji': '💎', 'desc': 'Earned 50 total points',       'points': 0},
+    {'id': 'points_100',  'name': 'Century Club!',     'emoji': '👑', 'desc': 'Earned 100 total points',      'points': 0},
+    {'id': 'all_taken',   'name': 'Perfect Day!',      'emoji': '✨', 'desc': 'All medicines taken in a day', 'points': 5},
+]
+
+@app.route('/api/rewards', methods=['GET'])
+def get_rewards():
+    return jsonify({'success': True, 'rewards': load_rewards(), 'badges': BADGES})
+
+@app.route('/api/rewards/earn', methods=['POST'])
+def earn_points():
+    data    = request.get_json()
+    reason  = data.get('reason', 'Medicine taken')
+    pts     = int(data.get('points', 10))
+    rewards = load_rewards()
+    today   = str(datetime.date.today())
+    rewards['points'] += pts
+    rewards['history'].append({'reason': reason, 'points': pts, 'date': today})
+    if rewards['last_date'] == str(datetime.date.today() - datetime.timedelta(days=1)):
+        rewards['streak'] += 1
+    elif rewards['last_date'] != today:
+        rewards['streak'] = 1
+    rewards['last_date'] = today
+    newly_earned = []
+    earned_ids   = [b['id'] for b in rewards['badges']]
+    def award(badge_id):
+        if badge_id not in earned_ids:
+            badge = next((b for b in BADGES if b['id'] == badge_id), None)
+            if badge:
+                rewards['badges'].append({'id': badge['id'], 'name': badge['name'], 'emoji': badge['emoji'], 'date': today})
+                rewards['points'] += badge['points']
+                newly_earned.append(badge)
+    if len(rewards['history']) == 1:   award('first_dose')
+    if rewards['streak'] >= 3:         award('streak_3')
+    if rewards['streak'] >= 7:         award('streak_7')
+    if rewards['streak'] >= 14:        award('streak_14')
+    if rewards['streak'] >= 30:        award('streak_30')
+    if rewards['points'] >= 50:        award('points_50')
+    if rewards['points'] >= 100:       award('points_100')
+    medicines = load_medicines()
+    if medicines and all(m['taken_today'] for m in medicines):
+        award('all_taken')
+    save_rewards(rewards)
+    return jsonify({'success': True, 'rewards': rewards, 'newly_earned': newly_earned})
+
+@app.route('/api/rewards/reset', methods=['POST'])
+def reset_rewards():
+    save_rewards({'points': 0, 'streak': 0, 'last_date': '', 'badges': [], 'history': []})
+    return jsonify({'success': True})
+
+# ── Appointments API ────────────────────────────────────────────────────────────
+
+APPOINTMENTS_FILE = 'appointments.json'
+
+def load_appointments():
+    if os.path.exists(APPOINTMENTS_FILE):
+        with open(APPOINTMENTS_FILE, 'r') as f:
+            return json.load(f)
+    return []
+
+def save_appointments(data):
+    with open(APPOINTMENTS_FILE, 'w') as f:
+        json.dump(data, f, indent=4)
+
+@app.route('/api/appointments', methods=['GET'])
+def get_appointments():
+    appts = load_appointments()
+    today = datetime.date.today()
+    for a in appts:
+        try:
+            appt_date = datetime.date.fromisoformat(a['date'])
+            a['days_left'] = (appt_date - today).days
+            a['status'] = 'today' if a['days_left'] == 0 else ('upcoming' if a['days_left'] > 0 else 'past')
+        except:
+            a['days_left'] = None
+            a['status'] = 'unknown'
+    return jsonify({'success': True, 'appointments': appts})
+
+@app.route('/api/appointments', methods=['POST'])
+def add_appointment():
+    data     = request.get_json()
+    doctor   = data.get('doctor', '').strip()
+    hospital = data.get('hospital', '').strip()
+    date     = data.get('date', '')
+    time     = data.get('time', '')
+    notes    = data.get('notes', '')
+    if not doctor or not date:
+        return jsonify({'success': False, 'error': 'Doctor name and date required'}), 400
+    appts = load_appointments()
+    appts.append({'id': str(len(appts)+1)+'_'+datetime.datetime.now().strftime('%H%M%S'),
+                  'doctor': doctor, 'hospital': hospital, 'date': date,
+                  'time': time, 'notes': notes, 'reminded': False})
+    appts.sort(key=lambda x: x['date'])
+    save_appointments(appts)
+    return jsonify({'success': True, 'appointments': appts}), 201
+
+@app.route('/api/appointments/<appt_id>', methods=['DELETE'])
+def delete_appointment(appt_id):
+    appts = [a for a in load_appointments() if a['id'] != appt_id]
+    save_appointments(appts)
+    return jsonify({'success': True, 'appointments': appts})
+
+@app.route('/api/appointments/check-reminders', methods=['POST'])
+def check_appointment_reminders():
+    appts   = load_appointments()
+    today   = datetime.date.today()
+    sent    = []
+    updated = False
+    for i, a in enumerate(appts):
+        try:
+            days_left = (datetime.date.fromisoformat(a['date']) - today).days
+            if days_left == 1 and not a.get('reminded', False):
+                from twilio.rest import Client
+                client = Client(os.getenv("TWILIO_ACCOUNT_SID"), os.getenv("TWILIO_AUTH_TOKEN"))
+                client.messages.create(
+                    from_="whatsapp:+14155238886",
+                    body=f"🏥 *MediBridge — Appointment Reminder*\n\n📅 Doctor appointment TOMORROW!\n\n👨‍⚕️ Doctor: {a['doctor']}\n🏥 Hospital: {a.get('hospital','N/A')}\n🕐 Time: {a.get('time','N/A')}\n📝 Notes: {a.get('notes','None')}\n\n_Please be prepared!_ 🌿\n_Sent by MediBridge_",
+                    to=os.getenv("FAMILY_PHONE")
+                )
+                appts[i]['reminded'] = True
+                updated = True
+                sent.append(a['doctor'])
+        except Exception as e:
+            print(f"Appointment reminder error: {e}")
+    if updated:
+        save_appointments(appts)
+    return jsonify({'success': True, 'sent': sent})
+
 # ── Summary API ────────────────────────────────────────────────────────────────
 
 @app.route('/api/summary', methods=['GET'])
