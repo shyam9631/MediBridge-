@@ -77,6 +77,15 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .med-status.pending{background:#fff8e8;border:1.5px solid #f0cc80;color:#a06010}
 .med-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
 .med-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.pill-photo{width:80px;height:80px;border-radius:14px;object-fit:cover;border:2px solid var(--border);box-shadow:0 2px 8px var(--shadow);cursor:pointer;transition:transform .2s}
+.pill-photo:hover{transform:scale(1.05)}
+.pill-photo-placeholder{width:80px;height:80px;border-radius:14px;border:2px dashed var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;background:var(--soft);transition:all .2s;font-size:.65em;color:var(--muted2);font-weight:700;gap:4px}
+.pill-photo-placeholder:hover{border-color:var(--green);background:var(--green3);color:var(--green)}
+.pill-photo-placeholder .icon{font-size:1.8rem}
+#photo-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:10000;display:none;align-items:center;justify-content:center}
+#photo-overlay.show{display:flex}
+#photo-viewer{max-width:90vw;max-height:80vh;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+#photo-close{position:fixed;top:20px;right:20px;background:#fff;border:none;border-radius:50%;width:44px;height:44px;font-size:1.4rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.3)}
 .role-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 16px;margin-bottom:20px}
 .role-card{background:var(--white);border:2px solid var(--border);border-radius:22px;padding:22px 16px;text-align:center;box-shadow:0 3px 14px var(--shadow);transition:all .25s;cursor:pointer}
 .role-card:hover{border-color:var(--green);transform:translateY(-3px);box-shadow:0 8px 24px var(--shadow2)}
@@ -132,6 +141,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
   <p id="reminder-text">Time to take your medicine</p>
   <button class="btn btn-primary reminder-pulse" onclick="dismissReminder()" style="margin-bottom:10px">✅ I'll Take It Now!</button>
   <button class="btn btn-outline btn-sm" style="width:100%" onclick="snoozeReminder()">⏰ Remind me in 10 mins</button>
+</div>
+
+<!-- ════════════ PHOTO VIEWER ════════════ -->
+<div id="photo-overlay" onclick="closePhotoViewer()">
+  <button id="photo-close" onclick="closePhotoViewer()">✕</button>
+  <img id="photo-viewer" src="" alt="Pill Photo"/>
 </div>
 
 <!-- ════════════ PAGE 1 — LANDING ════════════ -->
@@ -586,24 +601,32 @@ function renderMedicines(medicines){
     const stxt=med.taken_today?'✅ Taken':'⏳ Pending';
     const sclass=med.taken_today?'taken':'pending';
     const reminderTag=med.reminder_time?`<span class="med-reminder">🔔 Alarm: ${formatTime(med.reminder_time)}</span><br>`:'';
+    const photoHtml=med.photo
+      ?`<img src="${med.photo}?t=${Date.now()}" class="pill-photo" onclick="viewPhoto('${med.photo}')" title="View pill photo"/>`
+      :`<div class="pill-photo-placeholder" onclick="triggerPhotoUpload(${i})"><span class="icon">📸</span>Add Photo</div>`;
     return `
     <div class="med-card ${cls}">
       <div class="med-header">
-        <div>
+        <div style="flex:1">
           <div class="med-name">💊 ${med.name}</div>
           <div class="med-meta">${med.dosage} &nbsp;•&nbsp; ⏰ ${med.timing}</div>
           <div class="med-remaining">📦 ${med.remaining} tablets left</div>
           ${med.notes?`<div class="med-notes">📝 ${med.notes}</div>`:''}
           ${reminderTag}
         </div>
-        <span class="med-status ${sclass}">${stxt}</span>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+          <span class="med-status ${sclass}">${stxt}</span>
+          ${photoHtml}
+        </div>
       </div>
       ${isLow?`<p style="color:var(--yellow);font-size:.8em;font-weight:700;margin-bottom:8px">⚠️ Low stock — please refill soon!</p>`:''}
+      <input type="file" id="photo-input-${i}" accept="image/*" capture="environment" style="display:none" onchange="uploadPillPhoto(${i}, this)"/>
       <div class="med-actions">
         ${!med.taken_today
           ?`<button class="btn btn-green btn-sm" style="flex:1" onclick="takeMedicine(${i})">✅ I took it!</button>`
           :`<div style="flex:1"></div>`}
         <button class="btn btn-yellow btn-sm" onclick="requestRefill(${i},'${med.name}',${med.remaining})" title="Request Refill">🛒 Refill</button>
+        ${med.photo?`<button class="btn btn-outline btn-sm" onclick="deletePillPhoto(${i})" style="padding:10px 12px" title="Remove photo">🗑️📸</button>`:''}
         <button class="btn btn-outline btn-sm" onclick="deleteMedicine(${i})" style="padding:10px 14px">🗑️</button>
       </div>
     </div>`;
@@ -841,3 +864,56 @@ setInterval(()=>{if(document.getElementById('page-family').classList.contains('a
 </script>
 </body>
 </html>
+<script>
+// ── 📸 Pill Photo Functions ───────────────────────────────
+
+function triggerPhotoUpload(index){
+  const input = document.getElementById(`photo-input-${index}`);
+  if(input) input.click();
+}
+
+async function uploadPillPhoto(index, input){
+  const file = input.files[0];
+  if(!file) return;
+  // Convert to base64
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const image_data = e.target.result; // includes data:image/...;base64,
+    toast('📸 Uploading photo...');
+    try{
+      const res  = await fetch(`/api/medicines/${index}/photo`, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({image_data})
+      });
+      const data = await res.json();
+      if(data.success){
+        toast('✅ Pill photo saved!');
+        renderMedicines(data.medicines);
+      } else {
+        toast('❌ ' + data.error, 'error');
+      }
+    }catch(e){ toast('❌ Upload failed', 'error'); }
+  };
+  reader.readAsDataURL(file);
+}
+
+async function deletePillPhoto(index){
+  if(!confirm('Remove pill photo?')) return;
+  try{
+    const res  = await fetch(`/api/medicines/${index}/photo`, {method:'DELETE'});
+    const data = await res.json();
+    if(data.success){ toast('🗑️ Photo removed!'); renderMedicines(data.medicines); }
+    else toast('❌ ' + data.error, 'error');
+  }catch(e){ toast('❌ Server error', 'error'); }
+}
+
+function viewPhoto(src){
+  document.getElementById('photo-viewer').src = src + '?t=' + Date.now();
+  document.getElementById('photo-overlay').classList.add('show');
+}
+
+function closePhotoViewer(){
+  document.getElementById('photo-overlay').classList.remove('show');
+}
+</script>

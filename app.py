@@ -7,7 +7,7 @@ from whatsapp import (send_medicine_taken, send_low_stock_alert,
                       send_missed_medicine, send_emergency,
                       send_daily_report, send_missed_daily_report)
 from chatbot import get_medicine_response
-import json, os, datetime
+import json, os, datetime, base64
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -236,6 +236,44 @@ def check_missed():
                 except:
                     missed_meds.append(med['name'])
     return jsonify({'success': True, 'missed': missed_meds})
+
+# ── Pill Photo API ─────────────────────────────────────────────────────────────
+
+UPLOAD_FOLDER = os.path.join('static', 'pill_photos')
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+@app.route('/api/medicines/<int:index>/photo', methods=['POST'])
+def upload_pill_photo(index):
+    medicines = load_medicines()
+    if index < 0 or index >= len(medicines):
+        return jsonify({'success': False, 'error': 'Medicine not found'}), 404
+    data       = request.get_json()
+    image_data = data.get('image_data', '')
+    if not image_data:
+        return jsonify({'success': False, 'error': 'No image data'}), 400
+    if ',' in image_data:
+        image_data = image_data.split(',')[1]
+    filename = f"pill_{index}_{medicines[index]['name'].replace(' ','_')}.jpg"
+    filepath = os.path.join(UPLOAD_FOLDER, filename)
+    with open(filepath, 'wb') as f:
+        f.write(base64.b64decode(image_data))
+    medicines[index]['photo'] = f'/static/pill_photos/{filename}'
+    save_medicines(medicines)
+    return jsonify({'success': True, 'photo': medicines[index]['photo'], 'medicines': medicines})
+
+@app.route('/api/medicines/<int:index>/photo', methods=['DELETE'])
+def delete_pill_photo(index):
+    medicines = load_medicines()
+    if index < 0 or index >= len(medicines):
+        return jsonify({'success': False, 'error': 'Medicine not found'}), 404
+    photo_path = medicines[index].get('photo', '')
+    if photo_path:
+        full_path = photo_path.lstrip('/')
+        if os.path.exists(full_path):
+            os.remove(full_path)
+        medicines[index]['photo'] = ''
+        save_medicines(medicines)
+    return jsonify({'success': True, 'medicines': medicines})
 
 # ── Refill Request API ─────────────────────────────────────────────────────────
 
