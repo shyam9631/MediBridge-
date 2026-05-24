@@ -268,6 +268,136 @@ body{padding-bottom:0}
 .px{padding-left:16px;padding-right:16px}
 .mb{margin-bottom:16px}
 .section-title{color:var(--text);font-weight:800;font-size:1em;margin-bottom:14px}
+
+/* ══════════════════════════════════════════════
+   DARK MODE VARIABLES
+══════════════════════════════════════════════ */
+[data-theme="dark"] {
+  --bg:        #0a0f0d;
+  --bg2:       #0d1810;
+  --white:     #141f17;
+  --card:      #141f17;
+  --border:    #1e3328;
+  --green:     #2d9e5f;
+  --green2:    #3dbf75;
+  --green3:    #0d1f14;
+  --green-dark:#3dbf75;
+  --mint:      #1e4030;
+  --soft:      #0f1a12;
+  --red:       #e05252;
+  --yellow:    #e8a020;
+  --blue:      #4a90d9;
+  --text:      #e8f5ed;
+  --muted:     #7aaa8a;
+  --muted2:    #4a7a5a;
+  --shadow:    rgba(0,0,0,0.3);
+  --shadow2:   rgba(45,158,95,0.2);
+}
+
+/* ── Dark mode toggle button ─────────────────── */
+.theme-toggle {
+  position:fixed;top:16px;right:16px;
+  width:44px;height:44px;
+  background:var(--white);
+  border:1.5px solid var(--border);
+  border-radius:50%;
+  font-size:1.3rem;
+  cursor:pointer;z-index:600;
+  display:none;align-items:center;justify-content:center;
+  box-shadow:0 2px 10px var(--shadow);
+  transition:all .25s;
+}
+.theme-toggle.visible{display:flex}
+.theme-toggle:hover{transform:scale(1.1);border-color:var(--green)}
+
+/* ══════════════════════════════════════════════
+   EMPTY STATE ILLUSTRATIONS
+══════════════════════════════════════════════ */
+.empty-state {
+  text-align:center;padding:40px 24px;
+  animation:fadeUp .5s ease;
+}
+.empty-state svg { margin-bottom:16px; }
+.empty-state h3 { color:var(--text);font-size:1.05em;font-weight:800;margin-bottom:6px; }
+.empty-state p  { color:var(--muted);font-size:.85em;font-weight:600;line-height:1.5; }
+.empty-state .empty-btn { margin-top:16px; }
+
+/* ══════════════════════════════════════════════
+   PULL TO REFRESH
+══════════════════════════════════════════════ */
+#ptr-indicator {
+  position:fixed;top:0;left:50%;transform:translateX(-50%) translateY(-60px);
+  background:var(--green);color:#fff;
+  border-radius:0 0 20px 20px;
+  padding:10px 24px;font-size:.85em;font-weight:700;
+  z-index:700;transition:transform .3s ease;
+  display:flex;align-items:center;gap:8px;
+}
+#ptr-indicator.pulling { transform:translateX(-50%) translateY(0); }
+#ptr-indicator.refreshing { transform:translateX(-50%) translateY(0); }
+.ptr-spinner {
+  width:16px;height:16px;
+  border:2px solid rgba(255,255,255,.4);
+  border-top-color:#fff;border-radius:50%;
+  animation:spin .7s linear infinite;
+}
+
+/* ══════════════════════════════════════════════
+   FLOATING LABEL FORM INPUTS
+══════════════════════════════════════════════ */
+.float-group {
+  position:relative;margin-bottom:20px;
+}
+.float-group input,
+.float-group select,
+.float-group textarea {
+  width:100%;padding:20px 16px 8px;
+  background:var(--soft);border:2px solid var(--border);
+  border-radius:14px;color:var(--text);
+  font-family:var(--font);font-size:15px;
+  outline:none;transition:all .25s;
+  appearance:none;
+}
+.float-group input:focus,
+.float-group select:focus,
+.float-group textarea:focus {
+  border-color:var(--green);
+  box-shadow:0 0 0 4px rgba(45,158,95,.1);
+  background:var(--white);
+}
+.float-group label {
+  position:absolute;left:16px;top:14px;
+  font-size:14px;color:var(--muted2);
+  font-weight:700;pointer-events:none;
+  transition:all .2s cubic-bezier(.4,0,.2,1);
+  background:transparent;
+}
+.float-group input:focus ~ label,
+.float-group input:not(:placeholder-shown) ~ label,
+.float-group select:focus ~ label,
+.float-group select:not([value=""]) ~ label,
+.float-group textarea:focus ~ label,
+.float-group textarea:not(:placeholder-shown) ~ label,
+.float-group.has-value label {
+  top:6px;font-size:10px;color:var(--green);
+  letter-spacing:.5px;text-transform:uppercase;
+}
+.float-group input:focus ~ label,
+.float-group select:focus ~ label,
+.float-group textarea:focus ~ label { color:var(--green); }
+.float-group .float-hint {
+  font-size:.72em;color:var(--muted2);
+  margin-top:5px;padding-left:4px;font-weight:600;
+}
+/* Select arrow */
+.float-group select {
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a7a65' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 16px center;
+  padding-right:40px;
+}
+[data-theme="dark"] .float-group select {
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237aaa8a' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+}
 </style>
 </head>
 <body>
@@ -342,8 +472,14 @@ body{padding-bottom:0}
       <h2 style="font-size:1.5em;color:var(--text)">Welcome Back! 👋</h2>
       <p style="color:var(--muted);font-size:.88em;margin-top:5px;font-weight:600">Login to continue</p>
     </div>
-    <div class="input-group"><label>👤 Username</label><input type="text" id="login-username" placeholder="Your username"/></div>
-    <div class="input-group"><label>🔒 Password</label><input type="password" id="login-password" placeholder="Your password"/></div>
+    <div class="float-group">
+      <input type="text" id="login-username" placeholder=" "/>
+      <label>👤 Username</label>
+    </div>
+    <div class="float-group">
+      <input type="password" id="login-password" placeholder=" "/>
+      <label>🔒 Password</label>
+    </div>
     <button class="btn btn-primary mb" id="login-btn" onclick="doLogin()">🚀 Login to MediBridge</button>
     <div id="login-error" style="color:var(--red);font-size:.88em;text-align:center;margin-bottom:12px;font-weight:700"></div>
   </div>
@@ -352,11 +488,23 @@ body{padding-bottom:0}
       <h2 style="font-size:1.5em;color:var(--text)">Create Account! ✨</h2>
       <p style="color:var(--muted);font-size:.88em;margin-top:5px;font-weight:600">Join MediBridge today</p>
     </div>
-    <div class="input-group"><label>😊 Full Name</label><input type="text" id="reg-name" placeholder="Your full name"/></div>
-    <div class="input-group"><label>👤 Username</label><input type="text" id="reg-username" placeholder="Choose a username"/></div>
+    <div class="float-group">
+      <input type="text" id="reg-name" placeholder=" "/>
+      <label>😊 Full Name</label>
+    </div>
+    <div class="float-group">
+      <input type="text" id="reg-username" placeholder=" "/>
+      <label>👤 Username</label>
+    </div>
     <div class="input-row">
-      <div class="input-group"><label>🔒 Password</label><input type="password" id="reg-password" placeholder="Password"/></div>
-      <div class="input-group"><label>🔒 Confirm</label><input type="password" id="reg-confirm" placeholder="Confirm"/></div>
+      <div class="float-group">
+        <input type="password" id="reg-password" placeholder=" "/>
+        <label>🔒 Password</label>
+      </div>
+      <div class="float-group">
+        <input type="password" id="reg-confirm" placeholder=" "/>
+        <label>🔒 Confirm</label>
+      </div>
     </div>
     <button class="btn btn-primary mb" id="register-btn" onclick="doRegister()">✨ Create My Account</button>
     <div id="register-error" style="color:var(--red);font-size:.88em;text-align:center;margin-bottom:12px;font-weight:700"></div>
@@ -406,24 +554,37 @@ body{padding-bottom:0}
     <div style="padding:20px 16px 0">
       <p class="section-title">➕ Add Medicine</p>
       <div class="card">
-        <div class="input-group"><label>💊 Medicine Name</label><input type="text" id="med-name" placeholder="e.g. Metformin"/></div>
-        <div class="input-row">
-          <div class="input-group"><label>📏 Dosage</label><input type="text" id="med-dosage" placeholder="e.g. 500mg"/></div>
-          <div class="input-group"><label>📦 Tablets</label><input type="number" id="med-total" placeholder="30" min="1" max="500"/></div>
+        <div class="float-group">
+          <input type="text" id="med-name" placeholder=" "/>
+          <label>💊 Medicine Name</label>
         </div>
-        <div class="input-group"><label>⏰ Timing</label>
+        <div class="input-row">
+          <div class="float-group">
+            <input type="text" id="med-dosage" placeholder=" "/>
+            <label>📏 Dosage</label>
+          </div>
+          <div class="float-group">
+            <input type="number" id="med-total" placeholder=" " min="1" max="500"/>
+            <label>📦 Tablets</label>
+          </div>
+        </div>
+        <div class="float-group has-value">
           <select id="med-timing">
             <option>Morning</option><option>Afternoon</option><option>Evening</option><option>Night</option>
             <option>Morning &amp; Night</option><option>Morning, Afternoon &amp; Night</option>
             <option>After Food</option><option>Before Food</option>
           </select>
+          <label>⏰ Timing</label>
         </div>
-        <div class="input-group">
-          <label>🔔 Reminder Time (Alarm)</label>
-          <input type="time" id="med-reminder" style="font-size:16px"/>
-          <p style="color:var(--muted2);font-size:.76em;margin-top:5px;font-weight:600">⚡ App will ring an alarm at this time every day!</p>
+        <div class="float-group">
+          <input type="time" id="med-reminder" placeholder=" " style="font-size:16px"/>
+          <label>🔔 Reminder Time</label>
+          <p class="float-hint">⚡ App will ring an alarm at this time every day!</p>
         </div>
-        <div class="input-group"><label>📝 Notes (optional)</label><input type="text" id="med-notes" placeholder="Any special instructions..."/></div>
+        <div class="float-group">
+          <input type="text" id="med-notes" placeholder=" "/>
+          <label>📝 Notes (optional)</label>
+        </div>
         <button class="btn btn-primary" id="add-med-btn" onclick="addMedicine()">➕ Add Medicine</button>
       </div>
       <p class="section-title">📋 Today's Medicines</p>
@@ -439,13 +600,28 @@ body{padding-bottom:0}
     <div style="padding:16px 0 0">
       <p class="section-title">➕ Add Appointment</p>
       <div class="card">
-        <div class="input-group"><label>👨‍⚕️ Doctor Name</label><input type="text" id="appt-doctor" placeholder="Dr. Name"/></div>
-        <div class="input-group"><label>🏥 Hospital / Clinic</label><input type="text" id="appt-hospital" placeholder="Hospital name"/></div>
-        <div class="input-row">
-          <div class="input-group"><label>📅 Date</label><input type="date" id="appt-date"/></div>
-          <div class="input-group"><label>🕐 Time</label><input type="time" id="appt-time"/></div>
+        <div class="float-group">
+          <input type="text" id="appt-doctor" placeholder=" "/>
+          <label>👨‍⚕️ Doctor Name</label>
         </div>
-        <div class="input-group"><label>📝 Notes</label><input type="text" id="appt-notes" placeholder="Any notes..."/></div>
+        <div class="float-group">
+          <input type="text" id="appt-hospital" placeholder=" "/>
+          <label>🏥 Hospital / Clinic</label>
+        </div>
+        <div class="input-row">
+          <div class="float-group has-value">
+            <input type="date" id="appt-date" placeholder=" "/>
+            <label>📅 Date</label>
+          </div>
+          <div class="float-group has-value">
+            <input type="time" id="appt-time" placeholder=" "/>
+            <label>🕐 Time</label>
+          </div>
+        </div>
+        <div class="float-group">
+          <input type="text" id="appt-notes" placeholder=" "/>
+          <label>📝 Notes</label>
+        </div>
         <button class="btn btn-primary" id="add-appt-btn" onclick="addAppointment()">➕ Add Appointment</button>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
@@ -598,6 +774,15 @@ body{padding-bottom:0}
 <!-- Confetti -->
 <canvas id="confetti-canvas"></canvas>
 
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light mode">🌙</button>
+
+<!-- Pull to Refresh Indicator -->
+<div id="ptr-indicator">
+  <span id="ptr-icon">↓</span>
+  <span id="ptr-text">Pull to refresh</span>
+</div>
 <div id="toast"></div>
 
 <script>
@@ -675,6 +860,7 @@ async function doLogout(){
   currentUser=null;
   stopReminderChecker();
   hideBottomNav();
+  document.getElementById('theme-toggle').classList.remove('visible');
   goTo('landing');
 }
 
@@ -709,6 +895,7 @@ function loadSeniorDashboard(){
   showBottomNav();
   navTo('home');
   confettiFired = false;
+  document.getElementById('theme-toggle').classList.add('visible');
 }
 
 // ── 🔔 REMINDER SYSTEM ───────────────────────────────────
@@ -957,7 +1144,20 @@ async function loadHistory(dashboard){
     document.getElementById('hist-taken').textContent=taken;
     document.getElementById('hist-missed').textContent=missed;
     const el=document.getElementById('history-list');
-    if(!history.length){el.innerHTML='<div class="empty"><div class="icon">📊</div><p>No history yet!</p></div>';return;}
+    if(!history.length){el.innerHTML=`<div class="empty-state">
+  <svg width="140" height="120" viewBox="0 0 140 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="70" cy="108" rx="45" ry="8" fill="var(--border)"/>
+    <rect x="30" y="22" width="80" height="80" rx="14" fill="var(--green3)" stroke="var(--border)" stroke-width="2"/>
+    <rect x="44" y="40" width="52" height="6" rx="3" fill="var(--border)"/>
+    <rect x="44" y="54" width="38" height="6" rx="3" fill="var(--border)"/>
+    <rect x="44" y="68" width="46" height="6" rx="3" fill="var(--border)"/>
+    <circle cx="38" cy="43" r="4" fill="var(--green)" opacity=".4"/>
+    <circle cx="38" cy="57" r="4" fill="var(--green)" opacity=".4"/>
+    <circle cx="38" cy="71" r="4" fill="var(--green)" opacity=".4"/>
+  </svg>
+  <h3>No history yet!</h3>
+  <p>Your medicine activity<br>will appear here</p>
+</div>`;return;}
     el.innerHTML=[...history].reverse().map(r=>{
       const cls=r.action.toLowerCase();
       const icon=r.action==='Taken'?'✅':r.action==='Missed'?'❌':r.action==='Deleted'?'🗑️':'➕';
@@ -1047,6 +1247,7 @@ async function sendEmergency(){
 function loadFamilyDashboard(){
   document.getElementById('family-name').textContent=currentUser.name;
   hideBottomNav();
+  document.getElementById('theme-toggle').classList.add('visible');
   loadFamilyData();
 }
 async function loadFamilyData(){
@@ -1060,7 +1261,18 @@ async function loadFamilyData(){
     document.getElementById('family-updated').textContent='Last updated: '+sumData.last_updated;
     const medicines=medData.medicines||[];
     const el=document.getElementById('family-status-list');
-    if(!medicines.length){el.innerHTML='<div class="empty"><div class="icon">👀</div><p>No medicines to monitor yet.</p></div>';return;}
+    if(!medicines.length){el.innerHTML=`<div class="empty-state">
+  <svg width="140" height="120" viewBox="0 0 140 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="70" cy="108" rx="45" ry="8" fill="var(--border)"/>
+    <circle cx="50" cy="45" r="18" fill="var(--green)" opacity=".15" stroke="var(--green)" stroke-width="1.5"/>
+    <circle cx="90" cy="45" r="14" fill="var(--green)" opacity=".1" stroke="var(--green)" stroke-width="1.5"/>
+    <text x="50" y="52" text-anchor="middle" font-size="18">👴</text>
+    <text x="90" y="51" text-anchor="middle" font-size="14">👨‍👩‍👧</text>
+    <path d="M32 88 Q50 72 70 80 Q90 72 108 88" stroke="var(--green)" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </svg>
+  <h3>No medicines to monitor!</h3>
+  <p>Medicines added by your<br>loved one will appear here</p>
+</div>`;return;}
     el.innerHTML=medicines.map(med=>{
       const isLow=med.remaining<=5;const taken=med.taken_today;
       const borderColor=taken?'var(--green)':'var(--red)';
@@ -1438,7 +1650,15 @@ async function loadRewards(){
     // Points history
     const histEl = document.getElementById('points-history');
     const hist   = (r.history||[]).slice().reverse().slice(0,15);
-    if(!hist.length){histEl.innerHTML='<div class="empty"><div class="icon">📜</div><p>No history yet!</p></div>';return;}
+    if(!hist.length){histEl.innerHTML=`<div class="empty-state">
+  <svg width="140" height="120" viewBox="0 0 140 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="70" cy="108" rx="45" ry="8" fill="var(--border)"/>
+    <path d="M70 20 L80 50 L112 50 L88 68 L96 98 L70 80 L44 98 L52 68 L28 50 L60 50 Z" fill="var(--green)" opacity=".15" stroke="var(--green)" stroke-width="1.5"/>
+    <text x="70" y="72" text-anchor="middle" font-size="28">🏆</text>
+  </svg>
+  <h3>No badges yet!</h3>
+  <p>Take your medicines daily<br>to earn points and badges! 🌿</p>
+</div>`;return;}
     histEl.innerHTML = hist.map(h=>`
       <div class="history-record taken" style="display:flex;justify-content:space-between;align-items:center">
         <div>
@@ -1479,7 +1699,20 @@ async function loadAppointments(){
 function renderAppointments(appts){
   const el = document.getElementById('appointments-list');
   if(!appts.length){
-    el.innerHTML='<div class="empty"><div class="icon">🏥</div><p>No appointments yet.<br>Add your first appointment above!</p></div>';return;
+    el.innerHTML=`<div class="empty-state">
+  <svg width="140" height="120" viewBox="0 0 140 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="70" cy="108" rx="45" ry="8" fill="var(--border)"/>
+    <rect x="25" y="28" width="90" height="75" rx="14" fill="var(--green3)" stroke="var(--border)" stroke-width="2"/>
+    <rect x="25" y="28" width="90" height="26" rx="14" fill="var(--green)" opacity=".2"/>
+    <rect x="25" y="42" width="90" height="12" fill="var(--green)" opacity=".2"/>
+    <rect x="46" y="18" width="20" height="18" rx="4" fill="var(--green)" opacity=".3" stroke="var(--green)" stroke-width="1.5"/>
+    <rect x="74" y="18" width="20" height="18" rx="4" fill="var(--green)" opacity=".3" stroke="var(--green)" stroke-width="1.5"/>
+    <text x="70" y="82" text-anchor="middle" font-size="22">🏥</text>
+    <rect x="40" y="96" width="60" height="5" rx="2.5" fill="var(--border)"/>
+  </svg>
+  <h3>No appointments yet!</h3>
+  <p>Add your doctor appointments<br>and get WhatsApp reminders!</p>
+</div>`;return;
   }
   el.innerHTML = appts.map(a=>{
     const statusLabel = a.status==='today'?'Today!':a.status==='past'?'Past':`In ${a.days_left} day${a.days_left===1?'':'s'}`;
@@ -1540,8 +1773,102 @@ async function checkApptReminders(){
   else toast('No reminders due today!');
 }
 
-// ── Init ──────────────────────────────────────────────────
+
+// ══════════════════════════════════════════════
+// 🌙 DARK / LIGHT MODE
+// ══════════════════════════════════════════════
+
+function initTheme() {
+  const saved = localStorage.getItem('medibridge-theme') || 'light';
+  setTheme(saved, false);
+}
+
+function setTheme(theme, save=true) {
+  document.documentElement.setAttribute('data-theme', theme);
+  const btn = document.getElementById('theme-toggle');
+  if (btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙';
+  if (save) localStorage.setItem('medibridge-theme', theme);
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') || 'light';
+  setTheme(current === 'dark' ? 'light' : 'dark');
+  toast(document.documentElement.getAttribute('data-theme') === 'dark' ? '🌙 Dark mode on!' : '☀️ Light mode on!');
+}
+
+// ══════════════════════════════════════════════
+// 🔄 PULL TO REFRESH
+// ══════════════════════════════════════════════
+
+let ptrStartY    = 0;
+let ptrDelta     = 0;
+let ptrActive    = false;
+let ptrThreshold = 80;
+
+function initPullToRefresh() {
+  const page = document.getElementById('page-senior');
+  if (!page) return;
+
+  document.addEventListener('touchstart', (e) => {
+    if (window.scrollY === 0) {
+      ptrStartY = e.touches[0].clientY;
+      ptrActive = true;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchmove', (e) => {
+    if (!ptrActive) return;
+    ptrDelta = e.touches[0].clientY - ptrStartY;
+    if (ptrDelta > 0 && window.scrollY === 0) {
+      const indicator = document.getElementById('ptr-indicator');
+      const icon      = document.getElementById('ptr-icon');
+      const text      = document.getElementById('ptr-text');
+      if (ptrDelta > 20) {
+        indicator.classList.add('pulling');
+        icon.textContent = ptrDelta > ptrThreshold ? '✓' : '↓';
+        text.textContent = ptrDelta > ptrThreshold ? 'Release to refresh!' : 'Pull to refresh...';
+        icon.style.transform = `rotate(${Math.min(ptrDelta * 2, 180)}deg)`;
+      }
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', async () => {
+    if (!ptrActive) return;
+    ptrActive = false;
+    const indicator = document.getElementById('ptr-indicator');
+    const icon      = document.getElementById('ptr-icon');
+    const text      = document.getElementById('ptr-text');
+
+    if (ptrDelta > ptrThreshold) {
+      indicator.classList.add('refreshing');
+      icon.innerHTML = '<span class="ptr-spinner"></span>';
+      text.textContent = 'Refreshing...';
+
+      // Refresh current section
+      const activeSection = document.querySelector('.inner-section.active');
+      if (activeSection) {
+        const id = activeSection.id;
+        if (id === 'inner-home')         await loadMedicines();
+        if (id === 'inner-appointments') await loadAppointments();
+        if (id === 'inner-rewards')      await loadRewards();
+        if (id === 'inner-settings')     { await loadHistory('senior'); await loadPrescription('senior'); }
+      }
+      await new Promise(r => setTimeout(r, 600));
+      toast('✅ Refreshed!');
+    }
+
+    indicator.classList.remove('pulling', 'refreshing');
+    icon.textContent = '↓';
+    icon.style.transform = '';
+    text.textContent = 'Pull to refresh';
+    ptrDelta = 0;
+  });
+}
+
+// ── Init ──────────────────────────────────════════════════
 loadLogoImage();
+initTheme();
+initPullToRefresh();
 setInterval(()=>{if(document.getElementById('page-family').classList.contains('active'))loadFamilyData();},30000);
 </script>
 </body>
