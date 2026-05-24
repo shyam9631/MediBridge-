@@ -206,25 +206,28 @@ def scan_prescription():
 
     try:
         from groq import Groq
+        import anthropic
 
-        # Use Groq vision to read prescription
-        client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-        message = client.chat.completions.create(
-            model="meta-llama/llama-4-scout-17b-16e-instruct",
+        # Use Anthropic Claude vision to read prescription
+        client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+        message = client.messages.create(
+            model="claude-opus-4-5",
             max_tokens=1024,
             messages=[
                 {
                     "role": "user",
                     "content": [
                         {
-                            "type": "image_url",
-                            "image_url": {
-                                "url": f"data:image/jpeg;base64,{img_b64}"
+                            "type": "image",
+                            "source": {
+                                "type": "base64",
+                                "media_type": media_type,
+                                "data": img_b64,
                             },
                         },
                         {
                             "type": "text",
-                            "text": """You are a medical prescription reader.
+                            "text": """You are a medical prescription reader. 
 Carefully read this prescription image and extract all medicines.
 Return ONLY a valid JSON array, nothing else. No explanation, no markdown.
 Format exactly like this:
@@ -240,7 +243,8 @@ If you cannot read the prescription clearly, return an empty array: []"""
             ],
         )
 
-        raw = message.choices[0].message.content.strip()
+        raw = message.content[0].text.strip()
+        # Clean any markdown if present
         if '```' in raw:
             raw = raw.split('```')[1]
             if raw.startswith('json'):
@@ -291,55 +295,37 @@ If you cannot read the prescription clearly, return an empty array: []"""
 
 @app.route('/api/check-interactions', methods=['POST'])
 def check_interactions():
+    import re as _re
     medicines = load_medicines()
     if len(medicines) < 2:
-        return jsonify({'success': True, 'interactions': [], 'message': 'Need at least 2 medicines to check interactions.'})
-
-    med_names = [m['name'] + ' (' + m['dosage'] + ')' for m in medicines]
-    med_list  = ', '.join(med_names)
-
+        return jsonify({
+            'success': True, 'has_interactions': False, 'interactions': [],
+            'safe_message': f'You have {len(medicines)} medicine. Add at least 2 to check interactions.'
+        })
+    med_list = ', '.join([m['name'] + ' (' + m['dosage'] + ')' for m in medicines])
     try:
         from groq import Groq
         client = Groq(api_key=os.getenv("GROQ_API_KEY"))
         response = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
+            temperature=0.1,
             messages=[
-                {
-                    "role": "system",
-                    "content": """You are a pharmacist AI checking drug interactions.
-Be concise, warm, and easy to understand for senior citizens.
-Always end with: "Please consult your doctor before making any changes."
-Return ONLY a JSON object, no markdown, no explanation:
-{
-  "has_interactions": true/false,
-  "interactions": [
-    {
-      "medicines": ["Medicine A", "Medicine B"],
-      "severity": "high/medium/low",
-      "warning": "Short warning message",
-      "advice": "What to do"
-    }
-  ],
-  "safe_message": "Message if no interactions found"
-}"""
-                },
-                {
-                    "role": "user",
-                    "content": f"Check drug interactions for these medicines: {med_list}"
-                }
+                {"role": "system", "content": 'You are a pharmacist AI. Return ONLY raw JSON, no markdown, no backticks, no explanation. Format: {"has_interactions":true,"interactions":[{"medicines":["A","B"],"severity":"high","warning":"...","advice":"..."}],"safe_message":""} or if safe: {"has_interactions":false,"interactions":[],"safe_message":"Medicines appear safe. Consult your doctor."}'},
+                {"role": "user", "content": f"Check drug interactions for: {med_list}. Return only JSON."}
             ]
         )
         raw = response.choices[0].message.content.strip()
-        if '```' in raw:
-            raw = raw.split('```')[1]
-            if raw.startswith('json'):
-                raw = raw[4:]
+        raw = raw.replace("```json","").replace("```","").strip()
+        m = _re.search(r'\{.*\}', raw, _re.DOTALL)
+        if m: raw = m.group(0)
         result = json.loads(raw)
+        result.setdefault('has_interactions', False)
+        result.setdefault('interactions', [])
+        result.setdefault('safe_message', 'No dangerous interactions found. Always consult your doctor.')
         return jsonify({'success': True, **result})
-    except json.JSONDecodeError:
-        return jsonify({'success': False, 'error': 'Could not parse response'}), 500
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
+    except Exception:
+        return jsonify({'success': True, 'has_interactions': False, 'interactions': [],
+            'safe_message': 'Could not automatically check. Please consult your doctor or pharmacist.'})
 
 # ── Chatbot API ────────────────────────────────────────────────────────────────
 

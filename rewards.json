@@ -1,0 +1,31 @@
+{
+    "points": 30,
+    "streak": 2,
+    "last_date": "2026-05-24",
+    "badges": [
+        {
+            "id": "first_dose",
+            "name": "First Dose!",
+            "emoji": "\ud83c\udf31",
+            "date": "2026-05-23"
+        },
+        {
+            "id": "all_taken",
+            "name": "Perfect Day!",
+            "emoji": "\u2728",
+            "date": "2026-05-23"
+        }
+    ],
+    "history": [
+        {
+            "reason": "Medicine taken on time",
+            "points": 10,
+            "date": "2026-05-23"
+        },
+        {
+            "reason": "Medicine taken on time",
+            "points": 10,
+            "date": "2026-05-24"
+        }
+    ]
+}

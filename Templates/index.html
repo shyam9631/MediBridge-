@@ -115,6 +115,88 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .appt-badge.today{background:#ffe8e8;border:1px solid #ffb0b0;color:var(--red)}
 .appt-badge.past{background:var(--bg2);border:1px solid var(--border);color:var(--muted2)}
 
+/* ══════════════════════════════════════════════
+   BOTTOM NAVIGATION BAR
+══════════════════════════════════════════════ */
+.bottom-nav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:460px;
+  background:var(--white);
+  border-top:1.5px solid var(--border);
+  display:none;
+  grid-template-columns:repeat(5,1fr);
+  z-index:500;
+  padding:8px 0 max(8px, env(safe-area-inset-bottom));
+  box-shadow:0 -4px 20px rgba(45,158,95,.1);
+}
+.bottom-nav.visible{display:grid}
+.nav-item{
+  display:flex;flex-direction:column;align-items:center;
+  gap:3px;padding:4px 0;cursor:pointer;
+  transition:all .2s;border:none;background:transparent;
+  font-family:var(--font);
+}
+.nav-item .nav-icon{font-size:1.5rem;transition:transform .2s}
+.nav-item .nav-label{font-size:.65em;font-weight:700;color:var(--muted2);transition:color .2s}
+.nav-item.active .nav-label{color:var(--green)}
+.nav-item.active .nav-icon{transform:scale(1.15)}
+.nav-item:active .nav-icon{transform:scale(.9)}
+
+/* ══════════════════════════════════════════════
+   PROGRESS RING
+══════════════════════════════════════════════ */
+.progress-ring-wrap{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:20px 16px 10px;
+}
+.progress-ring-svg{filter:drop-shadow(0 4px 12px rgba(45,158,95,.25));overflow:visible}
+.progress-ring-bg{fill:none;stroke:#e8f5ee;stroke-width:12}
+.progress-ring-fill{
+  fill:none;stroke-width:12;stroke-linecap:round;
+  transform:rotate(-90deg);transform-origin:50% 50%;
+  transition:stroke-dashoffset 1s cubic-bezier(.4,0,.2,1),stroke .5s;
+}
+.progress-ring-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none}
+.progress-ring-num{font-family:var(--mono);font-size:2.2rem;font-weight:900;line-height:1;color:var(--green-dark)}
+.progress-ring-sub{font-size:.72em;color:var(--muted);font-weight:700;margin-top:2px}
+.progress-ring-container{position:relative;display:inline-flex;align-items:center;justify-content:center}
+.progress-greeting{font-size:1.1em;font-weight:800;color:var(--text);margin-top:12px;text-align:center}
+.progress-sub{font-size:.82em;color:var(--muted);font-weight:600;margin-top:4px;text-align:center}
+.progress-stats{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:10px;width:100%;margin-top:16px;
+}
+
+/* Page padding for bottom nav */
+.page-with-nav{padding-bottom:100px!important}
+body{padding-bottom:0}
+
+/* ── Inner pages for bottom nav sections ────── */
+.inner-section{display:none;padding:0 16px 16px}
+.inner-section.active{display:block}
+
+/* ── FAB ────────────────────────────────────── */
+.fab{
+  position:fixed;bottom:80px;right:calc(50% - 210px);
+  width:56px;height:56px;
+  background:linear-gradient(135deg,var(--green),var(--green2));
+  border:none;border-radius:50%;
+  color:#fff;font-size:1.6rem;
+  box-shadow:0 6px 20px var(--shadow2);
+  cursor:pointer;z-index:499;
+  display:none;align-items:center;justify-content:center;
+  transition:all .25s;
+  animation:fabPop .4s cubic-bezier(.34,1.56,.64,1);
+}
+.fab.visible{display:flex}
+.fab:hover{transform:scale(1.1) rotate(90deg)}
+.fab:active{transform:scale(.95)}
+@keyframes fabPop{from{opacity:0;transform:scale(0)}to{opacity:1;transform:scale(1)}}
+
+/* Confetti canvas */
+#confetti-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998;display:none}
+
+
 /* ── Prescription Scanner ───────────────────────────────── */
 .scan-drop{border:3px dashed var(--green);border-radius:20px;padding:32px 20px;text-align:center;cursor:pointer;background:var(--green3);transition:all .25s;margin-bottom:16px}
 .scan-drop:hover{background:#d0f0e0;border-color:var(--green-dark)}
@@ -283,7 +365,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 </div>
 
 <!-- ════════════ PAGE 3 — SENIOR ════════════ -->
-<div class="page" id="page-senior">
+<div class="page page-with-nav" id="page-senior">
   <div class="topbar">
     <div>
       <div style="color:rgba(255,255,255,.8);font-size:.75em;font-weight:700">Good day! 👋</div>
@@ -293,164 +375,162 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     <div class="topbar-badge">💊 MediBridge</div>
   </div>
 
-  <div class="metrics">
-    <div class="metric"><div class="metric-val" id="sm-total">0</div><div class="metric-label">💊 Total</div></div>
-    <div class="metric"><div class="metric-val" id="sm-taken" style="color:var(--green)">0</div><div class="metric-label">✅ Taken</div></div>
-    <div class="metric"><div class="metric-val" id="sm-left" style="color:var(--yellow)">0</div><div class="metric-label">⏳ Left</div></div>
-  </div>
-
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('senior','medicines')">💊 Medicines</button>
-    <button class="tab-btn" onclick="switchTab('senior','prescription')">📋 Rx</button>
-    <button class="tab-btn" onclick="switchTab('senior','history')">📊 History</button>
-    <button class="tab-btn" onclick="switchTab('senior','medibot')">🤖 MediBot</button>
-    <button class="tab-btn" onclick="switchTab('senior','rewards')">🏆 Rewards</button>
-    <button class="tab-btn" onclick="switchTab('senior','appointments')">🏥 Appts</button>
-    <button class="tab-btn" onclick="switchTab('senior','settings')">⚙️ Settings</button>
-  </div>
-
-  <!-- Medicines Tab -->
-  <div class="tab-content active" id="senior-tab-medicines">
-    <p class="section-title">➕ Add Medicine</p>
-    <div class="card">
-      <div class="input-group"><label>💊 Medicine Name</label><input type="text" id="med-name" placeholder="e.g. Metformin"/></div>
-      <div class="input-row">
-        <div class="input-group"><label>📏 Dosage</label><input type="text" id="med-dosage" placeholder="e.g. 500mg"/></div>
-        <div class="input-group"><label>📦 Tablets</label><input type="number" id="med-total" placeholder="30" min="1" max="500"/></div>
+  <!-- ── HOME SECTION ── -->
+  <div class="inner-section active" id="inner-home">
+    <div class="progress-ring-wrap">
+      <div class="progress-ring-container">
+        <svg class="progress-ring-svg" width="180" height="180" viewBox="0 0 180 180">
+          <circle class="progress-ring-bg" cx="90" cy="90" r="74"/>
+          <circle class="progress-ring-fill" id="progress-ring" cx="90" cy="90" r="74"
+            stroke="url(#ringGrad)" stroke-dasharray="465" stroke-dashoffset="465"/>
+          <defs>
+            <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#2d9e5f"/>
+              <stop offset="100%" style="stop-color:#3dbf75"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="progress-ring-center">
+          <div class="progress-ring-num" id="ring-taken">0</div>
+          <div class="progress-ring-sub" id="ring-sub">of 0 taken</div>
+        </div>
       </div>
-      <div class="input-group"><label>⏰ Timing</label>
-        <select id="med-timing">
-          <option>Morning</option><option>Afternoon</option><option>Evening</option><option>Night</option>
-          <option>Morning & Night</option><option>Morning, Afternoon & Night</option>
-          <option>After Food</option><option>Before Food</option>
-        </select>
+      <div class="progress-greeting" id="ring-greeting">Good day! 💊</div>
+      <div class="progress-sub" id="ring-message">Loading your medicines...</div>
+    </div>
+    <div class="progress-stats" style="padding:0 16px">
+      <div class="metric"><div class="metric-val" id="sm-total">0</div><div class="metric-label">💊 Total</div></div>
+      <div class="metric"><div class="metric-val" id="sm-taken" style="color:var(--green)">0</div><div class="metric-label">✅ Taken</div></div>
+      <div class="metric"><div class="metric-val" id="sm-left" style="color:var(--yellow)">0</div><div class="metric-label">⏳ Left</div></div>
+    </div>
+    <div style="padding:20px 16px 0">
+      <p class="section-title">➕ Add Medicine</p>
+      <div class="card">
+        <div class="input-group"><label>💊 Medicine Name</label><input type="text" id="med-name" placeholder="e.g. Metformin"/></div>
+        <div class="input-row">
+          <div class="input-group"><label>📏 Dosage</label><input type="text" id="med-dosage" placeholder="e.g. 500mg"/></div>
+          <div class="input-group"><label>📦 Tablets</label><input type="number" id="med-total" placeholder="30" min="1" max="500"/></div>
+        </div>
+        <div class="input-group"><label>⏰ Timing</label>
+          <select id="med-timing">
+            <option>Morning</option><option>Afternoon</option><option>Evening</option><option>Night</option>
+            <option>Morning &amp; Night</option><option>Morning, Afternoon &amp; Night</option>
+            <option>After Food</option><option>Before Food</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>🔔 Reminder Time (Alarm)</label>
+          <input type="time" id="med-reminder" style="font-size:16px"/>
+          <p style="color:var(--muted2);font-size:.76em;margin-top:5px;font-weight:600">⚡ App will ring an alarm at this time every day!</p>
+        </div>
+        <div class="input-group"><label>📝 Notes (optional)</label><input type="text" id="med-notes" placeholder="Any special instructions..."/></div>
+        <button class="btn btn-primary" id="add-med-btn" onclick="addMedicine()">➕ Add Medicine</button>
       </div>
-      <!-- 🔔 NEW: Reminder Time -->
-      <div class="input-group">
-        <label>🔔 Reminder Time (Alarm)</label>
-        <input type="time" id="med-reminder" style="font-size:16px"/>
-        <p style="color:var(--muted2);font-size:.76em;margin-top:5px;font-weight:600">⚡ App will ring an alarm at this time every day!</p>
+      <p class="section-title">📋 Today's Medicines</p>
+      <div id="medicines-list"></div>
+      <button class="btn btn-outline mb" onclick="checkMissed()">🔍 Check Missed Medicines</button>
+    </div>
+  </div>
+
+
+
+  <!-- ── APPOINTMENTS SECTION ── -->
+  <div class="inner-section" id="inner-appointments">
+    <div style="padding:16px 0 0">
+      <p class="section-title">➕ Add Appointment</p>
+      <div class="card">
+        <div class="input-group"><label>👨‍⚕️ Doctor Name</label><input type="text" id="appt-doctor" placeholder="Dr. Name"/></div>
+        <div class="input-group"><label>🏥 Hospital / Clinic</label><input type="text" id="appt-hospital" placeholder="Hospital name"/></div>
+        <div class="input-row">
+          <div class="input-group"><label>📅 Date</label><input type="date" id="appt-date"/></div>
+          <div class="input-group"><label>🕐 Time</label><input type="time" id="appt-time"/></div>
+        </div>
+        <div class="input-group"><label>📝 Notes</label><input type="text" id="appt-notes" placeholder="Any notes..."/></div>
+        <button class="btn btn-primary" id="add-appt-btn" onclick="addAppointment()">➕ Add Appointment</button>
       </div>
-      <div class="input-group"><label>📝 Notes (optional)</label><input type="text" id="med-notes" placeholder="Any special instructions..."/></div>
-      <button class="btn btn-primary" id="add-med-btn" onclick="addMedicine()">➕ Add Medicine</button>
-    </div>
-
-    <p class="section-title">📋 Today's Medicines</p>
-    <div id="medicines-list"></div>
-    <button class="btn btn-outline mb" onclick="checkMissed()">🔍 Check Missed Medicines</button>
-  </div>
-
-  <!-- Prescription Tab -->
-  <div class="tab-content" id="senior-tab-prescription">
-    <!-- Prescription Scanner -->
-    <div class="card" style="border-left:4px solid var(--green);background:linear-gradient(135deg,#f0fff6,#fff);margin-bottom:20px">
-      <p style="color:var(--green-dark);font-weight:800;font-size:.95em;margin-bottom:12px">📄 AI Prescription Scanner</p>
-      <p style="color:var(--muted);font-size:.82em;font-weight:600;margin-bottom:14px">Upload a photo of your prescription and AI will automatically read and add all medicines!</p>
-      <div class="scan-drop" onclick="document.getElementById('rx-scan-input').click()">
-        <span class="icon">📸</span>
-        <p>Tap to take photo or upload prescription</p>
-        <small>Supports JPG, PNG — Works with handwritten & printed</small>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <p class="section-title" style="margin:0">📅 Upcoming Appointments</p>
+        <button class="btn btn-outline btn-sm" onclick="checkApptReminders()">📱 Send Reminders</button>
       </div>
-      <input type="file" id="rx-scan-input" accept="image/*" capture="environment" style="display:none" onchange="handlePrescriptionScan(this)"/>
-      <img id="scan-preview" class="scan-preview" alt="Prescription preview"/>
-      <div id="scan-results"></div>
-      <button class="btn btn-primary" id="scan-btn" style="display:none" onclick="runPrescriptionScan()">🤖 Scan & Add Medicines</button>
+      <div id="appointments-list"></div>
     </div>
-    <div id="rx-display"></div>
-    <p class="section-title">💾 Save Prescription</p>
-    <div class="card">
-      <div class="input-group"><label>👴 Patient Name</label><input type="text" id="rx-patient" placeholder="Full name"/></div>
-      <div class="input-row">
-        <div class="input-group"><label>👨‍⚕️ Doctor Name</label><input type="text" id="rx-doctor" placeholder="Dr. Name"/></div>
-        <div class="input-group"><label>🏥 Hospital</label><input type="text" id="rx-hospital" placeholder="Hospital"/></div>
+  </div>
+
+  <!-- ── REWARDS SECTION ── -->
+  <div class="inner-section" id="inner-rewards">
+    <div style="padding:16px 0 0">
+      <div id="rewards-summary"></div>
+      <p class="section-title">🏅 My Badges</p>
+      <div id="badges-list"></div>
+      <p class="section-title">📜 Points History</p>
+      <div id="points-history"></div>
+    </div>
+  </div>
+
+  <!-- ── MEDIBOT SECTION ── -->
+  <div class="inner-section" id="inner-medibot">
+    <div style="padding:16px 0 0">
+      <div class="card" style="border-left:4px solid var(--green);background:linear-gradient(135deg,#f0fff6,#fff);margin-bottom:14px">
+        <p style="color:var(--green-dark);font-size:.9em;font-weight:700">🤖 Hi! I'm MediBot — your personal medicine assistant! Ask me anything 💊</p>
       </div>
-      <div class="input-row">
-        <div class="input-group"><label>📅 Date</label><input type="date" id="rx-date"/></div>
-        <div class="input-group"><label>📅 Next Visit</label><input type="date" id="rx-next"/></div>
+      <div class="chat-box" id="chat-box"></div>
+      <p class="section-title" style="font-size:.85em">Quick Questions:</p>
+      <div class="quick-btns">
+        <button class="btn btn-outline btn-sm" onclick="quickQ('What medicines am I taking?')">💊 My medicines?</button>
+        <button class="btn btn-outline btn-sm" onclick="quickQ('What are the side effects?')">⚠️ Side effects?</button>
+        <button class="btn btn-outline btn-sm" onclick="quickQ('When should I take each medicine?')">⏰ When to take?</button>
+        <button class="btn btn-outline btn-sm" onclick="quickQ('Which medicines are running low?')">📦 Stock check?</button>
       </div>
-      <div class="input-group"><label>📞 Doctor Contact</label><input type="text" id="rx-contact" placeholder="Phone number"/></div>
-      <div class="input-group"><label>📝 Doctor Notes</label><textarea id="rx-notes" rows="3" placeholder="Notes from doctor..."></textarea></div>
-      <button class="btn btn-primary" onclick="savePrescription()">💾 Save Prescription</button>
-    </div>
-  </div>
-
-  <!-- History Tab -->
-  <div class="tab-content" id="senior-tab-history">
-    <div class="metrics mb" style="grid-template-columns:1fr 1fr">
-      <div class="metric"><div class="metric-val" id="hist-taken" style="color:var(--green)">0</div><div class="metric-label">✅ Total Taken</div></div>
-      <div class="metric"><div class="metric-val" id="hist-missed" style="color:var(--red)">0</div><div class="metric-label">❌ Total Missed</div></div>
-    </div>
-    <div id="history-list"></div>
-    <button class="btn btn-outline" onclick="clearHistory()">🗑️ Clear History</button>
-  </div>
-
-  <!-- MediBot Tab -->
-  <div class="tab-content" id="senior-tab-medibot">
-    <div class="card" style="border-left:4px solid var(--green);background:linear-gradient(135deg,#f0fff6,#fff);margin-bottom:14px">
-      <p style="color:var(--green-dark);font-size:.9em;font-weight:700">🤖 Hi! I'm MediBot — your personal medicine assistant! Ask me anything 💊</p>
-    </div>
-    <div class="chat-box" id="chat-box"></div>
-    <p class="section-title" style="font-size:.85em">Quick Questions:</p>
-    <div class="quick-btns">
-      <button class="btn btn-outline btn-sm" onclick="quickQ('What medicines am I taking?')">💊 My medicines?</button>
-      <button class="btn btn-outline btn-sm" onclick="quickQ('What are the side effects?')">⚠️ Side effects?</button>
-      <button class="btn btn-outline btn-sm" onclick="quickQ('When should I take each medicine?')">⏰ When to take?</button>
-      <button class="btn btn-outline btn-sm" onclick="quickQ('Which medicines are running low?')">📦 Stock check?</button>
-    </div>
-    <div class="divider"></div>
-    <p class="section-title">⚠️ Drug Interaction Checker</p>
-    <div class="card" style="border-left:4px solid var(--yellow);background:linear-gradient(135deg,#fffdf0,#fff);margin-bottom:14px">
-      <p style="color:#a06010;font-size:.88em;font-weight:700;margin-bottom:12px">⚠️ Check if your medicines are safe to take together</p>
-      <button class="btn btn-yellow" id="check-interactions-btn" onclick="checkDrugInteractions()">🔬 Check My Medicines for Interactions</button>
-    </div>
-    <div id="interactions-result"></div>
-    <div style="display:flex;gap:8px;margin-bottom:8px">
-      <input type="text" id="chat-input" placeholder="Ask MediBot anything..." style="flex:1;padding:13px 16px;background:#fff;border:2px solid var(--border);border-radius:14px;color:var(--text);font-family:var(--font);font-size:14px;font-weight:600;outline:none" onkeydown="if(event.key==='Enter')sendChat()"/>
-      <button class="btn btn-primary btn-sm" onclick="sendChat()">📤</button>
-      <button class="btn btn-outline btn-sm" onclick="clearChat()">🗑️</button>
-    </div>
-  </div>
-
-
-  <!-- Rewards Tab -->
-  <div class="tab-content" id="senior-tab-rewards">
-    <div id="rewards-summary"></div>
-    <p class="section-title">🏅 My Badges</p>
-    <div id="badges-list"></div>
-    <p class="section-title">📜 Points History</p>
-    <div id="points-history"></div>
-  </div>
-
-  <!-- Appointments Tab -->
-  <div class="tab-content" id="senior-tab-appointments">
-    <p class="section-title">➕ Add Appointment</p>
-    <div class="card">
-      <div class="input-group"><label>👨‍⚕️ Doctor Name</label><input type="text" id="appt-doctor" placeholder="Dr. Name"/></div>
-      <div class="input-group"><label>🏥 Hospital / Clinic</label><input type="text" id="appt-hospital" placeholder="Hospital name"/></div>
-      <div class="input-row">
-        <div class="input-group"><label>📅 Date</label><input type="date" id="appt-date"/></div>
-        <div class="input-group"><label>🕐 Time</label><input type="time" id="appt-time"/></div>
+      <div style="display:flex;gap:8px;margin-bottom:8px">
+        <input type="text" id="chat-input" placeholder="Ask MediBot anything..." style="flex:1;padding:13px 16px;background:#fff;border:2px solid var(--border);border-radius:14px;color:var(--text);font-family:var(--font);font-size:14px;font-weight:600;outline:none" onkeydown="if(event.key==='Enter')sendChat()"/>
+        <button class="btn btn-primary btn-sm" onclick="sendChat()">📤</button>
+        <button class="btn btn-outline btn-sm" onclick="clearChat()">🗑️</button>
       </div>
-      <div class="input-group"><label>📝 Notes</label><input type="text" id="appt-notes" placeholder="Any notes..."/></div>
-      <button class="btn btn-primary" id="add-appt-btn" onclick="addAppointment()">➕ Add Appointment</button>
+      <div class="divider"></div>
+      <p class="section-title">⚠️ Drug Interaction Checker</p>
+      <div class="card" style="border-left:4px solid var(--yellow);background:linear-gradient(135deg,#fffdf0,#fff);margin-bottom:14px">
+        <p style="color:#a06010;font-size:.88em;font-weight:700;margin-bottom:12px">⚠️ Check if your medicines are safe to take together</p>
+        <button class="btn btn-yellow" id="check-interactions-btn" onclick="checkDrugInteractions()">🔬 Check My Medicines for Interactions</button>
+      </div>
+      <div id="interactions-result"></div>
     </div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-      <p class="section-title" style="margin:0">📅 Upcoming Appointments</p>
-      <button class="btn btn-outline btn-sm" onclick="checkApptReminders()">📱 Send Reminders</button>
-    </div>
-    <div id="appointments-list"></div>
   </div>
 
-  <!-- Settings Tab -->
-  <div class="tab-content" id="senior-tab-settings">
-    <div class="card" id="senior-profile"></div>
-    <p class="section-title">📱 Send Alerts</p>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
-      <button class="btn btn-outline" onclick="sendDailyReport()">📊 Daily Report</button>
-      <button class="btn btn-danger" onclick="sendEmergency()">🆘 Emergency!</button>
+  <!-- ── SETTINGS SECTION ── -->
+  <div class="inner-section" id="inner-settings">
+    <div style="padding:16px 0 0">
+      <div class="card" id="senior-profile"></div>
+      <p class="section-title">📋 Prescription</p>
+      <div id="rx-display"></div>
+      <div class="card" style="margin-bottom:14px">
+        <!-- Prescription Scanner -->
+        <p style="color:var(--green-dark);font-weight:800;font-size:.95em;margin-bottom:12px">📄 AI Prescription Scanner</p>
+        <div class="scan-drop" onclick="document.getElementById('rx-scan-input').click()">
+          <span class="icon">📸</span>
+          <p>Tap to scan prescription</p>
+          <small>AI reads and auto-adds medicines!</small>
+        </div>
+        <input type="file" id="rx-scan-input" accept="image/*" capture="environment" style="display:none" onchange="handlePrescriptionScan(this)"/>
+        <img id="scan-preview" class="scan-preview" alt="Prescription preview"/>
+        <div id="scan-results"></div>
+        <button class="btn btn-primary" id="scan-btn" style="display:none" onclick="runPrescriptionScan()">🤖 Scan & Add Medicines</button>
+      </div>
+      <p class="section-title">📊 Send Alerts</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+        <button class="btn btn-outline" onclick="sendDailyReport()">📊 Daily Report</button>
+        <button class="btn btn-danger" onclick="sendEmergency()">🆘 Emergency!</button>
+      </div>
+      <p class="section-title">📜 Medicine History</p>
+      <div class="metrics mb" style="grid-template-columns:1fr 1fr">
+        <div class="metric"><div class="metric-val" id="hist-taken" style="color:var(--green)">0</div><div class="metric-label">✅ Total Taken</div></div>
+        <div class="metric"><div class="metric-val" id="hist-missed" style="color:var(--red)">0</div><div class="metric-label">❌ Total Missed</div></div>
+      </div>
+      <div id="history-list"></div>
+      <button class="btn btn-outline mb" onclick="clearHistory()">🗑️ Clear History</button>
+      <button class="btn btn-outline" onclick="doLogout()">🚪 Logout</button>
     </div>
-    <button class="btn btn-outline" onclick="doLogout()">🚪 Logout</button>
   </div>
+
 </div>
 
 <!-- ════════════ PAGE 4 — FAMILY ════════════ -->
@@ -486,6 +566,37 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
   <div class="tab-content" id="family-tab-history"><div id="family-history-list"></div></div>
   <div class="px" style="margin-top:16px"><button class="btn btn-outline" onclick="doLogout()">🚪 Logout</button></div>
 </div>
+
+
+<!-- ════════════ BOTTOM NAV ════════════ -->
+<nav class="bottom-nav" id="bottom-nav">
+  <button class="nav-item active" id="nav-home" onclick="navTo('home')">
+    <span class="nav-icon">🏠</span>
+    <span class="nav-label">Home</span>
+  </button>
+  <button class="nav-item" id="nav-appointments" onclick="navTo('appointments')">
+    <span class="nav-icon">🏥</span>
+    <span class="nav-label">Appts</span>
+  </button>
+  <button class="nav-item" id="nav-rewards" onclick="navTo('rewards')">
+    <span class="nav-icon">🏆</span>
+    <span class="nav-label">Rewards</span>
+  </button>
+  <button class="nav-item" id="nav-medibot" onclick="navTo('medibot')">
+    <span class="nav-icon">🤖</span>
+    <span class="nav-label">MediBot</span>
+  </button>
+  <button class="nav-item" id="nav-settings" onclick="navTo('settings')">
+    <span class="nav-icon">⚙️</span>
+    <span class="nav-label">Settings</span>
+  </button>
+</nav>
+
+<!-- FAB -->
+<button class="fab" id="fab" onclick="showAddMedicineSheet()" title="Add Medicine">➕</button>
+
+<!-- Confetti -->
+<canvas id="confetti-canvas"></canvas>
 
 <div id="toast"></div>
 
@@ -563,6 +674,7 @@ async function doLogout(){
   await fetch('/api/logout',{method:'POST'});
   currentUser=null;
   stopReminderChecker();
+  hideBottomNav();
   goTo('landing');
 }
 
@@ -594,6 +706,9 @@ function loadSeniorDashboard(){
   loadMedicines();
   loadLogoImage();
   startReminderChecker();
+  showBottomNav();
+  navTo('home');
+  confettiFired = false;
 }
 
 // ── 🔔 REMINDER SYSTEM ───────────────────────────────────
@@ -713,6 +828,7 @@ function renderMedicines(medicines){
   document.getElementById('sm-total').textContent=total;
   document.getElementById('sm-taken').textContent=taken;
   document.getElementById('sm-left').textContent=total-taken;
+  updateProgressRing(taken, total);
   const el=document.getElementById('medicines-list');
   if(!medicines.length){
     el.innerHTML=`<div class="empty"><div class="icon">🌿</div><p>No medicines added yet.<br>Add your first medicine above!</p></div>`;return;
@@ -930,6 +1046,7 @@ async function sendEmergency(){
 // ── Family ────────────────────────────────────────────────
 function loadFamilyDashboard(){
   document.getElementById('family-name').textContent=currentUser.name;
+  hideBottomNav();
   loadFamilyData();
 }
 async function loadFamilyData(){
@@ -983,6 +1100,157 @@ function toast(msg,type='success'){
 }
 
 
+
+
+// ══════════════════════════════════════════════
+// BOTTOM NAVIGATION
+// ══════════════════════════════════════════════
+
+let currentNav = 'home';
+
+function navTo(section) {
+  // Update nav items
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  const navBtn = document.getElementById('nav-' + section);
+  if (navBtn) navBtn.classList.add('active');
+
+  // Update inner sections
+  document.querySelectorAll('.inner-section').forEach(s => s.classList.remove('active'));
+  const inner = document.getElementById('inner-' + section);
+  if (inner) inner.classList.add('active');
+
+  currentNav = section;
+
+  // Load section data
+  if (section === 'rewards')      loadRewards();
+  if (section === 'appointments') { loadAppointments(); }
+  if (section === 'medibot')      { /* chat ready */ }
+  if (section === 'settings') {
+    loadHistory('senior');
+    loadPrescription('senior');
+  }
+
+  window.scrollTo(0, 0);
+}
+
+function showAddMedicineSheet() {
+  navTo('home');
+  setTimeout(() => {
+    const name = document.getElementById('med-name');
+    if (name) {
+      name.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      name.focus();
+    }
+  }, 200);
+}
+
+function showBottomNav() {
+  document.getElementById('bottom-nav').classList.add('visible');
+  document.getElementById('fab').classList.add('visible');
+}
+
+function hideBottomNav() {
+  document.getElementById('bottom-nav').classList.remove('visible');
+  document.getElementById('fab').classList.remove('visible');
+}
+
+// ══════════════════════════════════════════════
+// PROGRESS RING
+// ══════════════════════════════════════════════
+
+function updateProgressRing(taken, total) {
+  const ring        = document.getElementById('progress-ring');
+  const ringTaken   = document.getElementById('ring-taken');
+  const ringSub     = document.getElementById('ring-sub');
+  const ringGreeting = document.getElementById('ring-greeting');
+  const ringMessage  = document.getElementById('ring-message');
+
+  if (!ring) return;
+
+  const radius       = 74;
+  const circumference = 2 * Math.PI * radius; // ~465
+  const pct          = total > 0 ? taken / total : 0;
+  const offset       = circumference - pct * circumference;
+
+  ring.style.strokeDasharray  = circumference;
+  ring.style.strokeDashoffset = offset;
+
+  // Color by progress
+  if (pct === 0)       ring.style.stroke = '#c8e6d4';
+  else if (pct < 0.5)  ring.style.stroke = '#e8a020';
+  else if (pct < 1)    ring.style.stroke = '#2d9e5f';
+  else                 ring.style.stroke = '#1a7a45';
+
+  ringTaken.textContent = taken;
+  ringSub.textContent   = `of ${total} taken`;
+
+  // Greeting message
+  const hour = new Date().getHours();
+  const greet = hour < 12 ? 'Good Morning! ☀️' : hour < 17 ? 'Good Afternoon! 🌤️' : 'Good Evening! 🌙';
+  ringGreeting.textContent = greet;
+
+  if (total === 0)          ringMessage.textContent = 'Add your medicines below 💊';
+  else if (taken === 0)     ringMessage.textContent = 'Time to take your first medicine!';
+  else if (taken === total) {
+    ringMessage.textContent = '🎉 All medicines taken today! Great job!';
+    launchConfetti();
+  } else {
+    ringMessage.textContent = `${total - taken} medicine${total - taken > 1 ? 's' : ''} remaining today`;
+  }
+}
+
+// ══════════════════════════════════════════════
+// CONFETTI 🎉
+// ══════════════════════════════════════════════
+
+let confettiFired = false;
+
+function launchConfetti() {
+  if (confettiFired) return;
+  confettiFired = true;
+
+  const canvas = document.getElementById('confetti-canvas');
+  canvas.style.display = 'block';
+  const ctx    = canvas.getContext('2d');
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const colors  = ['#2d9e5f','#3dbf75','#e8a020','#4a90d9','#e05252','#f0cc80','#a8dfc0'];
+  const pieces  = Array.from({length: 120}, () => ({
+    x:   Math.random() * canvas.width,
+    y:   Math.random() * canvas.height - canvas.height,
+    r:   Math.random() * 8 + 4,
+    d:   Math.random() * 3 + 2,
+    color: colors[Math.floor(Math.random() * colors.length)],
+    tilt: Math.random() * 10 - 5,
+    tiltAngle: 0,
+    tiltSpeed: Math.random() * 0.1 + 0.05
+  }));
+
+  let frame = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach(p => {
+      p.tiltAngle += p.tiltSpeed;
+      p.y += p.d;
+      p.tilt = Math.sin(p.tiltAngle) * 12;
+      ctx.beginPath();
+      ctx.lineWidth = p.r;
+      ctx.strokeStyle = p.color;
+      ctx.moveTo(p.x + p.tilt, p.y);
+      ctx.lineTo(p.x + p.tilt + p.r * 0.8, p.y + p.r * 0.8);
+      ctx.stroke();
+    });
+    frame++;
+    if (frame < 200) requestAnimationFrame(draw);
+    else {
+      canvas.style.display = 'none';
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+  draw();
+  toast('🎉 Amazing! All medicines taken today!');
+}
 
 // ── 📄 PRESCRIPTION SCANNER ──────────────────────────────
 

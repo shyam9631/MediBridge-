@@ -1,21 +1,11 @@
 [
     {
-        "name": "Metafornin",
-        "dosage": "500",
-        "timing": "Afternoon",
-        "total": 10,
-        "remaining": 8,
-        "taken_today": true,
-        "notes": "",
-        "photo": ""
-    },
-    {
         "name": "Dolo",
         "dosage": "300",
         "timing": "Afternoon",
         "total": 10,
         "remaining": 9,
-        "taken_today": true,
+        "taken_today": false,
         "notes": "",
         "reminder_time": "14:28",
         "photo": "/static/pill_photos/pill_1_Dolo.jpg"
@@ -25,7 +15,7 @@
         "dosage": "650",
         "timing": "Evening",
         "total": 10,
-        "remaining": 10,
+        "remaining": 9,
         "taken_today": false,
         "notes": "",
         "reminder_time": "17:56"
