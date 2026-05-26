@@ -552,6 +552,27 @@ body{padding-bottom:0}
       <div class="metric"><div class="metric-val" id="sm-left" style="color:var(--yellow)">0</div><div class="metric-label">⏳ Left</div></div>
     </div>
     <div style="padding:20px 16px 0">
+      <!-- 📄 AI Prescription Scanner -->
+      <div class="card" style="background:linear-gradient(135deg,#e8fff2,var(--white));border-left:4px solid var(--green);margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <span style="font-size:1.6rem">📄</span>
+          <div>
+            <p style="font-weight:800;color:var(--green-dark);font-size:.95em;margin:0">AI Prescription Scanner</p>
+            <p style="color:var(--muted);font-size:.78em;font-weight:600;margin:0">Upload prescription → AI adds medicines automatically!</p>
+          </div>
+        </div>
+        <div class="scan-drop" onclick="document.getElementById('rx-scan-input').click()">
+          <span class="icon">📸</span>
+          <p>Tap to take photo or upload</p>
+          <small>Works with handwritten &amp; printed prescriptions</small>
+        </div>
+        <input type="file" id="rx-scan-input" accept="image/*" capture="environment" style="display:none" onchange="handlePrescriptionScan(this)"/>
+        <img id="scan-preview" class="scan-preview" alt="Prescription preview"/>
+        <div id="scan-results"></div>
+        <button class="btn btn-primary" id="scan-btn" style="display:none" onclick="runPrescriptionScan()">🤖 Scan &amp; Add Medicines</button>
+        <div class="divider" style="margin:14px 0"></div>
+      </div>
+
       <p class="section-title">➕ Add Medicine</p>
       <div class="card">
         <div class="float-group">
@@ -678,19 +699,7 @@ body{padding-bottom:0}
       <div class="card" id="senior-profile"></div>
       <p class="section-title">📋 Prescription</p>
       <div id="rx-display"></div>
-      <div class="card" style="margin-bottom:14px">
-        <!-- Prescription Scanner -->
-        <p style="color:var(--green-dark);font-weight:800;font-size:.95em;margin-bottom:12px">📄 AI Prescription Scanner</p>
-        <div class="scan-drop" onclick="document.getElementById('rx-scan-input').click()">
-          <span class="icon">📸</span>
-          <p>Tap to scan prescription</p>
-          <small>AI reads and auto-adds medicines!</small>
-        </div>
-        <input type="file" id="rx-scan-input" accept="image/*" capture="environment" style="display:none" onchange="handlePrescriptionScan(this)"/>
-        <img id="scan-preview" class="scan-preview" alt="Prescription preview"/>
-        <div id="scan-results"></div>
-        <button class="btn btn-primary" id="scan-btn" style="display:none" onclick="runPrescriptionScan()">🤖 Scan & Add Medicines</button>
-      </div>
+
       <p class="section-title">📊 Send Alerts</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
         <button class="btn btn-outline" onclick="sendDailyReport()">📊 Daily Report</button>
