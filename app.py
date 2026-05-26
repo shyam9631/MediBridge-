@@ -75,13 +75,46 @@ def login():
     if users[username]['role'] != role:
         return jsonify({'success': False, 'error': f"This account is for {users[username]['role']}!"}), 403
 
-    session['user'] = {'username': username, 'name': users[username]['name'], 'role': role}
+    session['user'] = {
+        'username':      username,
+        'name':          users[username]['name'],
+        'role':          role,
+        'family_phones': users[username].get('family_phones', [])
+    }
     return jsonify({'success': True, 'user': session['user']})
 
 @app.route('/api/logout', methods=['POST'])
 def logout():
     session.pop('user', None)
     return jsonify({'success': True})
+
+@app.route('/api/family-phones', methods=['GET'])
+def get_family_phones_api():
+    username = session.get('user', {}).get('username')
+    if not username:
+        return jsonify({'success': False, 'error': 'Not logged in'}), 401
+    users = load_users()
+    phones = users.get(username, {}).get('family_phones', [])
+    return jsonify({'success': True, 'family_phones': phones})
+
+@app.route('/api/family-phones', methods=['POST'])
+def update_family_phones():
+    username = session.get('user', {}).get('username')
+    if not username:
+        return jsonify({'success': False, 'error': 'Not logged in'}), 401
+    data   = request.get_json()
+    phones = data.get('family_phones', [])
+    cleaned = []
+    for p in phones:
+        p = p.strip().replace(' ', '').replace('-', '')
+        if p and not p.startswith('+'):
+            p = '+91' + p
+        if p:
+            cleaned.append(p)
+    users = load_users()
+    users[username]['family_phones'] = cleaned
+    save_users(users)
+    return jsonify({'success': True, 'family_phones': cleaned})
 
 # ── Medicines API ──────────────────────────────────────────────────────────────
 
@@ -132,7 +165,8 @@ def take_medicine(index):
     whatsapp_status = 'not_sent'
     low_stock = False
     try:
-        send_medicine_taken(med['name'], med['dosage'], medicines[index]['remaining'])
+        username = session.get('user', {}).get('username')
+        send_medicine_taken(med['name'], med['dosage'], medicines[index]['remaining'], username)
         whatsapp_status = 'sent'
     except Exception as e:
         whatsapp_status = 'failed'
@@ -140,7 +174,7 @@ def take_medicine(index):
     if medicines[index]['remaining'] <= 5:
         low_stock = True
         try:
-            send_low_stock_alert(med['name'], medicines[index]['remaining'])
+            send_low_stock_alert(med['name'], medicines[index]['remaining'], session.get('user',{}).get('username'))
         except:
             pass
 
@@ -348,7 +382,7 @@ def chat():
 def daily_report():
     medicines = load_medicines()
     try:
-        send_daily_report(medicines)
+        send_daily_report(medicines, session.get('user',{}).get('username'))
         return jsonify({'success': True, 'message': 'Daily report sent!'})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
@@ -356,7 +390,7 @@ def daily_report():
 @app.route('/api/whatsapp/emergency', methods=['POST'])
 def emergency():
     try:
-        send_emergency()
+        send_emergency(session.get('user',{}).get('username'))
         return jsonify({'success': True, 'message': 'Emergency alert sent!'})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
@@ -370,7 +404,7 @@ def check_missed():
         if not med['taken_today']:
             if med['timing'] == 'Morning' and current_hour >= 11:
                 try:
-                    send_missed_medicine(med['name'], med['timing'])
+                    send_missed_medicine(med['name'], med['timing'], session.get('user',{}).get('username'))
                     save_history(med['name'], 'Missed')
                     missed_meds.append(med['name'])
                 except:
@@ -419,18 +453,14 @@ def delete_pill_photo(index):
 
 @app.route('/api/whatsapp/refill', methods=['POST'])
 def refill_request():
-    data = request.get_json()
+    data          = request.get_json()
     medicine_name = data.get('medicine_name', '')
     remaining     = data.get('remaining', 0)
+    username      = session.get('user', {}).get('username')
     try:
-        from twilio.rest import Client
-        client = Client(os.getenv("TWILIO_ACCOUNT_SID"), os.getenv("TWILIO_AUTH_TOKEN"))
-        client.messages.create(
-            from_="whatsapp:+14155238886",
-            body=f"💊 *MediBridge — Refill Request*\n\n🛒 Please buy medicine:\n• Medicine: {medicine_name}\n• Only {remaining} tablets left!\n\nPlease refill as soon as possible! 🏥\n\n_Sent by MediBridge_",
-            to=os.getenv("FAMILY_PHONE")
-        )
-        return jsonify({'success': True, 'message': 'Refill request sent!'})
+        from whatsapp import send_refill_request
+        send_refill_request(medicine_name, remaining, username)
+        return jsonify({'success': True, 'message': 'Refill request sent to all family members!'})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 

@@ -398,6 +398,41 @@ body{padding-bottom:0}
 [data-theme="dark"] .float-group select {
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237aaa8a' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
 }
+
+/* ── Family Phone Manager ───────────────────────────────── */
+.phone-list { margin-bottom:12px; }
+.phone-item {
+  display:flex;align-items:center;gap:10px;
+  background:var(--soft);border:1.5px solid var(--border);
+  border-radius:12px;padding:10px 14px;margin-bottom:8px;
+  animation:fadeUp .3s ease;
+}
+.phone-item .phone-flag { font-size:1.2rem; }
+.phone-item .phone-num  { flex:1;font-weight:700;font-size:.9em;color:var(--text); }
+.phone-item .phone-name { font-size:.78em;color:var(--muted);font-weight:600; }
+.phone-item .remove-btn {
+  background:none;border:none;color:var(--red);
+  cursor:pointer;font-size:1.1rem;padding:4px;
+  border-radius:8px;transition:all .2s;
+}
+.phone-item .remove-btn:hover { background:rgba(224,82,82,.1); }
+.phone-add-row {
+  display:flex;gap:8px;align-items:flex-end;margin-bottom:8px;
+}
+.phone-add-row input {
+  flex:1;padding:12px 14px;
+  background:var(--soft);border:2px solid var(--border);
+  border-radius:12px;color:var(--text);
+  font-family:var(--font);font-size:14px;outline:none;
+  transition:all .25s;
+}
+.phone-add-row input:focus { border-color:var(--green); }
+.phone-counter {
+  background:var(--green3);border:1px solid var(--mint);
+  border-radius:20px;padding:4px 12px;
+  font-size:.75em;font-weight:800;color:var(--green-dark);
+  display:inline-block;margin-bottom:8px;
+}
 </style>
 </head>
 <body>
@@ -506,6 +541,24 @@ body{padding-bottom:0}
         <label>🔒 Confirm</label>
       </div>
     </div>
+
+    <!-- Family Phone Numbers -->
+    <div style="background:var(--green3);border:1.5px solid var(--mint);border-radius:16px;padding:16px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <span style="font-size:1.3rem">👨‍👩‍👧</span>
+        <div>
+          <p style="font-weight:800;color:var(--green-dark);font-size:.9em;margin:0">Family WhatsApp Numbers</p>
+          <p style="color:var(--muted);font-size:.75em;font-weight:600;margin:0">Add numbers to receive medicine alerts</p>
+        </div>
+      </div>
+      <div class="phone-list" id="reg-phone-list"></div>
+      <div class="phone-add-row">
+        <input type="tel" id="reg-phone-input" placeholder="e.g. 9876543210 or +919876543210"/>
+        <button class="btn btn-green btn-sm" onclick="addRegPhone()" style="white-space:nowrap">+ Add</button>
+      </div>
+      <p style="color:var(--muted2);font-size:.75em;font-weight:600">📱 India numbers auto-get +91. Include country code for others.</p>
+    </div>
+
     <button class="btn btn-primary mb" id="register-btn" onclick="doRegister()">✨ Create My Account</button>
     <div id="register-error" style="color:var(--red);font-size:.88em;text-align:center;margin-bottom:12px;font-weight:700"></div>
   </div>
@@ -700,6 +753,28 @@ body{padding-bottom:0}
       <p class="section-title">📋 Prescription</p>
       <div id="rx-display"></div>
 
+      <!-- Family Phone Manager -->
+      <div class="card" style="margin-bottom:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:1.3rem">👨‍👩‍👧</span>
+            <div>
+              <p style="font-weight:800;color:var(--text);font-size:.95em;margin:0">Family Members</p>
+              <p style="color:var(--muted);font-size:.76em;font-weight:600;margin:0">WhatsApp alert recipients</p>
+            </div>
+          </div>
+          <span class="phone-counter" id="phone-counter">0 members</span>
+        </div>
+        <div class="phone-list" id="settings-phone-list">
+          <div style="text-align:center;padding:12px;color:var(--muted2);font-size:.85em">Loading...</div>
+        </div>
+        <div class="phone-add-row">
+          <input type="tel" id="settings-phone-input" placeholder="Add phone number..."/>
+          <button class="btn btn-green btn-sm" onclick="addSettingsPhone()">+ Add</button>
+        </div>
+        <button class="btn btn-primary" style="margin-top:10px" onclick="saveSettingsPhones()">💾 Save Family Numbers</button>
+      </div>
+
       <p class="section-title">📊 Send Alerts</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
         <button class="btn btn-outline" onclick="sendDailyReport()">📊 Daily Report</button>
@@ -856,9 +931,9 @@ async function doRegister(){
   const btn=document.getElementById('register-btn');
   btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Creating...';
   try{
-    const res=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,username,password,role:currentRole})});
+    const res=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,username,password,role:currentRole,family_phones:regPhones})});
     const data=await res.json();
-    if(data.success){toast('✅ Account created! Please login!');setAuthMode('login');}
+    if(data.success){toast('✅ Account created! Please login!');regPhones=[];renderRegPhones();setAuthMode('login');}
     else{errEl.textContent='❌ '+data.error;}
   }catch(e){errEl.textContent='❌ Server error.';}
   btn.disabled=false;btn.innerHTML='✨ Create My Account';
@@ -905,6 +980,7 @@ function loadSeniorDashboard(){
   navTo('home');
   confettiFired = false;
   document.getElementById('theme-toggle').classList.add('visible');
+  loadSettingsPhones();
 }
 
 // ── 🔔 REMINDER SYSTEM ───────────────────────────────────
@@ -1349,6 +1425,7 @@ function navTo(section) {
   if (section === 'settings') {
     loadHistory('senior');
     loadPrescription('senior');
+    loadSettingsPhones();
   }
 
   window.scrollTo(0, 0);
@@ -1783,6 +1860,119 @@ async function checkApptReminders(){
 }
 
 
+
+// ══════════════════════════════════════════════
+// 👨‍👩‍👧 FAMILY PHONE MANAGER
+// ══════════════════════════════════════════════
+
+let regPhones = [];      // phones during registration
+let settingsPhones = []; // phones in settings
+
+// ── Registration phones ───────────────────────
+
+function addRegPhone() {
+  const input = document.getElementById('reg-phone-input');
+  const num   = input.value.trim();
+  if (!num) { toast('❌ Enter a phone number!', 'error'); return; }
+  if (regPhones.includes(num)) { toast('❌ Already added!', 'error'); return; }
+  regPhones.push(num);
+  input.value = '';
+  renderRegPhones();
+  toast('✅ Phone number added!');
+}
+
+function removeRegPhone(index) {
+  regPhones.splice(index, 1);
+  renderRegPhones();
+}
+
+function renderRegPhones() {
+  const el = document.getElementById('reg-phone-list');
+  if (!regPhones.length) {
+    el.innerHTML = '<p style="color:var(--muted2);font-size:.8em;text-align:center;padding:8px 0;font-weight:600">No family numbers added yet</p>';
+    return;
+  }
+  el.innerHTML = regPhones.map((p, i) => `
+    <div class="phone-item">
+      <span class="phone-flag">📱</span>
+      <div style="flex:1">
+        <div class="phone-num">${p}</div>
+        <div class="phone-name">Family Member ${i + 1}</div>
+      </div>
+      <button class="remove-btn" onclick="removeRegPhone(${i})">✕</button>
+    </div>`).join('');
+}
+
+// ── Settings phones ───────────────────────────
+
+async function loadSettingsPhones() {
+  try {
+    const res  = await fetch('/api/family-phones');
+    const data = await res.json();
+    if (data.success) {
+      settingsPhones = data.family_phones || [];
+      renderSettingsPhones();
+    }
+  } catch(e) {}
+}
+
+function addSettingsPhone() {
+  const input = document.getElementById('settings-phone-input');
+  const num   = input.value.trim();
+  if (!num) { toast('❌ Enter a phone number!', 'error'); return; }
+  if (settingsPhones.includes(num)) { toast('❌ Already added!', 'error'); return; }
+  settingsPhones.push(num);
+  input.value = '';
+  renderSettingsPhones();
+}
+
+function removeSettingsPhone(index) {
+  settingsPhones.splice(index, 1);
+  renderSettingsPhones();
+}
+
+function renderSettingsPhones() {
+  const el      = document.getElementById('settings-phone-list');
+  const counter = document.getElementById('phone-counter');
+  if (counter) counter.textContent = settingsPhones.length + ' member' + (settingsPhones.length !== 1 ? 's' : '');
+
+  const names = ['Dad 👴', 'Mom 👩', 'Son 👦', 'Daughter 👧', 'Sibling 🧑', 'Member 👤'];
+
+  if (!settingsPhones.length) {
+    el.innerHTML = `
+      <div style="text-align:center;padding:16px;color:var(--muted2)">
+        <div style="font-size:2rem;margin-bottom:6px">👨‍👩‍👧</div>
+        <p style="font-size:.85em;font-weight:600">No family members added yet.<br>Add phone numbers to send alerts!</p>
+      </div>`;
+    return;
+  }
+  el.innerHTML = settingsPhones.map((p, i) => `
+    <div class="phone-item">
+      <span class="phone-flag">📱</span>
+      <div style="flex:1">
+        <div class="phone-num">${p}</div>
+        <div class="phone-name">${names[i] || 'Family Member ' + (i+1)}</div>
+      </div>
+      <button class="remove-btn" onclick="removeSettingsPhone(${i})">✕</button>
+    </div>`).join('');
+}
+
+async function saveSettingsPhones() {
+  try {
+    const res  = await fetch('/api/family-phones', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ family_phones: settingsPhones })
+    });
+    const data = await res.json();
+    if (data.success) {
+      toast('✅ Family numbers saved! All ' + data.family_phones.length + ' members will get alerts 📱');
+    } else {
+      toast('❌ ' + data.error, 'error');
+    }
+  } catch(e) { toast('❌ Server error', 'error'); }
+}
+
 // ══════════════════════════════════════════════
 // 🌙 DARK / LIGHT MODE
 // ══════════════════════════════════════════════
@@ -1878,6 +2068,7 @@ function initPullToRefresh() {
 loadLogoImage();
 initTheme();
 initPullToRefresh();
+renderRegPhones();
 setInterval(()=>{if(document.getElementById('page-family').classList.contains('active'))loadFamilyData();},30000);
 </script>
 </body>

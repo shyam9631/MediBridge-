@@ -13,5 +13,10 @@
         "password": "sru@123",
         "role": "senior",
         "name": "Sru"
+    },
+    "Giyu": {
+        "password": "shyam@123",
+        "role": "senior",
+        "name": "Shyam"
     }
 }

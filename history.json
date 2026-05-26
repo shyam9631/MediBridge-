@@ -1,1 +1,12 @@
-[]
+[
+    {
+        "medicine": "Dolo",
+        "action": "Added",
+        "time": "2026-05-26 12:16"
+    },
+    {
+        "medicine": "Dolo",
+        "action": "Taken",
+        "time": "2026-05-26 12:16"
+    }
+]

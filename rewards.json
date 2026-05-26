@@ -1,7 +1,7 @@
 {
-    "points": 40,
-    "streak": 2,
-    "last_date": "2026-05-24",
+    "points": 50,
+    "streak": 1,
+    "last_date": "2026-05-26",
     "badges": [
         {
             "id": "first_dose",
@@ -14,6 +14,12 @@
             "name": "Perfect Day!",
             "emoji": "\u2728",
             "date": "2026-05-23"
+        },
+        {
+            "id": "points_50",
+            "name": "50 Points Club!",
+            "emoji": "\ud83d\udc8e",
+            "date": "2026-05-26"
         }
     ],
     "history": [
@@ -31,6 +37,11 @@
             "reason": "Medicine taken on time",
             "points": 10,
             "date": "2026-05-24"
+        },
+        {
+            "reason": "Medicine taken on time",
+            "points": 10,
+            "date": "2026-05-26"
         }
     ]
 }
