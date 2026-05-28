@@ -1,0 +1,12 @@
+[
+    {
+        "name": "Dolo",
+        "dosage": "650",
+        "timing": "Morning",
+        "total": 15,
+        "remaining": 15,
+        "taken_today": false,
+        "notes": "",
+        "reminder_time": ""
+    }
+]
