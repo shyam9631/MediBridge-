@@ -1,5 +1,5 @@
 {
-    "points": 60,
+    "points": 70,
     "streak": 1,
     "last_date": "2026-05-28",
     "badges": [
@@ -42,6 +42,11 @@
             "reason": "Medicine taken on time",
             "points": 10,
             "date": "2026-05-26"
+        },
+        {
+            "reason": "Medicine taken on time",
+            "points": 10,
+            "date": "2026-05-28"
         },
         {
             "reason": "Medicine taken on time",
