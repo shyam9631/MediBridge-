@@ -1,1 +1,22 @@
 .env
+# Environment secrets
+.env
+
+# User data files — keep out of git
+users.json
+medicines.json
+history.json
+rewards.json
+appointments.json
+prescription.json
+last_reset.txt
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Uploads
+static/uploads/
+
+# OS files
+.DS_Store
