@@ -3,478 +3,611 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>MediBridge 💊</title>
+<title>MediBridge</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#f0faf4;--bg2:#e8f5ee;--white:#ffffff;--card:#ffffff;--border:#c8e6d4;
-  --green:#2d9e5f;--green2:#3dbf75;--green3:#e8f5ee;--green-dark:#1a7a45;
-  --mint:#a8dfc0;--soft:#f7fcf9;--red:#e05252;--yellow:#e8a020;--blue:#4a90d9;
-  --text:#1a2e22;--muted:#5a7a65;--muted2:#8aaa95;
-  --shadow:rgba(45,158,95,0.12);--shadow2:rgba(45,158,95,0.22);
-  --font:'Nunito',sans-serif;--mono:'DM Mono',monospace;
+  --bg:#e0e5ec;
+  --bg2:#d6dce8;
+  --white:#e0e5ec;
+  --card:#e0e5ec;
+  --border:#c8d0e0;
+  --blue:#1565C0;
+  --blue2:#1976D2;
+  --blue3:#dde4f0;
+  --blue-dark:#0D47A1;
+  --mint:#90CAF9;
+  --soft:#eef1f8;
+  --red:#d64545;
+  --yellow:#d4870a;
+  --green:#2d9e5f;
+  --text:#2d3748;
+  --muted:#5a7a9a;
+  --muted2:#8aa0b8;
+  --shadow-light:#ffffff;
+  --shadow-dark:rgba(163,177,198,0.7);
+  --shadow-blue:rgba(21,101,192,0.15);
+  --font:'Nunito',sans-serif;
+  --mono:'DM Mono',monospace;
+  /* Neumorphic shadows */
+  --neu-raised: 6px 6px 14px var(--shadow-dark), -6px -6px 14px var(--shadow-light);
+  --neu-inset: inset 4px 4px 10px var(--shadow-dark), inset -4px -4px 10px var(--shadow-light);
+  --neu-raised-sm: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+  --neu-pressed: inset 2px 2px 6px var(--shadow-dark), inset -2px -2px 6px var(--shadow-light);
 }
+
 html{scroll-behavior:smooth}
 body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;max-width:460px;margin:0 auto}
-@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes ringBell{0%,100%{transform:rotate(0)}15%{transform:rotate(20deg)}30%{transform:rotate(-20deg)}45%{transform:rotate(15deg)}60%{transform:rotate(-10deg)}75%{transform:rotate(5deg)}}
+@keyframes ringBell{0%,100%{transform:rotate(0)}15%{transform:rotate(18deg)}30%{transform:rotate(-18deg)}45%{transform:rotate(12deg)}60%{transform:rotate(-8deg)}75%{transform:rotate(4deg)}}
 @keyframes popIn{from{opacity:0;transform:translate(-50%,-50%) scale(.7)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(45,158,95,.4)}70%{box-shadow:0 0 0 12px rgba(45,158,95,0)}}
+@keyframes pulse{0%,100%{box-shadow:var(--neu-raised),0 0 0 0 rgba(21,101,192,.3)}70%{box-shadow:var(--neu-raised),0 0 0 10px rgba(21,101,192,0)}}
+
 .fade-up{animation:fadeUp .45s ease}
 .page{display:none;padding-bottom:40px}
 .page.active{display:block}
-.btn{width:100%;padding:15px;border:none;border-radius:16px;font-family:var(--font);font-size:16px;font-weight:700;cursor:pointer;transition:all .25s;letter-spacing:.3px}
-.btn-primary{background:linear-gradient(135deg,var(--green),var(--green2));color:#fff;box-shadow:0 4px 18px var(--shadow2)}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px var(--shadow2)}
-.btn-primary:active{transform:scale(.98)}
-.btn-outline{background:var(--white);border:2px solid var(--border);color:var(--muted);border-radius:16px}
-.btn-outline:hover{border-color:var(--green);color:var(--green);background:var(--green3)}
-.btn-danger{background:linear-gradient(135deg,#e05252,#c23b3b);color:#fff;box-shadow:0 4px 15px rgba(224,82,82,.3)}
-.btn-green{background:linear-gradient(135deg,var(--green),var(--green2));color:#fff}
-.btn-yellow{background:linear-gradient(135deg,#e8a020,#f0b840);color:#fff;box-shadow:0 4px 15px rgba(232,160,32,.3)}
-.btn-sm{padding:10px 18px;width:auto;font-size:14px;border-radius:12px}
+
+/* ── Buttons ── */
+.btn{
+  width:100%;padding:14px 20px;border:none;
+  border-radius:14px;font-family:var(--font);
+  font-size:15px;font-weight:700;cursor:pointer;
+  transition:all .2s;letter-spacing:.2px;
+  background:var(--bg);
+}
+.btn-primary{
+  background:linear-gradient(145deg,var(--blue2),var(--blue));
+  color:#fff;
+  box-shadow:4px 4px 10px rgba(13,71,161,.35),-2px -2px 6px rgba(255,255,255,.15);
+}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:6px 6px 14px rgba(13,71,161,.4),-2px -2px 8px rgba(255,255,255,.2)}
+.btn-primary:active{transform:scale(.98);box-shadow:2px 2px 6px rgba(13,71,161,.3)}
+.btn-outline{
+  background:var(--bg);color:var(--muted);
+  box-shadow:var(--neu-raised-sm);
+  border:none;
+}
+.btn-outline:hover{color:var(--blue);box-shadow:var(--neu-raised)}
+.btn-outline:active{box-shadow:var(--neu-pressed);color:var(--blue)}
+.btn-danger{background:linear-gradient(145deg,#e05252,#c23b3b);color:#fff;box-shadow:4px 4px 10px rgba(194,59,59,.3)}
+.btn-green{background:linear-gradient(145deg,#3dbf75,#2d9e5f);color:#fff;box-shadow:4px 4px 10px rgba(45,158,95,.3)}
+.btn-yellow{background:linear-gradient(145deg,#f0b840,#e8a020);color:#fff;box-shadow:4px 4px 10px rgba(232,160,32,.3)}
+.btn-sm{padding:9px 16px;width:auto;font-size:13px;border-radius:10px}
 .btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+
+/* ── Inputs ── */
 .input-group{margin-bottom:16px}
-.input-group label{display:block;font-size:13px;color:var(--muted);margin-bottom:7px;font-weight:700;letter-spacing:.3px}
-.input-group input,.input-group select,.input-group textarea{width:100%;padding:14px 16px;background:var(--soft);border:2px solid var(--border);border-radius:14px;color:var(--text);font-family:var(--font);font-size:15px;outline:none;transition:all .25s}
-.input-group input:focus,.input-group select:focus,.input-group textarea:focus{border-color:var(--green);box-shadow:0 0 0 4px rgba(45,158,95,.1);background:#fff}
-.input-group select option{background:#fff}
+.input-group label{display:block;font-size:12px;color:var(--muted);margin-bottom:7px;font-weight:800;letter-spacing:.5px;text-transform:uppercase}
+.input-group input,.input-group select,.input-group textarea{
+  width:100%;padding:13px 16px;
+  background:var(--bg);border:none;border-radius:12px;
+  color:var(--text);font-family:var(--font);font-size:15px;
+  outline:none;transition:all .25s;
+  box-shadow:var(--neu-inset);
+}
+.input-group input:focus,.input-group select:focus,.input-group textarea:focus{
+  box-shadow:var(--neu-inset),0 0 0 3px rgba(21,101,192,.15);
+}
 .input-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.card{background:var(--white);border:1.5px solid var(--border);border-radius:20px;padding:20px;margin-bottom:14px;box-shadow:0 2px 12px var(--shadow)}
-.hero{background:linear-gradient(160deg,var(--green) 0%,var(--green2) 100%);padding:36px 24px 28px;text-align:center;border-radius:0 0 36px 36px;box-shadow:0 6px 24px var(--shadow2);margin-bottom:24px}
-.hero-logo{width:90px;height:90px;background:rgba(255,255,255,.2);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:2.8rem;margin-bottom:12px;animation:float 3s ease infinite;border:3px solid rgba(255,255,255,.4)}
-.hero-img{width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,.5);animation:float 3s ease infinite;margin-bottom:12px}
-.hero h1{color:#fff;font-size:2em;font-weight:900;margin-bottom:4px}
-.hero p{color:rgba(255,255,255,.85);font-size:.9em}
-.topbar{background:linear-gradient(135deg,var(--green),var(--green2));padding:16px 20px;border-radius:0 0 28px 28px;margin-bottom:20px;box-shadow:0 6px 20px var(--shadow2);display:flex;justify-content:space-between;align-items:center}
-.topbar-name{color:#fff;font-weight:800;font-size:1.15em}
-.topbar-sub{color:rgba(255,255,255,.8);font-size:.75em;margin-top:2px}
-.topbar-badge{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);border-radius:20px;padding:5px 14px;color:#fff;font-size:.78em;font-weight:700}
-.tabs{display:flex;background:var(--white);border:1.5px solid var(--border);border-radius:18px;padding:5px;margin:0 16px 20px;gap:4px;overflow-x:auto;box-shadow:0 2px 10px var(--shadow)}
-.tab-btn{flex:1;padding:10px 8px;border:none;border-radius:13px;background:transparent;color:var(--muted2);font-family:var(--font);font-weight:700;font-size:12px;cursor:pointer;transition:all .25s;white-space:nowrap}
-.tab-btn.active{background:linear-gradient(135deg,var(--green),var(--green2));color:#fff;box-shadow:0 3px 12px var(--shadow2)}
+
+/* ── Cards ── */
+.card{
+  background:var(--bg);border-radius:20px;
+  padding:20px;margin-bottom:14px;
+  box-shadow:var(--neu-raised);
+}
+
+/* ── Hero / Topbar ── */
+.hero{
+  background:linear-gradient(145deg,var(--blue),var(--blue2));
+  padding:36px 24px 32px;text-align:center;
+  border-radius:0 0 32px 32px;
+  box-shadow:0 8px 24px rgba(13,71,161,.3);
+  margin-bottom:28px;
+}
+.hero-logo{
+  width:88px;height:88px;
+  background:rgba(255,255,255,.15);
+  border-radius:24px;display:inline-flex;
+  align-items:center;justify-content:center;
+  font-size:2.6rem;margin-bottom:14px;
+  animation:float 3s ease infinite;
+  box-shadow:6px 6px 16px rgba(0,0,0,.2),-4px -4px 10px rgba(255,255,255,.1);
+}
+.hero-img{
+  width:88px;height:88px;border-radius:24px;
+  object-fit:cover;
+  box-shadow:6px 6px 16px rgba(0,0,0,.25);
+  animation:float 3s ease infinite;margin-bottom:14px;
+}
+.hero h1{color:#fff;font-size:1.9em;font-weight:900;letter-spacing:-.5px;margin-bottom:4px}
+.hero p{color:rgba(255,255,255,.8);font-size:.88em;font-weight:600}
+
+.topbar{
+  background:linear-gradient(145deg,var(--blue),var(--blue2));
+  padding:18px 20px;border-radius:0 0 24px 24px;
+  margin-bottom:24px;
+  box-shadow:0 6px 20px rgba(13,71,161,.3);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.topbar-name{color:#fff;font-weight:800;font-size:1.1em}
+.topbar-sub{color:rgba(255,255,255,.75);font-size:.73em;margin-top:2px;font-weight:600}
+.topbar-badge{
+  background:rgba(255,255,255,.15);
+  border:1px solid rgba(255,255,255,.25);
+  border-radius:20px;padding:5px 14px;
+  color:#fff;font-size:.76em;font-weight:700;
+}
+
+/* ── Tabs ── */
+.tabs{
+  display:flex;background:var(--bg);
+  border-radius:16px;padding:5px;
+  margin:0 16px 20px;gap:4px;
+  overflow-x:auto;box-shadow:var(--neu-inset);
+}
+.tab-btn{
+  flex:1;padding:9px 8px;border:none;
+  border-radius:11px;background:transparent;
+  color:var(--muted2);font-family:var(--font);
+  font-weight:700;font-size:12px;cursor:pointer;
+  transition:all .25s;white-space:nowrap;
+}
+.tab-btn.active{
+  background:linear-gradient(145deg,var(--blue2),var(--blue));
+  color:#fff;
+  box-shadow:3px 3px 8px rgba(13,71,161,.3),-1px -1px 4px rgba(255,255,255,.15);
+}
 .tab-content{display:none;padding:0 16px}
 .tab-content.active{display:block}
-.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 16px;margin-bottom:20px}
-.metric{background:var(--white);border:1.5px solid var(--border);border-radius:18px;padding:16px 10px;text-align:center;box-shadow:0 2px 10px var(--shadow);transition:transform .2s}
-.metric:hover{transform:translateY(-2px)}
-.metric-val{font-family:var(--mono);font-size:1.8em;font-weight:700;color:var(--green)}
-.metric-label{font-size:.72em;color:var(--muted);margin-top:5px;font-weight:700}
-.med-card{background:var(--white);border-radius:20px;padding:18px;border:1.5px solid var(--border);border-left:5px solid var(--green);margin-bottom:14px;box-shadow:0 3px 14px var(--shadow);animation:fadeUp .4s ease;transition:transform .2s}
-.med-card:hover{transform:translateY(-2px)}
-.med-card.taken{border-left-color:var(--green);background:linear-gradient(135deg,#f0fff6,#fff)}
+
+/* ── Metrics ── */
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:0 16px;margin-bottom:20px}
+.metric{
+  background:var(--bg);border-radius:16px;
+  padding:16px 10px;text-align:center;
+  box-shadow:var(--neu-raised-sm);
+  transition:all .2s;
+}
+.metric:hover{box-shadow:var(--neu-raised)}
+.metric-val{font-family:var(--mono);font-size:1.8em;font-weight:700;color:var(--blue)}
+.metric-label{font-size:.7em;color:var(--muted);margin-top:5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+
+/* ── Med Cards ── */
+.med-card{
+  background:var(--bg);border-radius:18px;
+  padding:18px;margin-bottom:14px;
+  box-shadow:var(--neu-raised);
+  border-left:4px solid var(--blue);
+  animation:fadeUp .4s ease;transition:all .2s;
+}
+.med-card:hover{box-shadow:8px 8px 18px var(--shadow-dark),-8px -8px 18px var(--shadow-light)}
+.med-card.taken{border-left-color:var(--green)}
 .med-card.low{border-left-color:var(--yellow)}
 .med-name{color:var(--text);font-weight:800;font-size:1.05em;margin-bottom:3px}
 .med-meta{color:var(--muted);font-size:.83em;margin-bottom:3px;font-weight:600}
-.med-remaining{color:var(--red);font-size:.8em;font-weight:700;margin-bottom:3px}
+.med-remaining{color:var(--muted);font-size:.8em;font-weight:700;margin-bottom:3px}
 .med-notes{color:var(--muted2);font-size:.76em;margin-bottom:3px}
-.med-reminder{color:var(--green-dark);font-size:.78em;font-weight:700;background:var(--green3);border:1px solid var(--mint);border-radius:20px;padding:3px 10px;display:inline-block;margin-bottom:6px}
-.med-status{padding:7px 14px;border-radius:20px;font-size:.76em;font-weight:800;white-space:nowrap}
-.med-status.taken{background:#e8f8ef;border:1.5px solid #a8dfc0;color:var(--green-dark)}
-.med-status.pending{background:#fff8e8;border:1.5px solid #f0cc80;color:#a06010}
+.med-reminder{
+  color:var(--blue-dark);font-size:.76em;font-weight:700;
+  background:var(--blue3);border-radius:20px;
+  padding:3px 10px;display:inline-block;margin-bottom:6px;
+  box-shadow:2px 2px 5px var(--shadow-dark),-2px -2px 5px var(--shadow-light);
+}
+.med-status{padding:6px 14px;border-radius:20px;font-size:.75em;font-weight:800;white-space:nowrap}
+.med-status.taken{background:var(--bg);box-shadow:var(--neu-inset);color:var(--green)}
+.med-status.pending{background:var(--bg);box-shadow:var(--neu-inset);color:var(--yellow)}
 .med-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
 .med-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
-.pill-photo{width:80px;height:80px;border-radius:14px;object-fit:cover;border:2px solid var(--border);box-shadow:0 2px 8px var(--shadow);cursor:pointer;transition:transform .2s}
-.pill-photo:hover{transform:scale(1.05)}
-.pill-photo-placeholder{width:80px;height:80px;border-radius:14px;border:2px dashed var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;background:var(--soft);transition:all .2s;font-size:.65em;color:var(--muted2);font-weight:700;gap:4px}
-.pill-photo-placeholder:hover{border-color:var(--green);background:var(--green3);color:var(--green)}
-.pill-photo-placeholder .icon{font-size:1.8rem}
-#photo-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:10000;display:none;align-items:center;justify-content:center}
-#photo-overlay.show{display:flex}
-#photo-viewer{max-width:90vw;max-height:80vh;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
-#photo-close{position:fixed;top:20px;right:20px;background:#fff;border:none;border-radius:50%;width:44px;height:44px;font-size:1.4rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.3)}
 
-/* ── Rewards ────────────────────────────────────────────── */
-.reward-summary{background:linear-gradient(135deg,var(--green),var(--green2));border-radius:20px;padding:22px;color:#fff;text-align:center;margin-bottom:16px;box-shadow:0 6px 20px var(--shadow2)}
+/* ── Pill Photos ── */
+.pill-photo{
+  width:76px;height:76px;border-radius:14px;
+  object-fit:cover;cursor:pointer;
+  box-shadow:var(--neu-raised-sm);transition:all .2s;
+}
+.pill-photo:hover{box-shadow:var(--neu-raised)}
+.pill-photo-placeholder{
+  width:76px;height:76px;border-radius:14px;
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;cursor:pointer;background:var(--bg);
+  box-shadow:var(--neu-inset);transition:all .2s;
+  font-size:.62em;color:var(--muted2);font-weight:700;gap:4px;
+}
+.pill-photo-placeholder:hover{color:var(--blue)}
+.pill-photo-placeholder .icon{font-size:1.6rem}
+
+/* ── Overlays ── */
+#photo-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:10000;display:none;align-items:center;justify-content:center}
+#photo-overlay.show{display:flex}
+#photo-viewer{max-width:90vw;max-height:80vh;border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+#photo-close{position:fixed;top:20px;right:20px;background:var(--bg);border:none;border-radius:50%;width:44px;height:44px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--neu-raised-sm);color:var(--text)}
+
+/* ── Rewards ── */
+.reward-summary{
+  background:linear-gradient(145deg,var(--blue),var(--blue2));
+  border-radius:20px;padding:24px;color:#fff;
+  text-align:center;margin-bottom:16px;
+  box-shadow:0 8px 24px rgba(13,71,161,.3);
+}
 .reward-points{font-family:var(--mono);font-size:3em;font-weight:900;line-height:1}
-.reward-streak{font-size:.9em;opacity:.9;margin-top:6px}
-.badge-card{background:var(--white);border:1.5px solid var(--border);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:14px;margin-bottom:10px;box-shadow:0 2px 8px var(--shadow);animation:fadeUp .3s ease}
+.reward-streak{font-size:.88em;opacity:.85;margin-top:6px;font-weight:600}
+.badge-card{
+  background:var(--bg);border-radius:16px;
+  padding:14px 16px;display:flex;align-items:center;
+  gap:14px;margin-bottom:10px;
+  box-shadow:var(--neu-raised-sm);
+  animation:fadeUp .3s ease;
+}
 .badge-card.locked{opacity:.45;filter:grayscale(.8)}
-.badge-emoji{font-size:2.2rem;flex-shrink:0}
+.badge-emoji{font-size:2rem;flex-shrink:0}
 .badge-name{font-weight:800;font-size:.95em;color:var(--text)}
-.badge-desc{font-size:.78em;color:var(--muted);margin-top:2px}
-.badge-date{font-size:.72em;color:var(--green);font-weight:700;margin-top:3px}
-.badge-pts{background:var(--green3);border:1px solid var(--mint);border-radius:20px;padding:3px 10px;font-size:.72em;font-weight:800;color:var(--green-dark);margin-left:auto;white-space:nowrap;flex-shrink:0}
-/* badge popup */
-@keyframes badgePop{0%{opacity:0;transform:translate(-50%,-50%) scale(.5) rotate(-10deg)}70%{transform:translate(-50%,-50%) scale(1.1) rotate(3deg)}100%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(0)}}
-#badge-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--white);border-radius:28px;padding:36px 28px;text-align:center;z-index:10002;width:300px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.3);display:none;border:3px solid var(--green)}
+.badge-desc{font-size:.77em;color:var(--muted);margin-top:2px}
+.badge-date{font-size:.72em;color:var(--blue);font-weight:700;margin-top:3px}
+.badge-pts{
+  background:var(--bg);border-radius:20px;
+  padding:3px 10px;font-size:.72em;font-weight:800;
+  color:var(--blue);margin-left:auto;white-space:nowrap;
+  flex-shrink:0;box-shadow:var(--neu-inset);
+}
+
+/* Badge popup */
+@keyframes badgePop{0%{opacity:0;transform:translate(-50%,-50%) scale(.5) rotate(-10deg)}70%{transform:translate(-50%,-50%) scale(1.1) rotate(2deg)}100%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(0)}}
+#badge-popup{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  background:var(--bg);border-radius:24px;padding:36px 28px;
+  text-align:center;z-index:10002;width:300px;max-width:90vw;
+  box-shadow:12px 12px 28px var(--shadow-dark),-12px -12px 28px var(--shadow-light);
+  display:none;
+}
 #badge-popup.show{display:block;animation:badgePop .5s cubic-bezier(.34,1.56,.64,1)}
-#badge-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:10001;display:none}
+#badge-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:10001;display:none}
 #badge-overlay.show{display:block}
-/* ── Appointments ───────────────────────────────────────── */
-.appt-card{background:var(--white);border:1.5px solid var(--border);border-radius:18px;padding:16px 18px;margin-bottom:12px;border-left:5px solid var(--blue);box-shadow:0 2px 10px var(--shadow);animation:fadeUp .3s ease}
-.appt-card.today{border-left-color:var(--red);background:linear-gradient(135deg,#fff8f8,#fff)}
+
+/* ── Appointments ── */
+.appt-card{
+  background:var(--bg);border-radius:16px;
+  padding:16px 18px;margin-bottom:12px;
+  border-left:4px solid var(--blue);
+  box-shadow:var(--neu-raised-sm);animation:fadeUp .3s ease;
+}
+.appt-card.today{border-left-color:var(--red)}
 .appt-card.past{border-left-color:var(--muted2);opacity:.6}
 .appt-name{font-weight:800;font-size:1em;color:var(--text);margin-bottom:3px}
 .appt-meta{font-size:.82em;color:var(--muted);font-weight:600;margin-bottom:3px}
 .appt-badge{display:inline-block;padding:3px 12px;border-radius:20px;font-size:.75em;font-weight:800}
-.appt-badge.upcoming{background:#e8f0ff;border:1px solid #b0c8ff;color:#2a5fd4}
-.appt-badge.today{background:#ffe8e8;border:1px solid #ffb0b0;color:var(--red)}
-.appt-badge.past{background:var(--bg2);border:1px solid var(--border);color:var(--muted2)}
+.appt-badge.upcoming{background:var(--bg);box-shadow:var(--neu-inset);color:var(--blue)}
+.appt-badge.today{background:var(--bg);box-shadow:var(--neu-inset);color:var(--red)}
+.appt-badge.past{background:var(--bg);box-shadow:var(--neu-inset);color:var(--muted2)}
 
-/* ══════════════════════════════════════════════
-   BOTTOM NAVIGATION BAR
-══════════════════════════════════════════════ */
+/* ── Bottom Nav ── */
 .bottom-nav{
   position:fixed;bottom:0;left:50%;transform:translateX(-50%);
   width:100%;max-width:460px;
-  background:var(--white);
-  border-top:1.5px solid var(--border);
-  display:none;
-  grid-template-columns:repeat(5,1fr);
-  z-index:500;
-  padding:8px 0 max(8px, env(safe-area-inset-bottom));
-  box-shadow:0 -4px 20px rgba(45,158,95,.1);
+  background:var(--bg);
+  display:none;grid-template-columns:repeat(5,1fr);
+  z-index:500;padding:10px 0 max(10px,env(safe-area-inset-bottom));
+  box-shadow:0 -4px 20px rgba(163,177,198,.4),-0px -1px 0px rgba(255,255,255,.8);
+  border-top:1px solid rgba(255,255,255,.6);
 }
 .bottom-nav.visible{display:grid}
 .nav-item{
   display:flex;flex-direction:column;align-items:center;
-  gap:3px;padding:4px 0;cursor:pointer;
+  gap:4px;padding:4px 0;cursor:pointer;
   transition:all .2s;border:none;background:transparent;
   font-family:var(--font);
 }
-.nav-item .nav-icon{font-size:1.5rem;transition:transform .2s}
-.nav-item .nav-label{font-size:.65em;font-weight:700;color:var(--muted2);transition:color .2s}
-.nav-item.active .nav-label{color:var(--green)}
-.nav-item.active .nav-icon{transform:scale(1.15)}
+.nav-icon{font-size:1.3rem;transition:all .2s;opacity:.5}
+.nav-label{font-size:.62em;font-weight:800;color:var(--muted2);transition:color .2s;text-transform:uppercase;letter-spacing:.4px}
+.nav-item.active .nav-label{color:var(--blue)}
+.nav-item.active .nav-icon{opacity:1;transform:scale(1.1)}
 .nav-item:active .nav-icon{transform:scale(.9)}
 
-/* ══════════════════════════════════════════════
-   PROGRESS RING
-══════════════════════════════════════════════ */
-.progress-ring-wrap{
-  display:flex;flex-direction:column;align-items:center;
-  justify-content:center;padding:20px 16px 10px;
-}
-.progress-ring-svg{filter:drop-shadow(0 4px 12px rgba(45,158,95,.25));overflow:visible}
-.progress-ring-bg{fill:none;stroke:#e8f5ee;stroke-width:12}
-.progress-ring-fill{
-  fill:none;stroke-width:12;stroke-linecap:round;
-  transform:rotate(-90deg);transform-origin:50% 50%;
-  transition:stroke-dashoffset 1s cubic-bezier(.4,0,.2,1),stroke .5s;
-}
+/* ── Progress Ring ── */
+.progress-ring-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 16px 10px}
+.progress-ring-svg{overflow:visible}
+.progress-ring-bg{fill:none;stroke:var(--bg2);stroke-width:12;filter:drop-shadow(2px 2px 4px rgba(163,177,198,.6)) drop-shadow(-2px -2px 4px rgba(255,255,255,.8))}
+.progress-ring-fill{fill:none;stroke-width:12;stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset 1s cubic-bezier(.4,0,.2,1),stroke .5s}
 .progress-ring-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none}
-.progress-ring-num{font-family:var(--mono);font-size:2.2rem;font-weight:900;line-height:1;color:var(--green-dark)}
+.progress-ring-num{font-family:var(--mono);font-size:2.2rem;font-weight:900;line-height:1;color:var(--blue-dark)}
 .progress-ring-sub{font-size:.72em;color:var(--muted);font-weight:700;margin-top:2px}
 .progress-ring-container{position:relative;display:inline-flex;align-items:center;justify-content:center}
-.progress-greeting{font-size:1.1em;font-weight:800;color:var(--text);margin-top:12px;text-align:center}
+.progress-greeting{font-size:1.05em;font-weight:800;color:var(--text);margin-top:14px;text-align:center}
 .progress-sub{font-size:.82em;color:var(--muted);font-weight:600;margin-top:4px;text-align:center}
-.progress-stats{
-  display:grid;grid-template-columns:repeat(3,1fr);
-  gap:10px;width:100%;margin-top:16px;
-}
+.progress-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;margin-top:16px}
 
-/* Page padding for bottom nav */
 .page-with-nav{padding-bottom:100px!important}
-body{padding-bottom:0}
-
-/* ── Inner pages for bottom nav sections ────── */
 .inner-section{display:none;padding:0 16px 16px}
 .inner-section.active{display:block}
 
-/* ── FAB ────────────────────────────────────── */
+/* ── FAB ── */
 .fab{
   position:fixed;bottom:80px;right:calc(50% - 210px);
-  width:56px;height:56px;
-  background:linear-gradient(135deg,var(--green),var(--green2));
-  border:none;border-radius:50%;
-  color:#fff;font-size:1.6rem;
-  box-shadow:0 6px 20px var(--shadow2);
-  cursor:pointer;z-index:499;
-  display:none;align-items:center;justify-content:center;
+  width:54px;height:54px;
+  background:linear-gradient(145deg,var(--blue2),var(--blue));
+  border:none;border-radius:50%;color:#fff;font-size:1.5rem;
+  box-shadow:6px 6px 14px rgba(13,71,161,.4),-2px -2px 6px rgba(255,255,255,.15);
+  cursor:pointer;z-index:499;display:none;align-items:center;justify-content:center;
   transition:all .25s;
-  animation:fabPop .4s cubic-bezier(.34,1.56,.64,1);
 }
 .fab.visible{display:flex}
-.fab:hover{transform:scale(1.1) rotate(90deg)}
+.fab:hover{transform:scale(1.08) rotate(90deg)}
 .fab:active{transform:scale(.95)}
-@keyframes fabPop{from{opacity:0;transform:scale(0)}to{opacity:1;transform:scale(1)}}
 
-/* Confetti canvas */
 #confetti-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998;display:none}
 
-
-/* ── Prescription Scanner ───────────────────────────────── */
-.scan-drop{border:3px dashed var(--green);border-radius:20px;padding:32px 20px;text-align:center;cursor:pointer;background:var(--green3);transition:all .25s;margin-bottom:16px}
-.scan-drop:hover{background:#d0f0e0;border-color:var(--green-dark)}
-.scan-drop .icon{font-size:3rem;margin-bottom:10px;display:block}
-.scan-drop p{color:var(--green-dark);font-weight:700;font-size:.95em}
-.scan-drop small{color:var(--muted);font-size:.8em}
-.scan-preview{width:100%;border-radius:16px;margin-bottom:14px;border:2px solid var(--border);display:none}
-.scan-result{background:linear-gradient(135deg,#e8f8ef,#fff);border:1.5px solid var(--mint);border-radius:16px;padding:16px;margin-bottom:10px;animation:fadeUp .3s ease}
-.scan-result h4{color:var(--green-dark);font-weight:800;margin-bottom:6px}
+/* ── Scanner ── */
+.scan-drop{
+  border:2px dashed var(--muted2);border-radius:18px;
+  padding:28px 20px;text-align:center;cursor:pointer;
+  background:var(--bg);box-shadow:var(--neu-inset);
+  transition:all .25s;margin-bottom:16px;
+}
+.scan-drop:hover{border-color:var(--blue);color:var(--blue)}
+.scan-drop .icon{font-size:2.6rem;margin-bottom:10px;display:block}
+.scan-drop p{color:var(--muted);font-weight:700;font-size:.93em}
+.scan-drop small{color:var(--muted2);font-size:.78em}
+.scan-preview{width:100%;border-radius:14px;margin-bottom:14px;box-shadow:var(--neu-raised);display:none}
+.scan-result{
+  background:var(--bg);border-radius:14px;
+  padding:16px;margin-bottom:10px;
+  box-shadow:var(--neu-raised-sm);animation:fadeUp .3s ease;
+  border-left:4px solid var(--blue);
+}
+.scan-result h4{color:var(--blue-dark);font-weight:800;margin-bottom:6px}
 .scan-result p{color:var(--muted);font-size:.85em;font-weight:600}
-/* ── Drug Interactions ──────────────────────────────────── */
-.interaction-card{border-radius:16px;padding:16px;margin-bottom:12px;animation:fadeUp .3s ease}
-.interaction-high{background:#fff0f0;border:2px solid #ffb0b0}
-.interaction-medium{background:#fff8e8;border:2px solid #f0cc80}
-.interaction-low{background:#f0fff4;border:2px solid var(--mint)}
-.interaction-icon{font-size:1.5rem;margin-bottom:6px;display:block}
+
+/* ── Drug Interactions ── */
+.interaction-card{border-radius:14px;padding:16px;margin-bottom:12px;animation:fadeUp .3s ease;box-shadow:var(--neu-raised-sm)}
+.interaction-high{background:var(--bg);border-left:4px solid var(--red)}
+.interaction-medium{background:var(--bg);border-left:4px solid var(--yellow)}
+.interaction-low{background:var(--bg);border-left:4px solid var(--green)}
+.interaction-icon{font-size:1.4rem;margin-bottom:6px;display:block}
 .interaction-meds{font-weight:800;font-size:.95em;color:var(--text);margin-bottom:4px}
 .interaction-warning{font-size:.85em;color:var(--muted);margin-bottom:4px;font-weight:600}
 .interaction-advice{font-size:.82em;font-weight:700}
-.interaction-high .interaction-advice{color:#c23b3b}
-.interaction-medium .interaction-advice{color:#a06010}
-.interaction-low .interaction-advice{color:var(--green-dark)}
-.severity-badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.72em;font-weight:800;margin-bottom:6px}
-.severity-high{background:#ffe0e0;color:#c23b3b}
-.severity-medium{background:#fff0d0;color:#a06010}
-.severity-low{background:#e0f8ec;color:var(--green-dark)}
+.interaction-high .interaction-advice{color:var(--red)}
+.interaction-medium .interaction-advice{color:var(--yellow)}
+.interaction-low .interaction-advice{color:var(--green)}
+.severity-badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.72em;font-weight:800;margin-bottom:6px;background:var(--bg);box-shadow:var(--neu-inset)}
+.severity-high{color:var(--red)}
+.severity-medium{color:var(--yellow)}
+.severity-low{color:var(--green)}
 
-
-.role-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 16px;margin-bottom:20px}
-.role-card{background:var(--white);border:2px solid var(--border);border-radius:22px;padding:22px 16px;text-align:center;box-shadow:0 3px 14px var(--shadow);transition:all .25s;cursor:pointer}
-.role-card:hover{border-color:var(--green);transform:translateY(-3px);box-shadow:0 8px 24px var(--shadow2)}
-.role-card .emoji{font-size:2.8em;display:block;margin-bottom:10px;animation:float 3s ease infinite}
+/* ── Role Cards ── */
+.role-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:0 16px;margin-bottom:24px}
+.role-card{
+  background:var(--bg);border-radius:22px;
+  padding:24px 16px;text-align:center;
+  box-shadow:var(--neu-raised);transition:all .25s;cursor:pointer;
+}
+.role-card:hover{box-shadow:8px 8px 20px var(--shadow-dark),-8px -8px 20px var(--shadow-light);transform:translateY(-2px)}
+.role-card:active{box-shadow:var(--neu-pressed)}
+.role-card .emoji{font-size:2.6em;display:block;margin-bottom:12px;animation:float 3s ease infinite}
 .role-card h3{color:var(--text);font-size:1em;font-weight:800;margin-bottom:4px}
-.role-card p{color:var(--muted2);font-size:.8em;margin-bottom:14px;font-weight:600}
+.role-card p{color:var(--muted2);font-size:.78em;margin-bottom:16px;font-weight:600}
+
 .auth-toggle{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 16px 20px}
+
+/* ── Chat ── */
 .chat-box{max-height:300px;overflow-y:auto;margin-bottom:12px;padding-right:4px}
-.chat-msg-user{background:linear-gradient(135deg,var(--green),var(--green2));padding:11px 16px;border-radius:20px 20px 4px 20px;margin:6px 0 6px 25%;color:#fff;font-size:.88em;font-weight:600}
-.chat-msg-bot{background:var(--white);border:1.5px solid var(--border);padding:11px 16px;border-radius:20px 20px 20px 4px;margin:6px 25% 6px 0;font-size:.88em;color:var(--text);font-weight:600;box-shadow:0 2px 8px var(--shadow)}
+.chat-msg-user{
+  background:linear-gradient(145deg,var(--blue2),var(--blue));
+  padding:11px 16px;border-radius:18px 18px 4px 18px;
+  margin:6px 0 6px 25%;color:#fff;font-size:.87em;font-weight:600;
+  box-shadow:3px 3px 8px rgba(13,71,161,.3);
+}
+.chat-msg-bot{
+  background:var(--bg);padding:11px 16px;
+  border-radius:18px 18px 18px 4px;
+  margin:6px 25% 6px 0;font-size:.87em;color:var(--text);
+  font-weight:600;box-shadow:var(--neu-raised-sm);
+}
 .quick-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.history-record{background:var(--white);padding:12px 16px;border-radius:14px;border-left:4px solid var(--green);margin-bottom:8px;box-shadow:0 2px 8px var(--shadow)}
+
+/* ── History Records ── */
+.history-record{
+  background:var(--bg);padding:12px 16px;border-radius:12px;
+  border-left:4px solid var(--blue);margin-bottom:8px;
+  box-shadow:var(--neu-raised-sm);
+}
 .history-record.taken{border-left-color:var(--green)}
 .history-record.missed{border-left-color:var(--red)}
 .history-record.deleted{border-left-color:var(--red)}
-.rx-card{background:var(--white);border-radius:20px;padding:20px;border:1.5px solid var(--border);border-left:5px solid var(--green);margin-bottom:20px;box-shadow:0 3px 14px var(--shadow)}
-.rx-card h3{color:var(--text);margin-bottom:12px;font-size:1.1em;font-weight:800}
-.rx-card p{color:var(--muted);margin:6px 0;font-size:.88em;font-weight:600}
-.welcome-banner{background:linear-gradient(135deg,#e8f8ef,#d0f0e0);border:1.5px solid #a8dfc0;border-radius:20px;padding:20px;margin:0 16px 20px;text-align:center}
-.welcome-banner h2{color:var(--green-dark);font-size:1.15em;font-weight:800;margin-bottom:6px}
-.welcome-banner p{color:var(--muted);font-size:.88em;line-height:1.6;font-weight:600}
 
-/* ── Reminder Popup ─────────────────────────────────────── */
-#reminder-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:10000;display:none}
+/* ── Prescription Card ── */
+.rx-card{
+  background:var(--bg);border-radius:18px;
+  padding:20px;border-left:5px solid var(--blue);
+  margin-bottom:20px;box-shadow:var(--neu-raised);
+}
+.rx-card h3{color:var(--text);margin-bottom:12px;font-size:1.05em;font-weight:800}
+.rx-card p{color:var(--muted);margin:6px 0;font-size:.87em;font-weight:600}
+
+/* ── Welcome Banner ── */
+.welcome-banner{
+  background:var(--bg);border-radius:18px;
+  padding:20px;margin:0 16px 20px;text-align:center;
+  box-shadow:var(--neu-raised);
+}
+.welcome-banner h2{color:var(--blue-dark);font-size:1.1em;font-weight:800;margin-bottom:6px}
+.welcome-banner p{color:var(--muted);font-size:.87em;line-height:1.6;font-weight:600}
+
+/* ── Reminder Popup ── */
+#reminder-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:10000;display:none}
 #reminder-overlay.show{display:block}
-#reminder-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--white);border-radius:28px;padding:32px 28px;text-align:center;z-index:10001;width:320px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.3);display:none;border:3px solid var(--green)}
+#reminder-popup{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  background:var(--bg);border-radius:24px;padding:32px 28px;
+  text-align:center;z-index:10001;width:320px;max-width:90vw;
+  box-shadow:12px 12px 28px var(--shadow-dark),-12px -12px 28px var(--shadow-light);
+  display:none;
+}
 #reminder-popup.show{display:block;animation:popIn .4s cubic-bezier(.34,1.56,.64,1)}
-.bell-icon{font-size:4rem;animation:ringBell .8s ease infinite;display:block;margin-bottom:16px}
-#reminder-popup h2{color:var(--green-dark);font-size:1.4em;font-weight:900;margin-bottom:8px}
-#reminder-popup p{color:var(--muted);font-size:.95em;font-weight:600;margin-bottom:20px;line-height:1.5}
+.bell-icon{font-size:3.5rem;animation:ringBell .8s ease infinite;display:block;margin-bottom:16px}
+#reminder-popup h2{color:var(--blue-dark);font-size:1.3em;font-weight:900;margin-bottom:8px}
+#reminder-popup p{color:var(--muted);font-size:.93em;font-weight:600;margin-bottom:20px;line-height:1.5}
 .reminder-pulse{animation:pulse 1.5s ease infinite}
 
-/* ── Toast ──────────────────────────────────────────────── */
-#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--green-dark);border-radius:16px;padding:13px 24px;font-size:.9em;font-weight:700;color:#fff;box-shadow:0 8px 28px rgba(0,0,0,.2);transition:all .35s cubic-bezier(.34,1.56,.64,1);z-index:9999;white-space:nowrap;opacity:0}
+/* ── Toast ── */
+#toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--blue-dark);border-radius:14px;padding:12px 22px;
+  font-size:.88em;font-weight:700;color:#fff;
+  box-shadow:6px 6px 16px rgba(0,0,0,.25);
+  transition:all .35s cubic-bezier(.34,1.56,.64,1);
+  z-index:9999;white-space:nowrap;opacity:0;
+}
 #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 #toast.error{background:var(--red)}
-.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;margin-right:8px;vertical-align:middle}
+
+.spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;margin-right:8px;vertical-align:middle}
 .empty{text-align:center;padding:40px 20px;color:var(--muted2)}
-.empty .icon{font-size:3.2em;margin-bottom:12px}
-.empty p{font-weight:600;font-size:.95em}
+.empty .icon{font-size:3rem;margin-bottom:12px}
+.empty p{font-weight:600;font-size:.93em}
 .px{padding-left:16px;padding-right:16px}
 .mb{margin-bottom:16px}
-.section-title{color:var(--text);font-weight:800;font-size:1em;margin-bottom:14px}
+.section-title{color:var(--text);font-weight:800;font-size:.95em;margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px}
 
-/* ══════════════════════════════════════════════
-   DARK MODE VARIABLES
-══════════════════════════════════════════════ */
-[data-theme="dark"] {
-  --bg:        #0a0f0d;
-  --bg2:       #0d1810;
-  --white:     #141f17;
-  --card:      #141f17;
-  --border:    #1e3328;
-  --green:     #2d9e5f;
-  --green2:    #3dbf75;
-  --green3:    #0d1f14;
-  --green-dark:#3dbf75;
-  --mint:      #1e4030;
-  --soft:      #0f1a12;
-  --red:       #e05252;
-  --yellow:    #e8a020;
-  --blue:      #4a90d9;
-  --text:      #e8f5ed;
-  --muted:     #7aaa8a;
-  --muted2:    #4a7a5a;
-  --shadow:    rgba(0,0,0,0.3);
-  --shadow2:   rgba(45,158,95,0.2);
+/* ── Dark Mode ── */
+[data-theme="dark"]{
+  --bg:#1a2035;--bg2:#151929;
+  --white:#1a2035;--card:#1a2035;--border:#252d45;
+  --blue:#4a90d9;--blue2:#5b9fe8;--blue3:#1e2d4a;
+  --blue-dark:#7ab4f0;--mint:#2a4a6a;--soft:#151929;
+  --red:#e05252;--yellow:#e8a020;--green:#3dbf75;
+  --text:#e0e8f5;--muted:#7a9ab8;--muted2:#4a6a88;
+  --shadow-light:rgba(40,55,90,0.5);
+  --shadow-dark:rgba(10,15,30,0.8);
 }
 
-/* ── Dark mode toggle button ─────────────────── */
-.theme-toggle {
-  position:fixed;top:16px;right:16px;
-  width:44px;height:44px;
-  background:var(--white);
-  border:1.5px solid var(--border);
-  border-radius:50%;
-  font-size:1.3rem;
-  cursor:pointer;z-index:600;
-  display:none;align-items:center;justify-content:center;
-  box-shadow:0 2px 10px var(--shadow);
-  transition:all .25s;
+/* ── Theme Toggle ── */
+.theme-toggle{
+  position:fixed;top:16px;right:16px;width:42px;height:42px;
+  background:var(--bg);border:none;border-radius:50%;font-size:1.2rem;
+  cursor:pointer;z-index:600;display:none;align-items:center;justify-content:center;
+  box-shadow:var(--neu-raised-sm);transition:all .25s;color:var(--text);
 }
 .theme-toggle.visible{display:flex}
-.theme-toggle:hover{transform:scale(1.1);border-color:var(--green)}
+.theme-toggle:hover{box-shadow:var(--neu-raised)}
 
-/* ══════════════════════════════════════════════
-   EMPTY STATE ILLUSTRATIONS
-══════════════════════════════════════════════ */
-.empty-state {
-  text-align:center;padding:40px 24px;
-  animation:fadeUp .5s ease;
-}
-.empty-state svg { margin-bottom:16px; }
-.empty-state h3 { color:var(--text);font-size:1.05em;font-weight:800;margin-bottom:6px; }
-.empty-state p  { color:var(--muted);font-size:.85em;font-weight:600;line-height:1.5; }
-.empty-state .empty-btn { margin-top:16px; }
+/* ── Empty State ── */
+.empty-state{text-align:center;padding:40px 24px;animation:fadeUp .5s ease}
+.empty-state svg{margin-bottom:16px}
+.empty-state h3{color:var(--text);font-size:1.05em;font-weight:800;margin-bottom:6px}
+.empty-state p{color:var(--muted);font-size:.85em;font-weight:600;line-height:1.5}
 
-/* ══════════════════════════════════════════════
-   PULL TO REFRESH
-══════════════════════════════════════════════ */
-#ptr-indicator {
+/* ── Pull to Refresh ── */
+#ptr-indicator{
   position:fixed;top:0;left:50%;transform:translateX(-50%) translateY(-60px);
-  background:var(--green);color:#fff;
-  border-radius:0 0 20px 20px;
-  padding:10px 24px;font-size:.85em;font-weight:700;
-  z-index:700;transition:transform .3s ease;
-  display:flex;align-items:center;gap:8px;
+  background:var(--blue);color:#fff;border-radius:0 0 18px 18px;
+  padding:10px 24px;font-size:.85em;font-weight:700;z-index:700;
+  transition:transform .3s ease;display:flex;align-items:center;gap:8px;
 }
-#ptr-indicator.pulling { transform:translateX(-50%) translateY(0); }
-#ptr-indicator.refreshing { transform:translateX(-50%) translateY(0); }
-.ptr-spinner {
-  width:16px;height:16px;
-  border:2px solid rgba(255,255,255,.4);
-  border-top-color:#fff;border-radius:50%;
-  animation:spin .7s linear infinite;
+#ptr-indicator.pulling,#ptr-indicator.refreshing{transform:translateX(-50%) translateY(0)}
+.ptr-spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+
+/* ── Floating Label ── */
+.float-group{position:relative;margin-bottom:20px}
+.float-group input,.float-group select,.float-group textarea{
+  width:100%;padding:20px 16px 8px;background:var(--bg);border:none;
+  border-radius:14px;color:var(--text);font-family:var(--font);
+  font-size:15px;outline:none;transition:all .25s;appearance:none;
+  box-shadow:var(--neu-inset);
+}
+.float-group input:focus,.float-group select:focus,.float-group textarea:focus{
+  box-shadow:var(--neu-inset),0 0 0 3px rgba(21,101,192,.15);
+}
+.float-group label{
+  position:absolute;left:16px;top:14px;font-size:14px;
+  color:var(--muted2);font-weight:700;pointer-events:none;
+  transition:all .2s cubic-bezier(.4,0,.2,1);background:transparent;
+}
+.float-group input:focus~label,.float-group input:not(:placeholder-shown)~label,
+.float-group select:focus~label,.float-group textarea:focus~label,
+.float-group textarea:not(:placeholder-shown)~label,.float-group.has-value label{
+  top:6px;font-size:10px;color:var(--blue);letter-spacing:.5px;text-transform:uppercase;
+}
+.float-group .float-hint{font-size:.72em;color:var(--muted2);margin-top:5px;padding-left:4px;font-weight:600}
+.float-group select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a7a9a' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 16px center;padding-right:40px;
 }
 
-/* ══════════════════════════════════════════════
-   FLOATING LABEL FORM INPUTS
-══════════════════════════════════════════════ */
-.float-group {
-  position:relative;margin-bottom:20px;
-}
-.float-group input,
-.float-group select,
-.float-group textarea {
-  width:100%;padding:20px 16px 8px;
-  background:var(--soft);border:2px solid var(--border);
-  border-radius:14px;color:var(--text);
-  font-family:var(--font);font-size:15px;
-  outline:none;transition:all .25s;
-  appearance:none;
-}
-.float-group input:focus,
-.float-group select:focus,
-.float-group textarea:focus {
-  border-color:var(--green);
-  box-shadow:0 0 0 4px rgba(45,158,95,.1);
-  background:var(--white);
-}
-.float-group label {
-  position:absolute;left:16px;top:14px;
-  font-size:14px;color:var(--muted2);
-  font-weight:700;pointer-events:none;
-  transition:all .2s cubic-bezier(.4,0,.2,1);
-  background:transparent;
-}
-.float-group input:focus ~ label,
-.float-group input:not(:placeholder-shown) ~ label,
-.float-group select:focus ~ label,
-.float-group select:not([value=""]) ~ label,
-.float-group textarea:focus ~ label,
-.float-group textarea:not(:placeholder-shown) ~ label,
-.float-group.has-value label {
-  top:6px;font-size:10px;color:var(--green);
-  letter-spacing:.5px;text-transform:uppercase;
-}
-.float-group input:focus ~ label,
-.float-group select:focus ~ label,
-.float-group textarea:focus ~ label { color:var(--green); }
-.float-group .float-hint {
-  font-size:.72em;color:var(--muted2);
-  margin-top:5px;padding-left:4px;font-weight:600;
-}
-/* Select arrow */
-.float-group select {
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a7a65' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 16px center;
-  padding-right:40px;
-}
-[data-theme="dark"] .float-group select {
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237aaa8a' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-}
-
-/* ── Family Phone Manager ───────────────────────────────── */
-.phone-list { margin-bottom:12px; }
-.phone-item {
+/* ── Phone Manager ── */
+.phone-list{margin-bottom:12px}
+.phone-item{
   display:flex;align-items:center;gap:10px;
-  background:var(--soft);border:1.5px solid var(--border);
-  border-radius:12px;padding:10px 14px;margin-bottom:8px;
-  animation:fadeUp .3s ease;
+  background:var(--bg);border-radius:12px;
+  padding:10px 14px;margin-bottom:8px;
+  animation:fadeUp .3s ease;box-shadow:var(--neu-inset);
 }
-.phone-item .phone-flag { font-size:1.2rem; }
-.phone-item .phone-num  { flex:1;font-weight:700;font-size:.9em;color:var(--text); }
-.phone-item .phone-name { font-size:.78em;color:var(--muted);font-weight:600; }
-.phone-item .remove-btn {
-  background:none;border:none;color:var(--red);
-  cursor:pointer;font-size:1.1rem;padding:4px;
-  border-radius:8px;transition:all .2s;
+.phone-item .phone-flag{font-size:1.1rem}
+.phone-item .phone-num{flex:1;font-weight:700;font-size:.88em;color:var(--text)}
+.phone-item .phone-name{font-size:.76em;color:var(--muted);font-weight:600}
+.phone-item .remove-btn{background:none;border:none;color:var(--red);cursor:pointer;font-size:1rem;padding:4px;border-radius:8px;transition:all .2s}
+.phone-add-row{display:flex;gap:8px;align-items:flex-end;margin-bottom:8px}
+.phone-add-row input{
+  flex:1;padding:11px 14px;background:var(--bg);border:none;
+  border-radius:12px;color:var(--text);font-family:var(--font);
+  font-size:14px;outline:none;transition:all .25s;
+  box-shadow:var(--neu-inset);
 }
-.phone-item .remove-btn:hover { background:rgba(224,82,82,.1); }
-.phone-add-row {
-  display:flex;gap:8px;align-items:flex-end;margin-bottom:8px;
+.phone-counter{
+  background:var(--bg);border-radius:20px;
+  padding:4px 12px;font-size:.74em;font-weight:800;
+  color:var(--blue);display:inline-block;margin-bottom:8px;
+  box-shadow:var(--neu-inset);
 }
-.phone-add-row input {
-  flex:1;padding:12px 14px;
-  background:var(--soft);border:2px solid var(--border);
-  border-radius:12px;color:var(--text);
-  font-family:var(--font);font-size:14px;outline:none;
-  transition:all .25s;
-}
-.phone-add-row input:focus { border-color:var(--green); }
-.phone-counter {
-  background:var(--green3);border:1px solid var(--mint);
-  border-radius:20px;padding:4px 12px;
-  font-size:.75em;font-weight:800;color:var(--green-dark);
-  display:inline-block;margin-bottom:8px;
-}
+
+/* Divider */
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:16px 0}
 </style>
 </head>
 <body>
 
-<!-- ════════════ REMINDER POPUP ════════════ -->
+<!-- REMINDER POPUP -->
 <div id="reminder-overlay" onclick="dismissReminder()"></div>
 <div id="reminder-popup">
   <span class="bell-icon">🔔</span>
   <h2>Medicine Time!</h2>
   <p id="reminder-text">Time to take your medicine</p>
-  <button class="btn btn-primary reminder-pulse" onclick="dismissReminder()" style="margin-bottom:10px">✅ I'll Take It Now!</button>
-  <button class="btn btn-outline btn-sm" style="width:100%" onclick="snoozeReminder()">⏰ Remind me in 10 mins</button>
+  <button class="btn btn-primary reminder-pulse" onclick="dismissReminder()" style="margin-bottom:10px">Take It Now</button>
+  <button class="btn btn-outline btn-sm" style="width:100%" onclick="snoozeReminder()">Snooze 10 mins</button>
 </div>
 
-<!-- ════════════ PHOTO VIEWER ════════════ -->
+<!-- PHOTO VIEWER -->
 <div id="photo-overlay" onclick="closePhotoViewer()">
   <button id="photo-close" onclick="closePhotoViewer()">✕</button>
   <img id="photo-viewer" src="" alt="Pill Photo"/>
 </div>
 
-<!-- ════════════ BADGE POPUP ════════════ -->
+<!-- BADGE POPUP -->
 <div id="badge-overlay" onclick="closeBadgePopup()"></div>
 <div id="badge-popup">
-  <div id="badge-popup-emoji" style="font-size:4rem;margin-bottom:12px">🏆</div>
-  <h2 style="color:var(--green-dark);font-size:1.3em;margin-bottom:6px">New Badge Earned!</h2>
-  <div id="badge-popup-name" style="font-weight:800;font-size:1.1em;color:var(--text);margin-bottom:6px"></div>
-  <div id="badge-popup-desc" style="color:var(--muted);font-size:.88em;margin-bottom:16px"></div>
-  <button class="btn btn-primary" onclick="closeBadgePopup()">🎉 Awesome!</button>
+  <div id="badge-popup-emoji" style="font-size:3.5rem;margin-bottom:12px">🏆</div>
+  <h2 style="color:var(--blue-dark);font-size:1.2em;margin-bottom:6px">New Badge Earned!</h2>
+  <div id="badge-popup-name" style="font-weight:800;font-size:1.05em;color:var(--text);margin-bottom:6px"></div>
+  <div id="badge-popup-desc" style="color:var(--muted);font-size:.86em;margin-bottom:16px"></div>
+  <button class="btn btn-primary" onclick="closeBadgePopup()">Awesome!</button>
 </div>
 
-<!-- ════════════ PAGE 1 — LANDING ════════════ -->
+<!-- PAGE 1 — LANDING -->
 <div class="page active" id="page-landing">
   <div class="hero fade-up">
     <div id="logo-container"><div class="hero-logo">💊</div></div>
     <h1>MediBridge</h1>
-    <p>Smart medicine care for your loved ones 🌿</p>
+    <p>Smart medicine care for your loved ones</p>
   </div>
   <div class="welcome-banner fade-up">
-    <h2>Welcome to MediBridge 👋</h2>
+    <h2>Welcome to MediBridge</h2>
     <p>Smart medicine tracking for senior citizens with real-time WhatsApp alerts for family members</p>
   </div>
-  <p style="text-align:center;color:var(--muted);font-size:.95em;margin-bottom:14px;font-weight:700">👤 I am a...</p>
+  <p style="text-align:center;color:var(--muted);font-size:.93em;margin-bottom:16px;font-weight:700">I am a...</p>
   <div class="role-cards">
     <div class="role-card" onclick="selectRole('senior')">
       <span class="emoji">👴</span>
@@ -489,94 +622,90 @@ body{padding-bottom:0}
       <button class="btn btn-primary btn-sm">Select</button>
     </div>
   </div>
-  <p style="text-align:center;color:var(--muted2);font-size:.78em;font-weight:700">🌿 Powered by AI • WhatsApp Alerts • Care with Love</p>
+  <p style="text-align:center;color:var(--muted2);font-size:.76em;font-weight:700;padding-bottom:20px">AI Powered &nbsp;•&nbsp; WhatsApp Alerts &nbsp;•&nbsp; Care with Love</p>
 </div>
 
-<!-- ════════════ PAGE 2 — AUTH ════════════ -->
+<!-- PAGE 2 — AUTH -->
 <div class="page" id="page-auth">
   <div class="hero fade-up" id="auth-hero">
     <div class="hero-logo">💊</div>
     <h1>MediBridge</h1>
   </div>
   <div class="auth-toggle">
-    <button class="btn btn-primary" id="auth-login-btn" onclick="setAuthMode('login')">🔑 Login</button>
-    <button class="btn btn-outline" id="auth-register-btn" onclick="setAuthMode('register')">📝 Register</button>
+    <button class="btn btn-primary" id="auth-login-btn" onclick="setAuthMode('login')">Login</button>
+    <button class="btn btn-outline" id="auth-register-btn" onclick="setAuthMode('register')">Register</button>
   </div>
   <div id="form-login" class="px fade-up">
-    <div style="text-align:center;margin-bottom:20px">
-      <h2 style="font-size:1.5em;color:var(--text)">Welcome Back! 👋</h2>
-      <p style="color:var(--muted);font-size:.88em;margin-top:5px;font-weight:600">Login to continue</p>
+    <div style="text-align:center;margin-bottom:24px">
+      <h2 style="font-size:1.4em;color:var(--text);font-weight:900">Welcome Back</h2>
+      <p style="color:var(--muted);font-size:.86em;margin-top:5px;font-weight:600">Login to continue</p>
     </div>
     <div class="float-group">
       <input type="text" id="login-username" placeholder=" "/>
-      <label>👤 Username</label>
+      <label>Username</label>
     </div>
     <div class="float-group">
       <input type="password" id="login-password" placeholder=" "/>
-      <label>🔒 Password</label>
+      <label>Password</label>
     </div>
-    <button class="btn btn-primary mb" id="login-btn" onclick="doLogin()">🚀 Login to MediBridge</button>
-    <div id="login-error" style="color:var(--red);font-size:.88em;text-align:center;margin-bottom:12px;font-weight:700"></div>
+    <button class="btn btn-primary mb" id="login-btn" onclick="doLogin()">Login to MediBridge</button>
+    <div id="login-error" style="color:var(--red);font-size:.86em;text-align:center;margin-bottom:12px;font-weight:700"></div>
   </div>
   <div id="form-register" class="px fade-up" style="display:none">
-    <div style="text-align:center;margin-bottom:20px">
-      <h2 style="font-size:1.5em;color:var(--text)">Create Account! ✨</h2>
-      <p style="color:var(--muted);font-size:.88em;margin-top:5px;font-weight:600">Join MediBridge today</p>
+    <div style="text-align:center;margin-bottom:24px">
+      <h2 style="font-size:1.4em;color:var(--text);font-weight:900">Create Account</h2>
+      <p style="color:var(--muted);font-size:.86em;margin-top:5px;font-weight:600">Join MediBridge today</p>
     </div>
     <div class="float-group">
       <input type="text" id="reg-name" placeholder=" "/>
-      <label>😊 Full Name</label>
+      <label>Full Name</label>
     </div>
     <div class="float-group">
       <input type="text" id="reg-username" placeholder=" "/>
-      <label>👤 Username</label>
+      <label>Username</label>
     </div>
     <div class="input-row">
       <div class="float-group">
         <input type="password" id="reg-password" placeholder=" "/>
-        <label>🔒 Password</label>
+        <label>Password</label>
       </div>
       <div class="float-group">
         <input type="password" id="reg-confirm" placeholder=" "/>
-        <label>🔒 Confirm</label>
+        <label>Confirm</label>
       </div>
     </div>
-
-    <!-- Family Phone Numbers -->
-    <div style="background:var(--green3);border:1.5px solid var(--mint);border-radius:16px;padding:16px;margin-bottom:16px">
+    <div style="background:var(--bg);border-radius:16px;padding:16px;margin-bottom:16px;box-shadow:var(--neu-inset)">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-        <span style="font-size:1.3rem">👨‍👩‍👧</span>
         <div>
-          <p style="font-weight:800;color:var(--green-dark);font-size:.9em;margin:0">Family WhatsApp Numbers</p>
-          <p style="color:var(--muted);font-size:.75em;font-weight:600;margin:0">Add numbers to receive medicine alerts</p>
+          <p style="font-weight:800;color:var(--blue-dark);font-size:.88em;margin:0">Family WhatsApp Numbers</p>
+          <p style="color:var(--muted);font-size:.74em;font-weight:600;margin:0">Add numbers to receive medicine alerts</p>
         </div>
       </div>
       <div class="phone-list" id="reg-phone-list"></div>
       <div class="phone-add-row">
-        <input type="tel" id="reg-phone-input" placeholder="e.g. 9876543210 or +919876543210"/>
-        <button class="btn btn-green btn-sm" onclick="addRegPhone()" style="white-space:nowrap">+ Add</button>
+        <input type="tel" id="reg-phone-input" placeholder="e.g. 9876543210"/>
+        <button class="btn btn-green btn-sm" onclick="addRegPhone()">Add</button>
       </div>
-      <p style="color:var(--muted2);font-size:.75em;font-weight:600">📱 India numbers auto-get +91. Include country code for others.</p>
+      <p style="color:var(--muted2);font-size:.73em;font-weight:600;margin-top:4px">India numbers auto-get +91. Include country code for others.</p>
     </div>
-
-    <button class="btn btn-primary mb" id="register-btn" onclick="doRegister()">✨ Create My Account</button>
-    <div id="register-error" style="color:var(--red);font-size:.88em;text-align:center;margin-bottom:12px;font-weight:700"></div>
+    <button class="btn btn-primary mb" id="register-btn" onclick="doRegister()">Create Account</button>
+    <div id="register-error" style="color:var(--red);font-size:.86em;text-align:center;margin-bottom:12px;font-weight:700"></div>
   </div>
-  <div class="px"><button class="btn btn-outline" onclick="goTo('landing')">⬅️ Go Back</button></div>
+  <div class="px"><button class="btn btn-outline" onclick="goTo('landing')">Go Back</button></div>
 </div>
 
-<!-- ════════════ PAGE 3 — SENIOR ════════════ -->
+<!-- PAGE 3 — SENIOR -->
 <div class="page page-with-nav" id="page-senior">
   <div class="topbar">
     <div>
-      <div style="color:rgba(255,255,255,.8);font-size:.75em;font-weight:700">Good day! 👋</div>
+      <div style="color:rgba(255,255,255,.75);font-size:.73em;font-weight:700;text-transform:uppercase;letter-spacing:.4px">Good day</div>
       <div class="topbar-name" id="senior-name">—</div>
-      <div class="topbar-sub">Senior Citizen 👴</div>
+      <div class="topbar-sub">Senior Citizen</div>
     </div>
-    <div class="topbar-badge">💊 MediBridge</div>
+    <div class="topbar-badge">MediBridge</div>
   </div>
 
-  <!-- ── HOME SECTION ── -->
+  <!-- HOME SECTION -->
   <div class="inner-section active" id="inner-home">
     <div class="progress-ring-wrap">
       <div class="progress-ring-container">
@@ -586,8 +715,8 @@ body{padding-bottom:0}
             stroke="url(#ringGrad)" stroke-dasharray="465" stroke-dashoffset="465"/>
           <defs>
             <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style="stop-color:#2d9e5f"/>
-              <stop offset="100%" style="stop-color:#3dbf75"/>
+              <stop offset="0%" style="stop-color:#1565C0"/>
+              <stop offset="100%" style="stop-color:#42a5f5"/>
             </linearGradient>
           </defs>
         </svg>
@@ -596,50 +725,49 @@ body{padding-bottom:0}
           <div class="progress-ring-sub" id="ring-sub">of 0 taken</div>
         </div>
       </div>
-      <div class="progress-greeting" id="ring-greeting">Good day! 💊</div>
+      <div class="progress-greeting" id="ring-greeting">Good day!</div>
       <div class="progress-sub" id="ring-message">Loading your medicines...</div>
     </div>
     <div class="progress-stats" style="padding:0 16px">
-      <div class="metric"><div class="metric-val" id="sm-total">0</div><div class="metric-label">💊 Total</div></div>
-      <div class="metric"><div class="metric-val" id="sm-taken" style="color:var(--green)">0</div><div class="metric-label">✅ Taken</div></div>
-      <div class="metric"><div class="metric-val" id="sm-left" style="color:var(--yellow)">0</div><div class="metric-label">⏳ Left</div></div>
+      <div class="metric"><div class="metric-val" id="sm-total">0</div><div class="metric-label">Total</div></div>
+      <div class="metric"><div class="metric-val" id="sm-taken" style="color:var(--green)">0</div><div class="metric-label">Taken</div></div>
+      <div class="metric"><div class="metric-val" id="sm-left" style="color:var(--yellow)">0</div><div class="metric-label">Remaining</div></div>
     </div>
-    <div style="padding:20px 16px 0">
-      <!-- 📄 AI Prescription Scanner -->
-      <div class="card" style="background:linear-gradient(135deg,#e8fff2,var(--white));border-left:4px solid var(--green);margin-bottom:16px">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-          <span style="font-size:1.6rem">📄</span>
+    <div style="padding:20px 0 0">
+      <!-- Prescription Scanner -->
+      <div class="card" style="border-left:4px solid var(--blue)">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
           <div>
-            <p style="font-weight:800;color:var(--green-dark);font-size:.95em;margin:0">AI Prescription Scanner</p>
-            <p style="color:var(--muted);font-size:.78em;font-weight:600;margin:0">Upload prescription → AI adds medicines automatically!</p>
+            <p style="font-weight:800;color:var(--blue-dark);font-size:.93em;margin:0">AI Prescription Scanner</p>
+            <p style="color:var(--muted);font-size:.76em;font-weight:600;margin:0">Upload prescription — AI adds medicines automatically</p>
           </div>
         </div>
         <div class="scan-drop" onclick="document.getElementById('rx-scan-input').click()">
-          <span class="icon">📸</span>
+          <span class="icon">📷</span>
           <p>Tap to take photo or upload</p>
-          <small>Works with handwritten &amp; printed prescriptions</small>
+          <small>Works with handwritten and printed prescriptions</small>
         </div>
         <input type="file" id="rx-scan-input" accept="image/*" capture="environment" style="display:none" onchange="handlePrescriptionScan(this)"/>
         <img id="scan-preview" class="scan-preview" alt="Prescription preview"/>
         <div id="scan-results"></div>
-        <button class="btn btn-primary" id="scan-btn" style="display:none" onclick="runPrescriptionScan()">🤖 Scan &amp; Add Medicines</button>
-        <div class="divider" style="margin:14px 0"></div>
+        <button class="btn btn-primary" id="scan-btn" style="display:none" onclick="runPrescriptionScan()">Scan &amp; Add Medicines</button>
+        <div class="divider"></div>
       </div>
 
-      <p class="section-title">➕ Add Medicine</p>
+      <p class="section-title">Add Medicine</p>
       <div class="card">
         <div class="float-group">
           <input type="text" id="med-name" placeholder=" "/>
-          <label>💊 Medicine Name</label>
+          <label>Medicine Name</label>
         </div>
         <div class="input-row">
           <div class="float-group">
             <input type="text" id="med-dosage" placeholder=" "/>
-            <label>📏 Dosage</label>
+            <label>Dosage</label>
           </div>
           <div class="float-group">
             <input type="number" id="med-total" placeholder=" " min="1" max="500"/>
-            <label>📦 Tablets</label>
+            <label>Tablets</label>
           </div>
         </div>
         <div class="float-group has-value">
@@ -648,187 +776,178 @@ body{padding-bottom:0}
             <option>Morning &amp; Night</option><option>Morning, Afternoon &amp; Night</option>
             <option>After Food</option><option>Before Food</option>
           </select>
-          <label>⏰ Timing</label>
+          <label>Timing</label>
         </div>
         <div class="float-group">
           <input type="time" id="med-reminder" placeholder=" " style="font-size:16px"/>
-          <label>🔔 Reminder Time</label>
-          <p class="float-hint">⚡ App will ring an alarm at this time every day!</p>
+          <label>Reminder Time</label>
+          <p class="float-hint">App will send an alarm at this time every day</p>
         </div>
         <div class="float-group">
           <input type="text" id="med-notes" placeholder=" "/>
-          <label>📝 Notes (optional)</label>
+          <label>Notes (optional)</label>
         </div>
-        <button class="btn btn-primary" id="add-med-btn" onclick="addMedicine()">➕ Add Medicine</button>
+        <button class="btn btn-primary" id="add-med-btn" onclick="addMedicine()">Add Medicine</button>
       </div>
-      <p class="section-title">📋 Today's Medicines</p>
+
+      <p class="section-title">Today's Medicines</p>
       <div id="medicines-list"></div>
-      <button class="btn btn-outline mb" onclick="checkMissed()">🔍 Check Missed Medicines</button>
+      <button class="btn btn-outline mb" onclick="checkMissed()">Check Missed Medicines</button>
     </div>
   </div>
 
-
-
-  <!-- ── APPOINTMENTS SECTION ── -->
+  <!-- APPOINTMENTS SECTION -->
   <div class="inner-section" id="inner-appointments">
     <div style="padding:16px 0 0">
-      <p class="section-title">➕ Add Appointment</p>
+      <p class="section-title">Add Appointment</p>
       <div class="card">
         <div class="float-group">
           <input type="text" id="appt-doctor" placeholder=" "/>
-          <label>👨‍⚕️ Doctor Name</label>
+          <label>Doctor Name</label>
         </div>
         <div class="float-group">
           <input type="text" id="appt-hospital" placeholder=" "/>
-          <label>🏥 Hospital / Clinic</label>
+          <label>Hospital / Clinic</label>
         </div>
         <div class="input-row">
           <div class="float-group has-value">
             <input type="date" id="appt-date" placeholder=" "/>
-            <label>📅 Date</label>
+            <label>Date</label>
           </div>
           <div class="float-group has-value">
             <input type="time" id="appt-time" placeholder=" "/>
-            <label>🕐 Time</label>
+            <label>Time</label>
           </div>
         </div>
         <div class="float-group">
           <input type="text" id="appt-notes" placeholder=" "/>
-          <label>📝 Notes</label>
+          <label>Notes</label>
         </div>
-        <button class="btn btn-primary" id="add-appt-btn" onclick="addAppointment()">➕ Add Appointment</button>
+        <button class="btn btn-primary" id="add-appt-btn" onclick="addAppointment()">Add Appointment</button>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <p class="section-title" style="margin:0">📅 Upcoming Appointments</p>
-        <button class="btn btn-outline btn-sm" onclick="checkApptReminders()">📱 Send Reminders</button>
+        <p class="section-title" style="margin:0">Upcoming Appointments</p>
+        <button class="btn btn-outline btn-sm" onclick="checkApptReminders()">Send Reminders</button>
       </div>
       <div id="appointments-list"></div>
     </div>
   </div>
 
-  <!-- ── REWARDS SECTION ── -->
+  <!-- REWARDS SECTION -->
   <div class="inner-section" id="inner-rewards">
     <div style="padding:16px 0 0">
       <div id="rewards-summary"></div>
-      <p class="section-title">🏅 My Badges</p>
+      <p class="section-title">My Badges</p>
       <div id="badges-list"></div>
-      <p class="section-title">📜 Points History</p>
+      <p class="section-title">Points History</p>
       <div id="points-history"></div>
     </div>
   </div>
 
-  <!-- ── MEDIBOT SECTION ── -->
+  <!-- MEDIBOT SECTION -->
   <div class="inner-section" id="inner-medibot">
     <div style="padding:16px 0 0">
-      <div class="card" style="border-left:4px solid var(--green);background:linear-gradient(135deg,#f0fff6,#fff);margin-bottom:14px">
-        <p style="color:var(--green-dark);font-size:.9em;font-weight:700">🤖 Hi! I'm MediBot — your personal medicine assistant! Ask me anything 💊</p>
+      <div class="card" style="border-left:4px solid var(--blue)">
+        <p style="color:var(--blue-dark);font-size:.88em;font-weight:700">Hi! I'm MediBot — your personal medicine assistant. Ask me anything.</p>
       </div>
       <div class="chat-box" id="chat-box"></div>
-      <p class="section-title" style="font-size:.85em">Quick Questions:</p>
+      <p class="section-title" style="font-size:.8em">Quick Questions</p>
       <div class="quick-btns">
-        <button class="btn btn-outline btn-sm" onclick="quickQ('What medicines am I taking?')">💊 My medicines?</button>
-        <button class="btn btn-outline btn-sm" onclick="quickQ('What are the side effects?')">⚠️ Side effects?</button>
-        <button class="btn btn-outline btn-sm" onclick="quickQ('When should I take each medicine?')">⏰ When to take?</button>
-        <button class="btn btn-outline btn-sm" onclick="quickQ('Which medicines are running low?')">📦 Stock check?</button>
+        <button class="btn btn-outline btn-sm" onclick="quickQ('What medicines am I taking?')">My medicines?</button>
+        <button class="btn btn-outline btn-sm" onclick="quickQ('What are the side effects?')">Side effects?</button>
+        <button class="btn btn-outline btn-sm" onclick="quickQ('When should I take each medicine?')">When to take?</button>
+        <button class="btn btn-outline btn-sm" onclick="quickQ('Which medicines are running low?')">Stock check?</button>
       </div>
       <div style="display:flex;gap:8px;margin-bottom:8px">
-        <input type="text" id="chat-input" placeholder="Ask MediBot anything..." style="flex:1;padding:13px 16px;background:#fff;border:2px solid var(--border);border-radius:14px;color:var(--text);font-family:var(--font);font-size:14px;font-weight:600;outline:none" onkeydown="if(event.key==='Enter')sendChat()"/>
-        <button class="btn btn-primary btn-sm" onclick="sendChat()">📤</button>
-        <button class="btn btn-outline btn-sm" onclick="clearChat()">🗑️</button>
+        <input type="text" id="chat-input" placeholder="Ask MediBot anything..." style="flex:1;padding:12px 16px;background:var(--bg);border:none;border-radius:12px;color:var(--text);font-family:var(--font);font-size:14px;font-weight:600;outline:none;box-shadow:var(--neu-inset)" onkeydown="if(event.key==='Enter')sendChat()"/>
+        <button class="btn btn-primary btn-sm" onclick="sendChat()">Send</button>
+        <button class="btn btn-outline btn-sm" onclick="clearChat()">Clear</button>
       </div>
       <div class="divider"></div>
-      <p class="section-title">⚠️ Drug Interaction Checker</p>
-      <div class="card" style="border-left:4px solid var(--yellow);background:linear-gradient(135deg,#fffdf0,#fff);margin-bottom:14px">
-        <p style="color:#a06010;font-size:.88em;font-weight:700;margin-bottom:12px">⚠️ Check if your medicines are safe to take together</p>
-        <button class="btn btn-yellow" id="check-interactions-btn" onclick="checkDrugInteractions()">🔬 Check My Medicines for Interactions</button>
+      <p class="section-title">Drug Interaction Checker</p>
+      <div class="card" style="border-left:4px solid var(--yellow)">
+        <p style="color:var(--yellow);font-size:.86em;font-weight:700;margin-bottom:12px">Check if your medicines are safe to take together</p>
+        <button class="btn btn-yellow" id="check-interactions-btn" onclick="checkDrugInteractions()">Check My Medicines for Interactions</button>
       </div>
       <div id="interactions-result"></div>
     </div>
   </div>
 
-  <!-- ── SETTINGS SECTION ── -->
+  <!-- SETTINGS SECTION -->
   <div class="inner-section" id="inner-settings">
     <div style="padding:16px 0 0">
       <div class="card" id="senior-profile"></div>
-      <p class="section-title">📋 Prescription</p>
+      <p class="section-title">Prescription</p>
       <div id="rx-display"></div>
-
-      <!-- Family Phone Manager -->
       <div class="card" style="margin-bottom:14px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span style="font-size:1.3rem">👨‍👩‍👧</span>
-            <div>
-              <p style="font-weight:800;color:var(--text);font-size:.95em;margin:0">Family Members</p>
-              <p style="color:var(--muted);font-size:.76em;font-weight:600;margin:0">WhatsApp alert recipients</p>
-            </div>
+          <div>
+            <p style="font-weight:800;color:var(--text);font-size:.93em;margin:0">Family Members</p>
+            <p style="color:var(--muted);font-size:.74em;font-weight:600;margin:0">WhatsApp alert recipients</p>
           </div>
           <span class="phone-counter" id="phone-counter">0 members</span>
         </div>
         <div class="phone-list" id="settings-phone-list">
-          <div style="text-align:center;padding:12px;color:var(--muted2);font-size:.85em">Loading...</div>
+          <div style="text-align:center;padding:12px;color:var(--muted2);font-size:.84em">Loading...</div>
         </div>
         <div class="phone-add-row">
           <input type="tel" id="settings-phone-input" placeholder="Add phone number..."/>
-          <button class="btn btn-green btn-sm" onclick="addSettingsPhone()">+ Add</button>
+          <button class="btn btn-green btn-sm" onclick="addSettingsPhone()">Add</button>
         </div>
-        <button class="btn btn-primary" style="margin-top:10px" onclick="saveSettingsPhones()">💾 Save Family Numbers</button>
+        <button class="btn btn-primary" style="margin-top:10px" onclick="saveSettingsPhones()">Save Family Numbers</button>
       </div>
-
-      <p class="section-title">📊 Send Alerts</p>
+      <p class="section-title">Send Alerts</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
-        <button class="btn btn-outline" onclick="sendDailyReport()">📊 Daily Report</button>
-        <button class="btn btn-danger" onclick="sendEmergency()">🆘 Emergency!</button>
+        <button class="btn btn-outline" onclick="sendDailyReport()">Daily Report</button>
+        <button class="btn btn-danger" onclick="sendEmergency()">Emergency!</button>
       </div>
-      <p class="section-title">📜 Medicine History</p>
+      <p class="section-title">Medicine History</p>
       <div class="metrics mb" style="grid-template-columns:1fr 1fr">
-        <div class="metric"><div class="metric-val" id="hist-taken" style="color:var(--green)">0</div><div class="metric-label">✅ Total Taken</div></div>
-        <div class="metric"><div class="metric-val" id="hist-missed" style="color:var(--red)">0</div><div class="metric-label">❌ Total Missed</div></div>
+        <div class="metric"><div class="metric-val" id="hist-taken" style="color:var(--green)">0</div><div class="metric-label">Total Taken</div></div>
+        <div class="metric"><div class="metric-val" id="hist-missed" style="color:var(--red)">0</div><div class="metric-label">Total Missed</div></div>
       </div>
       <div id="history-list"></div>
-      <button class="btn btn-outline mb" onclick="clearHistory()">🗑️ Clear History</button>
-      <button class="btn btn-outline" onclick="doLogout()">🚪 Logout</button>
+      <button class="btn btn-outline mb" onclick="clearHistory()">Clear History</button>
+      <button class="btn btn-outline" onclick="doLogout()">Logout</button>
     </div>
   </div>
-
 </div>
 
-<!-- ════════════ PAGE 4 — FAMILY ════════════ -->
+<!-- PAGE 4 — FAMILY -->
 <div class="page" id="page-family">
   <div class="topbar">
     <div>
-      <div style="color:rgba(255,255,255,.8);font-size:.75em;font-weight:700">Monitoring 👀</div>
+      <div style="color:rgba(255,255,255,.75);font-size:.73em;font-weight:700;text-transform:uppercase;letter-spacing:.4px">Monitoring</div>
       <div class="topbar-name" id="family-name">—</div>
-      <div class="topbar-sub">Family Member 👨‍👩‍👧</div>
+      <div class="topbar-sub">Family Member</div>
     </div>
-    <div class="topbar-badge">💊 MediBridge</div>
+    <div class="topbar-badge">MediBridge</div>
   </div>
   <div class="metrics" style="grid-template-columns:repeat(4,1fr)">
-    <div class="metric"><div class="metric-val" id="fm-total">0</div><div class="metric-label">💊</div></div>
-    <div class="metric"><div class="metric-val" id="fm-taken" style="color:var(--green)">0</div><div class="metric-label">✅</div></div>
-    <div class="metric"><div class="metric-val" id="fm-missed" style="color:var(--red)">0</div><div class="metric-label">❌</div></div>
-    <div class="metric"><div class="metric-val" id="fm-low" style="color:var(--yellow)">0</div><div class="metric-label">⚠️</div></div>
+    <div class="metric"><div class="metric-val" id="fm-total">0</div><div class="metric-label">Total</div></div>
+    <div class="metric"><div class="metric-val" id="fm-taken" style="color:var(--green)">0</div><div class="metric-label">Taken</div></div>
+    <div class="metric"><div class="metric-val" id="fm-missed" style="color:var(--red)">0</div><div class="metric-label">Missed</div></div>
+    <div class="metric"><div class="metric-val" id="fm-low" style="color:var(--yellow)">0</div><div class="metric-label">Low</div></div>
   </div>
   <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('family','status')">📊 Status</button>
-    <button class="tab-btn" onclick="switchTab('family','prescription')">📋 Rx</button>
-    <button class="tab-btn" onclick="switchTab('family','history')">📝 History</button>
+    <button class="tab-btn active" onclick="switchTab('family','status')">Status</button>
+    <button class="tab-btn" onclick="switchTab('family','prescription')">Rx</button>
+    <button class="tab-btn" onclick="switchTab('family','history')">History</button>
   </div>
   <div class="tab-content active" id="family-tab-status">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
       <p class="section-title" style="margin:0">Medicine Status</p>
-      <button class="btn btn-outline btn-sm" onclick="loadFamilyData()">↻ Refresh</button>
+      <button class="btn btn-outline btn-sm" onclick="loadFamilyData()">Refresh</button>
     </div>
     <div id="family-status-list"></div>
-    <p style="color:var(--muted2);font-size:.76em;text-align:right;font-weight:600" id="family-updated"></p>
+    <p style="color:var(--muted2);font-size:.74em;text-align:right;font-weight:600" id="family-updated"></p>
   </div>
   <div class="tab-content" id="family-tab-prescription"><div id="family-rx-display"></div></div>
   <div class="tab-content" id="family-tab-history"><div id="family-history-list"></div></div>
-  <div class="px" style="margin-top:16px"><button class="btn btn-outline" onclick="doLogout()">🚪 Logout</button></div>
+  <div class="px" style="margin-top:16px"><button class="btn btn-outline" onclick="doLogout()">Logout</button></div>
 </div>
 
-
-<!-- ════════════ BOTTOM NAV ════════════ -->
+<!-- BOTTOM NAV -->
 <nav class="bottom-nav" id="bottom-nav">
   <button class="nav-item active" id="nav-home" onclick="navTo('home')">
     <span class="nav-icon">🏠</span>
@@ -853,16 +972,15 @@ body{padding-bottom:0}
 </nav>
 
 <!-- FAB -->
-<button class="fab" id="fab" onclick="showAddMedicineSheet()" title="Add Medicine">➕</button>
+<button class="fab" id="fab" onclick="showAddMedicineSheet()" title="Add Medicine">+</button>
 
 <!-- Confetti -->
 <canvas id="confetti-canvas"></canvas>
 
-
 <!-- Theme Toggle -->
 <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light mode">🌙</button>
 
-<!-- Pull to Refresh Indicator -->
+<!-- Pull to Refresh -->
 <div id="ptr-indicator">
   <span id="ptr-icon">↓</span>
   <span id="ptr-text">Pull to refresh</span>
@@ -875,7 +993,6 @@ let currentUser = null;
 let snoozedReminders = {};
 let reminderInterval = null;
 
-// ── Navigation ────────────────────────────────────────────
 function goTo(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
@@ -886,7 +1003,7 @@ function selectRole(role){
   currentRole=role;
   const emoji=role==='senior'?'👴':'👨‍👩‍👧';
   const name=role==='senior'?'Senior Citizen':'Family Member';
-  document.getElementById('auth-hero').innerHTML=`<div class="hero-logo">${emoji}</div><h1>MediBridge</h1><p>${name} — Welcome! 🌿</p>`;
+  document.getElementById('auth-hero').innerHTML=`<div class="hero-logo">${emoji}</div><h1>MediBridge</h1><p>${name}</p>`;
   setAuthMode('login');goTo('auth');
 }
 
@@ -899,11 +1016,10 @@ function setAuthMode(mode){
   document.getElementById('register-error').textContent='';
 }
 
-// ── Auth ──────────────────────────────────────────────────
 async function doLogin(){
   const username=document.getElementById('login-username').value.trim();
   const password=document.getElementById('login-password').value.trim();
-  if(!username||!password){document.getElementById('login-error').textContent='❌ Fill all fields!';return;}
+  if(!username||!password){document.getElementById('login-error').textContent='Please fill all fields';return;}
   const btn=document.getElementById('login-btn');
   btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Logging in...';
   try{
@@ -911,12 +1027,12 @@ async function doLogin(){
     const data=await res.json();
     if(data.success){
       currentUser=data.user;
-      toast('✅ Welcome, '+currentUser.name+'! 🌿');
+      toast('Welcome, '+currentUser.name+'!');
       if(currentRole==='senior'){loadSeniorDashboard();goTo('senior');}
       else{loadFamilyDashboard();goTo('family');}
-    }else{document.getElementById('login-error').textContent='❌ '+data.error;}
-  }catch(e){document.getElementById('login-error').textContent='❌ Server error. Is Flask running?';}
-  btn.disabled=false;btn.innerHTML='🚀 Login to MediBridge';
+    }else{document.getElementById('login-error').textContent=data.error;}
+  }catch(e){document.getElementById('login-error').textContent='Server error. Is Flask running?';}
+  btn.disabled=false;btn.innerHTML='Login to MediBridge';
 }
 
 async function doRegister(){
@@ -925,30 +1041,27 @@ async function doRegister(){
   const password=document.getElementById('reg-password').value.trim();
   const confirm=document.getElementById('reg-confirm').value.trim();
   const errEl=document.getElementById('register-error');
-  if(!name||!username||!password||!confirm){errEl.textContent='❌ Fill all fields!';return;}
-  if(password!==confirm){errEl.textContent='❌ Passwords don\'t match!';return;}
-  if(password.length<4){errEl.textContent='❌ Password too short!';return;}
+  if(!name||!username||!password||!confirm){errEl.textContent='Please fill all fields';return;}
+  if(password!==confirm){errEl.textContent='Passwords do not match';return;}
+  if(password.length<4){errEl.textContent='Password too short';return;}
   const btn=document.getElementById('register-btn');
   btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Creating...';
   try{
     const res=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,username,password,role:currentRole,family_phones:regPhones})});
     const data=await res.json();
-    if(data.success){toast('✅ Account created! Please login!');regPhones=[];renderRegPhones();setAuthMode('login');}
-    else{errEl.textContent='❌ '+data.error;}
-  }catch(e){errEl.textContent='❌ Server error.';}
-  btn.disabled=false;btn.innerHTML='✨ Create My Account';
+    if(data.success){toast('Account created! Please login.');regPhones=[];renderRegPhones();setAuthMode('login');}
+    else{errEl.textContent=data.error;}
+  }catch(e){errEl.textContent='Server error.';}
+  btn.disabled=false;btn.innerHTML='Create Account';
 }
 
 async function doLogout(){
   await fetch('/api/logout',{method:'POST'});
-  currentUser=null;
-  stopReminderChecker();
-  hideBottomNav();
+  currentUser=null;stopReminderChecker();hideBottomNav();
   document.getElementById('theme-toggle').classList.remove('visible');
   goTo('landing');
 }
 
-// ── Tabs ──────────────────────────────────────────────────
 function switchTab(dashboard,tab){
   document.querySelectorAll(`#page-${dashboard} .tab-btn`).forEach(b=>b.classList.remove('active'));
   document.querySelectorAll(`#page-${dashboard} .tab-content`).forEach(c=>c.classList.remove('active'));
@@ -964,61 +1077,44 @@ function switchTab(dashboard,tab){
   if(tab==='appointments')loadAppointments();
 }
 
-// ── Senior Dashboard ──────────────────────────────────────
 function loadSeniorDashboard(){
   document.getElementById('senior-name').textContent=currentUser.name;
   document.getElementById('senior-profile').innerHTML=`
-    <h3 style="color:var(--text);margin-bottom:12px;font-size:1.1em">👤 My Profile</h3>
-    <p style="color:var(--muted);margin:6px 0;font-weight:600">😊 Name: ${currentUser.name}</p>
-    <p style="color:var(--muted);margin:6px 0;font-weight:600">👤 Username: ${currentUser.username}</p>
-    <p style="color:var(--muted);margin:6px 0;font-weight:600">👴 Role: Senior Citizen</p>
-    <p style="color:var(--muted);margin:6px 0;font-weight:600">📅 Date: ${new Date().toLocaleDateString('en-IN')}</p>`;
-  loadMedicines();
-  loadLogoImage();
-  startReminderChecker();
-  showBottomNav();
-  navTo('home');
-  confettiFired = false;
+    <h3 style="color:var(--text);margin-bottom:12px;font-size:1em;font-weight:800;text-transform:uppercase;letter-spacing:.5px">My Profile</h3>
+    <p style="color:var(--muted);margin:6px 0;font-weight:600;font-size:.88em">Name: ${currentUser.name}</p>
+    <p style="color:var(--muted);margin:6px 0;font-weight:600;font-size:.88em">Username: ${currentUser.username}</p>
+    <p style="color:var(--muted);margin:6px 0;font-weight:600;font-size:.88em">Role: Senior Citizen</p>
+    <p style="color:var(--muted);margin:6px 0;font-weight:600;font-size:.88em">Date: ${new Date().toLocaleDateString('en-IN')}</p>`;
+  loadMedicines();loadLogoImage();startReminderChecker();showBottomNav();navTo('home');
+  confettiFired=false;
   document.getElementById('theme-toggle').classList.add('visible');
   loadSettingsPhones();
 }
 
-// ── 🔔 REMINDER SYSTEM ───────────────────────────────────
-function startReminderChecker(){
-  stopReminderChecker();
-  reminderInterval = setInterval(checkReminders, 30000); // check every 30s
-  checkReminders(); // check immediately on login
-}
-
-function stopReminderChecker(){
-  if(reminderInterval) clearInterval(reminderInterval);
-}
+function startReminderChecker(){stopReminderChecker();reminderInterval=setInterval(checkReminders,30000);checkReminders();}
+function stopReminderChecker(){if(reminderInterval)clearInterval(reminderInterval);}
 
 async function checkReminders(){
   try{
-    const res  = await fetch('/api/medicines');
-    const data = await res.json();
-    const medicines = data.medicines || [];
-    const now  = new Date();
-    const hhmm = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
-
+    const res=await fetch('/api/medicines');const data=await res.json();
+    const medicines=data.medicines||[];
+    const now=new Date();
+    const hhmm=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
     for(const med of medicines){
-      if(!med.reminder_time || med.taken_today) continue;
-      if(med.reminder_time !== hhmm) continue;
-      const key = med.name + '_' + hhmm;
-      if(snoozedReminders[key]) continue;
-      showReminder(med);
-      break; // show one at a time
+      if(!med.reminder_time||med.taken_today)continue;
+      if(med.reminder_time!==hhmm)continue;
+      const key=med.name+'_'+hhmm;
+      if(snoozedReminders[key])continue;
+      showReminder(med);break;
     }
   }catch(e){}
 }
 
-let currentReminderMed = null;
+let currentReminderMed=null;
 
 function showReminder(med){
-  currentReminderMed = med;
-  document.getElementById('reminder-text').textContent =
-    `Time to take your 💊 ${med.name} (${med.dosage}) — ${med.timing}`;
+  currentReminderMed=med;
+  document.getElementById('reminder-text').textContent=`Time to take ${med.name} (${med.dosage}) — ${med.timing}`;
   document.getElementById('reminder-overlay').classList.add('show');
   document.getElementById('reminder-popup').classList.add('show');
   playAlarmSound();
@@ -1027,101 +1123,66 @@ function showReminder(med){
 function dismissReminder(){
   document.getElementById('reminder-overlay').classList.remove('show');
   document.getElementById('reminder-popup').classList.remove('show');
-  stopAlarmSound();
-  currentReminderMed = null;
+  stopAlarmSound();currentReminderMed=null;
 }
 
 function snoozeReminder(){
   if(currentReminderMed){
-    const snoozeTime = new Date(Date.now() + 10*60*1000);
-    const hhmm = snoozeTime.getHours().toString().padStart(2,'0') + ':' + snoozeTime.getMinutes().toString().padStart(2,'0');
-    snoozedReminders[currentReminderMed.name + '_' + currentReminderMed.reminder_time] = true;
-    toast('⏰ Reminder snoozed for 10 minutes!');
+    snoozedReminders[currentReminderMed.name+'_'+currentReminderMed.reminder_time]=true;
+    toast('Reminder snoozed for 10 minutes');
   }
   dismissReminder();
 }
 
-// ── 🔊 Alarm Sound (Web Audio API — no files needed) ─────
-let alarmOscillators = [];
-let alarmCtx = null;
+let alarmOscillators=[];let alarmCtx=null;
 
 function playAlarmSound(){
   try{
-    alarmCtx = new (window.AudioContext || window.webkitAudioContext)();
-    function beep(freq, start, duration){
-      const osc  = alarmCtx.createOscillator();
-      const gain = alarmCtx.createGain();
-      osc.connect(gain);
-      gain.connect(alarmCtx.destination);
-      osc.frequency.value = freq;
-      osc.type = 'sine';
-      gain.gain.setValueAtTime(0.4, alarmCtx.currentTime + start);
-      gain.gain.exponentialRampToValueAtTime(0.001, alarmCtx.currentTime + start + duration);
-      osc.start(alarmCtx.currentTime + start);
-      osc.stop(alarmCtx.currentTime + start + duration);
+    alarmCtx=new(window.AudioContext||window.webkitAudioContext)();
+    function beep(freq,start,duration){
+      const osc=alarmCtx.createOscillator();const gain=alarmCtx.createGain();
+      osc.connect(gain);gain.connect(alarmCtx.destination);
+      osc.frequency.value=freq;osc.type='sine';
+      gain.gain.setValueAtTime(0.4,alarmCtx.currentTime+start);
+      gain.gain.exponentialRampToValueAtTime(0.001,alarmCtx.currentTime+start+duration);
+      osc.start(alarmCtx.currentTime+start);osc.stop(alarmCtx.currentTime+start+duration);
       alarmOscillators.push(osc);
     }
-    // Play a pleasant 3-beep alarm
-    for(let i = 0; i < 3; i++){
-      beep(880, i * 0.6, 0.4);
-      beep(1100, i * 0.6 + 0.2, 0.3);
-    }
-    // Repeat every 3 seconds
-    window._alarmLoop = setInterval(()=>{
-      if(!alarmCtx) return;
-      for(let i=0;i<3;i++){
-        beep(880, i*0.6, 0.4);
-        beep(1100, i*0.6+0.2, 0.3);
-      }
-    }, 3500);
-  }catch(e){ console.log('Audio not supported'); }
+    for(let i=0;i<3;i++){beep(880,i*0.6,0.4);beep(1100,i*0.6+0.2,0.3);}
+    window._alarmLoop=setInterval(()=>{if(!alarmCtx)return;for(let i=0;i<3;i++){beep(880,i*0.6,0.4);beep(1100,i*0.6+0.2,0.3);}},3500);
+  }catch(e){}
 }
 
-function stopAlarmSound(){
-  if(window._alarmLoop) clearInterval(window._alarmLoop);
-  if(alarmCtx){ alarmCtx.close(); alarmCtx = null; }
-  alarmOscillators = [];
-}
+function stopAlarmSound(){if(window._alarmLoop)clearInterval(window._alarmLoop);if(alarmCtx){alarmCtx.close();alarmCtx=null;}alarmOscillators=[];}
 
-// ── Medicines ─────────────────────────────────────────────
 async function loadMedicines(){
-  try{
-    const res=await fetch('/api/medicines');
-    const data=await res.json();
-    renderMedicines(data.medicines||[]);
-  }catch(e){
-    document.getElementById('medicines-list').innerHTML='<div class="empty"><div class="icon">⚠️</div><p>Cannot connect to server</p></div>';
-  }
+  try{const res=await fetch('/api/medicines');const data=await res.json();renderMedicines(data.medicines||[]);}
+  catch(e){document.getElementById('medicines-list').innerHTML='<div class="empty"><div class="icon">⚠️</div><p>Cannot connect to server</p></div>';}
 }
 
 function renderMedicines(medicines){
-  const total=medicines.length;
-  const taken=medicines.filter(m=>m.taken_today).length;
+  const total=medicines.length;const taken=medicines.filter(m=>m.taken_today).length;
   document.getElementById('sm-total').textContent=total;
   document.getElementById('sm-taken').textContent=taken;
   document.getElementById('sm-left').textContent=total-taken;
-  updateProgressRing(taken, total);
+  updateProgressRing(taken,total);
   const el=document.getElementById('medicines-list');
-  if(!medicines.length){
-    el.innerHTML=`<div class="empty"><div class="icon">🌿</div><p>No medicines added yet.<br>Add your first medicine above!</p></div>`;return;
-  }
+  if(!medicines.length){el.innerHTML=`<div class="empty"><div class="icon">💊</div><p>No medicines added yet.<br>Add your first medicine above.</p></div>`;return;}
   el.innerHTML=medicines.map((med,i)=>{
-    const isLow=med.remaining<=5;
-    const cls=med.taken_today?'taken':(isLow?'low':'');
-    const stxt=med.taken_today?'✅ Taken':'⏳ Pending';
-    const sclass=med.taken_today?'taken':'pending';
-    const reminderTag=med.reminder_time?`<span class="med-reminder">🔔 Alarm: ${formatTime(med.reminder_time)}</span><br>`:'';
+    const isLow=med.remaining<=5;const cls=med.taken_today?'taken':(isLow?'low':'');
+    const stxt=med.taken_today?'Taken':'Pending';const sclass=med.taken_today?'taken':'pending';
+    const reminderTag=med.reminder_time?`<span class="med-reminder">Alarm: ${formatTime(med.reminder_time)}</span><br>`:'';
     const photoHtml=med.photo
       ?`<img src="${med.photo}?t=${Date.now()}" class="pill-photo" onclick="viewPhoto('${med.photo}')" title="View pill photo"/>`
-      :`<div class="pill-photo-placeholder" onclick="triggerPhotoUpload(${i})"><span class="icon">📸</span>Add Photo</div>`;
+      :`<div class="pill-photo-placeholder" onclick="triggerPhotoUpload(${i})"><span class="icon">📷</span>Photo</div>`;
     return `
     <div class="med-card ${cls}">
       <div class="med-header">
         <div style="flex:1">
-          <div class="med-name">💊 ${med.name}</div>
-          <div class="med-meta">${med.dosage} &nbsp;•&nbsp; ⏰ ${med.timing}</div>
-          <div class="med-remaining">📦 ${med.remaining} tablets left</div>
-          ${med.notes?`<div class="med-notes">📝 ${med.notes}</div>`:''}
+          <div class="med-name">${med.name}</div>
+          <div class="med-meta">${med.dosage} &nbsp;•&nbsp; ${med.timing}</div>
+          <div class="med-remaining">${med.remaining} tablets remaining</div>
+          ${med.notes?`<div class="med-notes">${med.notes}</div>`:''}
           ${reminderTag}
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
@@ -1129,25 +1190,21 @@ function renderMedicines(medicines){
           ${photoHtml}
         </div>
       </div>
-      ${isLow?`<p style="color:var(--yellow);font-size:.8em;font-weight:700;margin-bottom:8px">⚠️ Low stock — please refill soon!</p>`:''}
-      <input type="file" id="photo-input-${i}" accept="image/*" capture="environment" style="display:none" onchange="uploadPillPhoto(${i}, this)"/>
+      ${isLow?`<p style="color:var(--yellow);font-size:.78em;font-weight:700;margin-bottom:8px">Low stock — please refill soon</p>`:''}
+      <input type="file" id="photo-input-${i}" accept="image/*" capture="environment" style="display:none" onchange="uploadPillPhoto(${i},this)"/>
       <div class="med-actions">
-        ${!med.taken_today
-          ?`<button class="btn btn-green btn-sm" style="flex:1" onclick="takeMedicine(${i})">✅ I took it!</button>`
-          :`<div style="flex:1"></div>`}
-        <button class="btn btn-yellow btn-sm" onclick="requestRefill(${i},'${med.name}',${med.remaining})" title="Request Refill">🛒 Refill</button>
-        ${med.photo?`<button class="btn btn-outline btn-sm" onclick="deletePillPhoto(${i})" style="padding:10px 12px" title="Remove photo">🗑️📸</button>`:''}
-        <button class="btn btn-outline btn-sm" onclick="deleteMedicine(${i})" style="padding:10px 14px">🗑️</button>
+        ${!med.taken_today?`<button class="btn btn-green btn-sm" style="flex:1" onclick="takeMedicine(${i})">Mark as Taken</button>`:`<div style="flex:1"></div>`}
+        <button class="btn btn-yellow btn-sm" onclick="requestRefill(${i},'${med.name}',${med.remaining})">Refill</button>
+        ${med.photo?`<button class="btn btn-outline btn-sm" onclick="deletePillPhoto(${i})" title="Remove photo">Remove Photo</button>`:''}
+        <button class="btn btn-outline btn-sm" onclick="deleteMedicine(${i})" style="padding:10px 14px">Delete</button>
       </div>
     </div>`;
   }).join('');
 }
 
 function formatTime(t){
-  if(!t)return'';
-  const [h,m]=t.split(':');
-  const hr=parseInt(h);
-  return `${hr>12?hr-12:hr}:${m} ${hr>=12?'PM':'AM'}`;
+  if(!t)return'';const[h,m]=t.split(':');const hr=parseInt(h);
+  return`${hr>12?hr-12:hr}:${m} ${hr>=12?'PM':'AM'}`;
 }
 
 async function addMedicine(){
@@ -1157,23 +1214,20 @@ async function addMedicine(){
   const total=document.getElementById('med-total').value;
   const notes=document.getElementById('med-notes').value.trim();
   const reminder_time=document.getElementById('med-reminder').value;
-  if(!name||!dosage||!total){toast('❌ Fill Medicine Name, Dosage and Tablets!','error');return;}
+  if(!name||!dosage||!total){toast('Fill Medicine Name, Dosage and Tablets','error');return;}
   const btn=document.getElementById('add-med-btn');
   btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Adding...';
   try{
     const res=await fetch('/api/medicines',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,dosage,timing,total:parseInt(total),notes,reminder_time})});
     const data=await res.json();
     if(data.success){
-      toast('✅ '+name+' added!'+(reminder_time?' 🔔 Reminder set for '+formatTime(reminder_time):''));
-      document.getElementById('med-name').value='';
-      document.getElementById('med-dosage').value='';
-      document.getElementById('med-total').value='';
-      document.getElementById('med-notes').value='';
-      document.getElementById('med-reminder').value='';
-      renderMedicines(data.medicines);
-    }else{toast('❌ '+data.error,'error');}
-  }catch(e){toast('❌ Server error','error');}
-  btn.disabled=false;btn.innerHTML='➕ Add Medicine';
+      toast(name+' added!'+(reminder_time?' Reminder set for '+formatTime(reminder_time):''));
+      document.getElementById('med-name').value='';document.getElementById('med-dosage').value='';
+      document.getElementById('med-total').value='';document.getElementById('med-notes').value='';
+      document.getElementById('med-reminder').value='';renderMedicines(data.medicines);
+    }else{toast(data.error,'error');}
+  }catch(e){toast('Server error','error');}
+  btn.disabled=false;btn.innerHTML='Add Medicine';
 }
 
 async function takeMedicine(index){
@@ -1181,13 +1235,11 @@ async function takeMedicine(index){
     const res=await fetch(`/api/medicines/${index}/take`,{method:'POST'});
     const data=await res.json();
     if(data.success){
-      toast('✅ Medicine taken!'+(data.whatsapp_status==='sent'?' 📱 Family notified!':''));
-      if(data.low_stock)toast('⚠️ Low stock alert sent to family!');
-      renderMedicines(data.medicines);
-      // 🏆 Earn points
-      earnPoints('Medicine taken on time', 10);
-    }else{toast('❌ '+data.error,'error');}
-  }catch(e){toast('❌ Server error','error');}
+      toast('Medicine marked as taken!'+(data.whatsapp_status==='sent'?' Family notified.':''));
+      if(data.low_stock)toast('Low stock alert sent to family');
+      renderMedicines(data.medicines);earnPoints('Medicine taken on time',10);
+    }else{toast(data.error,'error');}
+  }catch(e){toast('Server error','error');}
 }
 
 async function deleteMedicine(index){
@@ -1195,33 +1247,30 @@ async function deleteMedicine(index){
   try{
     const res=await fetch(`/api/medicines/${index}`,{method:'DELETE'});
     const data=await res.json();
-    if(data.success){toast('🗑️ Medicine removed!');renderMedicines(data.medicines);}
-    else{toast('❌ '+data.error,'error');}
-  }catch(e){toast('❌ Server error','error');}
+    if(data.success){toast('Medicine removed');renderMedicines(data.medicines);}
+    else{toast(data.error,'error');}
+  }catch(e){toast('Server error','error');}
 }
 
-// ── 🛒 Refill Request ─────────────────────────────────────
-async function requestRefill(index, medicine_name, remaining){
-  if(!confirm(`Send refill request for ${medicine_name} to family on WhatsApp?`))return;
+async function requestRefill(index,medicine_name,remaining){
+  if(!confirm(`Send refill request for ${medicine_name} to family?`))return;
   try{
     const res=await fetch('/api/whatsapp/refill',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({medicine_name,remaining})});
     const data=await res.json();
-    if(data.success)toast('🛒 Refill request sent to family on WhatsApp! 📱');
-    else toast('❌ '+data.error,'error');
-  }catch(e){toast('❌ Server error','error');}
+    if(data.success)toast('Refill request sent to family on WhatsApp');
+    else toast(data.error,'error');
+  }catch(e){toast('Server error','error');}
 }
 
 async function checkMissed(){
   const res=await fetch('/api/whatsapp/check-missed',{method:'POST'});
   const data=await res.json();
-  if(data.missed&&data.missed.length>0)toast('❌ Missed: '+data.missed.join(', '),'error');
-  else toast('✅ Great! All medicines on track! 🌿');
+  if(data.missed&&data.missed.length>0)toast('Missed: '+data.missed.join(', '),'error');
+  else toast('All medicines on track!');
 }
 
-// ── History ───────────────────────────────────────────────
 async function loadHistory(dashboard){
-  const res=await fetch('/api/history');
-  const data=await res.json();
+  const res=await fetch('/api/history');const data=await res.json();
   const history=data.history||[];
   const taken=history.filter(h=>h.action==='Taken').length;
   const missed=history.filter(h=>h.action==='Missed').length;
@@ -1229,32 +1278,18 @@ async function loadHistory(dashboard){
     document.getElementById('hist-taken').textContent=taken;
     document.getElementById('hist-missed').textContent=missed;
     const el=document.getElementById('history-list');
-    if(!history.length){el.innerHTML=`<div class="empty-state">
-  <svg width="140" height="120" viewBox="0 0 140 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <ellipse cx="70" cy="108" rx="45" ry="8" fill="var(--border)"/>
-    <rect x="30" y="22" width="80" height="80" rx="14" fill="var(--green3)" stroke="var(--border)" stroke-width="2"/>
-    <rect x="44" y="40" width="52" height="6" rx="3" fill="var(--border)"/>
-    <rect x="44" y="54" width="38" height="6" rx="3" fill="var(--border)"/>
-    <rect x="44" y="68" width="46" height="6" rx="3" fill="var(--border)"/>
-    <circle cx="38" cy="43" r="4" fill="var(--green)" opacity=".4"/>
-    <circle cx="38" cy="57" r="4" fill="var(--green)" opacity=".4"/>
-    <circle cx="38" cy="71" r="4" fill="var(--green)" opacity=".4"/>
-  </svg>
-  <h3>No history yet!</h3>
-  <p>Your medicine activity<br>will appear here</p>
-</div>`;return;}
+    if(!history.length){el.innerHTML='<div class="empty"><div class="icon">📋</div><p>No activity yet</p></div>';return;}
     el.innerHTML=[...history].reverse().map(r=>{
       const cls=r.action.toLowerCase();
-      const icon=r.action==='Taken'?'✅':r.action==='Missed'?'❌':r.action==='Deleted'?'🗑️':'➕';
-      return `<div class="history-record ${cls}"><p style="color:var(--text);font-size:.9em;font-weight:700">${icon} ${r.medicine} — ${r.action}</p><p style="color:var(--muted2);font-size:.76em;margin-top:3px;font-weight:600">🕐 ${r.time}</p></div>`;
+      const label=r.action==='Taken'?'Taken':r.action==='Missed'?'Missed':'Removed';
+      return `<div class="history-record ${cls}"><p style="color:var(--text);font-size:.88em;font-weight:700">${r.medicine} — ${label}</p><p style="color:var(--muted2);font-size:.74em;margin-top:3px;font-weight:600">${r.time}</p></div>`;
     }).join('');
   }else{
     const el=document.getElementById('family-history-list');
-    if(!history.length){el.innerHTML='<div class="empty"><div class="icon">📝</div><p>No activity yet!</p></div>';return;}
+    if(!history.length){el.innerHTML='<div class="empty"><div class="icon">📋</div><p>No activity yet</p></div>';return;}
     el.innerHTML=[...history].reverse().slice(0,15).map(r=>{
-      const icon=r.action==='Taken'?'✅':r.action==='Missed'?'❌':'➕';
       const cls=r.action.toLowerCase();
-      return `<div class="history-record ${cls}"><p style="color:var(--text);font-size:.88em;font-weight:700">${icon} ${r.medicine} — ${r.action}</p><p style="color:var(--muted2);font-size:.76em;margin-top:2px;font-weight:600">🕐 ${r.time}</p></div>`;
+      return `<div class="history-record ${cls}"><p style="color:var(--text);font-size:.86em;font-weight:700">${r.medicine} — ${r.action}</p><p style="color:var(--muted2);font-size:.74em;margin-top:2px;font-weight:600">${r.time}</p></div>`;
     }).join('');
   }
 }
@@ -1262,82 +1297,61 @@ async function loadHistory(dashboard){
 async function clearHistory(){
   if(!confirm('Clear all history?'))return;
   await fetch('/api/history',{method:'DELETE'});
-  toast('✅ History cleared!');loadHistory('senior');
+  toast('History cleared');loadHistory('senior');
 }
 
-// ── Prescription ──────────────────────────────────────────
 async function loadPrescription(dashboard){
-  const res=await fetch('/api/prescription');
-  const data=await res.json();
-  const rx=data.prescription;
+  const res=await fetch('/api/prescription');const data=await res.json();const rx=data.prescription;
   const elId=dashboard==='senior'?'rx-display':'family-rx-display';
-  if(!rx){document.getElementById(elId).innerHTML='<div class="empty"><div class="icon">📋</div><p>No prescription saved yet!</p></div>';return;}
+  if(!rx){document.getElementById(elId).innerHTML='<div class="empty"><div class="icon">📋</div><p>No prescription saved yet</p></div>';return;}
   document.getElementById(elId).innerHTML=`
     <div class="rx-card">
-      <h3>👴 ${rx.patient_name}</h3>
-      <p>👨‍⚕️ Dr. ${rx.doctor_name}</p>
-      <p>🏥 ${rx.hospital_name||'N/A'}</p>
-      <p>📅 ${rx.date}</p>
-      <p>📅 Next Visit: ${rx.next_visit||'N/A'}</p>
-      <p>📞 ${rx.contact||'N/A'}</p>
-      <p style="color:var(--text);margin-top:10px;font-weight:700">📝 ${rx.notes||'None'}</p>
+      <h3>${rx.patient_name}</h3>
+      <p>Dr. ${rx.doctor_name}</p>
+      <p>${rx.hospital_name||'N/A'}</p>
+      <p>Date: ${rx.date}</p>
+      <p>Next Visit: ${rx.next_visit||'N/A'}</p>
+      <p>${rx.contact||'N/A'}</p>
+      <p style="color:var(--text);margin-top:10px;font-weight:700">${rx.notes||'None'}</p>
     </div>`;
 }
 
-async function savePrescription(){
-  const data={patient_name:document.getElementById('rx-patient').value.trim(),doctor_name:document.getElementById('rx-doctor').value.trim(),hospital_name:document.getElementById('rx-hospital').value.trim(),date:document.getElementById('rx-date').value,next_visit:document.getElementById('rx-next').value,contact:document.getElementById('rx-contact').value.trim(),notes:document.getElementById('rx-notes').value.trim()};
-  if(!data.patient_name||!data.doctor_name){toast('❌ Fill patient and doctor name!','error');return;}
-  const res=await fetch('/api/prescription',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
-  const result=await res.json();
-  if(result.success){toast('✅ Prescription saved!');loadPrescription('senior');}
-  else toast('❌ '+result.error,'error');
-}
-
-// ── MediBot ───────────────────────────────────────────────
 function quickQ(q){document.getElementById('chat-input').value=q;sendChat();}
 async function sendChat(){
-  const input=document.getElementById('chat-input');
-  const q=input.value.trim();if(!q)return;
+  const input=document.getElementById('chat-input');const q=input.value.trim();if(!q)return;
   input.value='';appendChat('user',q);appendChat('bot','<span class="spinner"></span>Thinking...');
   try{
     const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:q})});
     const data=await res.json();
-    removeLastBot();appendChat('bot',data.success?data.response:'❌ '+data.error);
-  }catch(e){removeLastBot();appendChat('bot','❌ Server error. Try again!');}
+    removeLastBot();appendChat('bot',data.success?data.response:data.error);
+  }catch(e){removeLastBot();appendChat('bot','Server error. Try again.');}
 }
 function appendChat(role,msg){
-  const box=document.getElementById('chat-box');
-  const div=document.createElement('div');
+  const box=document.getElementById('chat-box');const div=document.createElement('div');
   div.className=role==='user'?'chat-msg-user':'chat-msg-bot';
-  div.innerHTML=(role==='bot'?'🤖 ':'')+msg;
+  div.innerHTML=(role==='bot'?'MediBot: ':'')+msg;
   box.appendChild(div);box.scrollTop=box.scrollHeight;
 }
 function removeLastBot(){const box=document.getElementById('chat-box');const bots=box.querySelectorAll('.chat-msg-bot');if(bots.length)bots[bots.length-1].remove();}
 function clearChat(){document.getElementById('chat-box').innerHTML='';}
 
-// ── WhatsApp ──────────────────────────────────────────────
 async function sendDailyReport(){
-  const res=await fetch('/api/whatsapp/daily-report',{method:'POST'});
-  const data=await res.json();
-  toast(data.success?'✅ Daily report sent! 📱':('❌ '+data.error),data.success?'success':'error');
+  const res=await fetch('/api/whatsapp/daily-report',{method:'POST'});const data=await res.json();
+  toast(data.success?'Daily report sent!':data.error,data.success?'success':'error');
 }
 async function sendEmergency(){
   if(!confirm('Send emergency alert to family?'))return;
-  const res=await fetch('/api/whatsapp/emergency',{method:'POST'});
-  const data=await res.json();
-  toast(data.success?'🆘 Emergency alert sent!':('❌ '+data.error),data.success?'success':'error');
+  const res=await fetch('/api/whatsapp/emergency',{method:'POST'});const data=await res.json();
+  toast(data.success?'Emergency alert sent!':data.error,data.success?'success':'error');
 }
 
-// ── Family ────────────────────────────────────────────────
 function loadFamilyDashboard(){
   document.getElementById('family-name').textContent=currentUser.name;
-  hideBottomNav();
-  document.getElementById('theme-toggle').classList.add('visible');
-  loadFamilyData();
+  hideBottomNav();document.getElementById('theme-toggle').classList.add('visible');loadFamilyData();
 }
 async function loadFamilyData(){
   try{
-    const [medRes,sumRes]=await Promise.all([fetch('/api/medicines'),fetch('/api/summary')]);
+    const[medRes,sumRes]=await Promise.all([fetch('/api/medicines'),fetch('/api/summary')]);
     const medData=await medRes.json();const sumData=await sumRes.json();
     document.getElementById('fm-total').textContent=sumData.total;
     document.getElementById('fm-taken').textContent=sumData.taken;
@@ -1346,41 +1360,29 @@ async function loadFamilyData(){
     document.getElementById('family-updated').textContent='Last updated: '+sumData.last_updated;
     const medicines=medData.medicines||[];
     const el=document.getElementById('family-status-list');
-    if(!medicines.length){el.innerHTML=`<div class="empty-state">
-  <svg width="140" height="120" viewBox="0 0 140 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <ellipse cx="70" cy="108" rx="45" ry="8" fill="var(--border)"/>
-    <circle cx="50" cy="45" r="18" fill="var(--green)" opacity=".15" stroke="var(--green)" stroke-width="1.5"/>
-    <circle cx="90" cy="45" r="14" fill="var(--green)" opacity=".1" stroke="var(--green)" stroke-width="1.5"/>
-    <text x="50" y="52" text-anchor="middle" font-size="18">👴</text>
-    <text x="90" y="51" text-anchor="middle" font-size="14">👨‍👩‍👧</text>
-    <path d="M32 88 Q50 72 70 80 Q90 72 108 88" stroke="var(--green)" stroke-width="2" fill="none" stroke-linecap="round"/>
-  </svg>
-  <h3>No medicines to monitor!</h3>
-  <p>Medicines added by your<br>loved one will appear here</p>
-</div>`;return;}
+    if(!medicines.length){el.innerHTML='<div class="empty"><div class="icon">💊</div><p>No medicines to monitor</p></div>';return;}
     el.innerHTML=medicines.map(med=>{
       const isLow=med.remaining<=5;const taken=med.taken_today;
       const borderColor=taken?'var(--green)':'var(--red)';
-      const stxt=taken?'✅ Taken!':'❌ Not taken!';const sclass=taken?'taken':'pending';
-      const reminderTag=med.reminder_time?`<div style="color:var(--green-dark);font-size:.76em;font-weight:700;margin-top:3px">🔔 Alarm: ${formatTime(med.reminder_time)}</div>`:'';
+      const stxt=taken?'Taken':'Not taken';const sclass=taken?'taken':'pending';
+      const reminderTag=med.reminder_time?`<div style="color:var(--blue);font-size:.74em;font-weight:700;margin-top:3px">Alarm: ${formatTime(med.reminder_time)}</div>`:'';
       return `
       <div class="med-card" style="border-left-color:${borderColor}">
         <div class="med-header">
           <div>
-            <div class="med-name">💊 ${med.name}</div>
-            <div class="med-meta">${med.dosage} • ${med.timing}</div>
-            <div class="med-remaining">📦 ${med.remaining} tablets left${isLow?' ⚠️':''}</div>
+            <div class="med-name">${med.name}</div>
+            <div class="med-meta">${med.dosage} &nbsp;•&nbsp; ${med.timing}</div>
+            <div class="med-remaining">${med.remaining} tablets remaining${isLow?' — Low stock':''}</div>
             ${reminderTag}
           </div>
           <span class="med-status ${sclass}">${stxt}</span>
         </div>
-        ${isLow?`<p style="color:var(--yellow);font-size:.8em;font-weight:700">⚠️ Low stock! Only ${med.remaining} left!</p>`:''}
+        ${isLow?`<p style="color:var(--yellow);font-size:.78em;font-weight:700">Low stock! Only ${med.remaining} left.</p>`:''}
       </div>`;
     }).join('');
   }catch(e){document.getElementById('family-status-list').innerHTML='<div class="empty"><div class="icon">⚠️</div><p>Cannot connect to server</p></div>';}
 }
 
-// ── Logo ──────────────────────────────────────────────────
 function loadLogoImage(){
   const c=document.getElementById('logo-container');if(!c)return;
   const img=new Image();
@@ -1389,740 +1391,277 @@ function loadLogoImage(){
   img.src='/static/Logo.jpeg';
 }
 
-// ── Toast ─────────────────────────────────────────────────
 function toast(msg,type='success'){
-  const el=document.getElementById('toast');
-  el.textContent=msg;el.className=type==='error'?'show error':'show';
+  const el=document.getElementById('toast');el.textContent=msg;
+  el.className=type==='error'?'show error':'show';
   clearTimeout(window._toast);window._toast=setTimeout(()=>el.className='',3500);
 }
 
+let currentNav='home';
 
-
-
-// ══════════════════════════════════════════════
-// BOTTOM NAVIGATION
-// ══════════════════════════════════════════════
-
-let currentNav = 'home';
-
-function navTo(section) {
-  // Update nav items
-  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-  const navBtn = document.getElementById('nav-' + section);
-  if (navBtn) navBtn.classList.add('active');
-
-  // Update inner sections
-  document.querySelectorAll('.inner-section').forEach(s => s.classList.remove('active'));
-  const inner = document.getElementById('inner-' + section);
-  if (inner) inner.classList.add('active');
-
-  currentNav = section;
-
-  // Load section data
-  if (section === 'rewards')      loadRewards();
-  if (section === 'appointments') { loadAppointments(); }
-  if (section === 'medibot')      { /* chat ready */ }
-  if (section === 'settings') {
-    loadHistory('senior');
-    loadPrescription('senior');
-    loadSettingsPhones();
-  }
-
-  window.scrollTo(0, 0);
+function navTo(section){
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  const navBtn=document.getElementById('nav-'+section);if(navBtn)navBtn.classList.add('active');
+  document.querySelectorAll('.inner-section').forEach(s=>s.classList.remove('active'));
+  const inner=document.getElementById('inner-'+section);if(inner)inner.classList.add('active');
+  currentNav=section;
+  if(section==='rewards')loadRewards();
+  if(section==='appointments')loadAppointments();
+  if(section==='settings'){loadHistory('senior');loadPrescription('senior');loadSettingsPhones();}
+  window.scrollTo(0,0);
 }
 
-function showAddMedicineSheet() {
-  navTo('home');
-  setTimeout(() => {
-    const name = document.getElementById('med-name');
-    if (name) {
-      name.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      name.focus();
-    }
-  }, 200);
+function showAddMedicineSheet(){navTo('home');setTimeout(()=>{const name=document.getElementById('med-name');if(name){name.scrollIntoView({behavior:'smooth',block:'center'});name.focus();}},200);}
+function showBottomNav(){document.getElementById('bottom-nav').classList.add('visible');document.getElementById('fab').classList.add('visible');}
+function hideBottomNav(){document.getElementById('bottom-nav').classList.remove('visible');document.getElementById('fab').classList.remove('visible');}
+
+function updateProgressRing(taken,total){
+  const ring=document.getElementById('progress-ring');
+  const ringTaken=document.getElementById('ring-taken');
+  const ringSub=document.getElementById('ring-sub');
+  const ringGreeting=document.getElementById('ring-greeting');
+  const ringMessage=document.getElementById('ring-message');
+  if(!ring)return;
+  const circumference=2*Math.PI*74;
+  const pct=total>0?taken/total:0;
+  const offset=circumference-pct*circumference;
+  ring.style.strokeDasharray=circumference;ring.style.strokeDashoffset=offset;
+  if(pct===0)ring.style.stroke='#c8d0e0';
+  else if(pct<0.5)ring.style.stroke='#e8a020';
+  else if(pct<1)ring.style.stroke='#1565C0';
+  else ring.style.stroke='#0D47A1';
+  ringTaken.textContent=taken;ringSub.textContent=`of ${total} taken`;
+  const hour=new Date().getHours();
+  const greet=hour<12?'Good Morning':hour<17?'Good Afternoon':'Good Evening';
+  ringGreeting.textContent=greet;
+  if(total===0)ringMessage.textContent='Add your medicines below';
+  else if(taken===0)ringMessage.textContent='Time to take your first medicine';
+  else if(taken===total){ringMessage.textContent='All medicines taken today — great job!';launchConfetti();}
+  else ringMessage.textContent=`${total-taken} medicine${total-taken>1?'s':''} remaining today`;
 }
 
-function showBottomNav() {
-  document.getElementById('bottom-nav').classList.add('visible');
-  document.getElementById('fab').classList.add('visible');
+let confettiFired=false;
+function launchConfetti(){
+  if(confettiFired)return;confettiFired=true;
+  const canvas=document.getElementById('confetti-canvas');canvas.style.display='block';
+  const ctx=canvas.getContext('2d');canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+  const colors=['#1565C0','#42a5f5','#e8a020','#2d9e5f','#e05252','#90CAF9'];
+  const pieces=Array.from({length:120},()=>({x:Math.random()*canvas.width,y:Math.random()*canvas.height-canvas.height,r:Math.random()*8+4,d:Math.random()*3+2,color:colors[Math.floor(Math.random()*colors.length)],tilt:Math.random()*10-5,tiltAngle:0,tiltSpeed:Math.random()*0.1+0.05}));
+  let frame=0;
+  function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);pieces.forEach(p=>{p.tiltAngle+=p.tiltSpeed;p.y+=p.d;p.tilt=Math.sin(p.tiltAngle)*12;ctx.beginPath();ctx.lineWidth=p.r;ctx.strokeStyle=p.color;ctx.moveTo(p.x+p.tilt,p.y);ctx.lineTo(p.x+p.tilt+p.r*0.8,p.y+p.r*0.8);ctx.stroke();});frame++;if(frame<200)requestAnimationFrame(draw);else{canvas.style.display='none';ctx.clearRect(0,0,canvas.width,canvas.height);}}
+  draw();toast('All medicines taken today!');
 }
 
-function hideBottomNav() {
-  document.getElementById('bottom-nav').classList.remove('visible');
-  document.getElementById('fab').classList.remove('visible');
-}
-
-// ══════════════════════════════════════════════
-// PROGRESS RING
-// ══════════════════════════════════════════════
-
-function updateProgressRing(taken, total) {
-  const ring        = document.getElementById('progress-ring');
-  const ringTaken   = document.getElementById('ring-taken');
-  const ringSub     = document.getElementById('ring-sub');
-  const ringGreeting = document.getElementById('ring-greeting');
-  const ringMessage  = document.getElementById('ring-message');
-
-  if (!ring) return;
-
-  const radius       = 74;
-  const circumference = 2 * Math.PI * radius; // ~465
-  const pct          = total > 0 ? taken / total : 0;
-  const offset       = circumference - pct * circumference;
-
-  ring.style.strokeDasharray  = circumference;
-  ring.style.strokeDashoffset = offset;
-
-  // Color by progress
-  if (pct === 0)       ring.style.stroke = '#c8e6d4';
-  else if (pct < 0.5)  ring.style.stroke = '#e8a020';
-  else if (pct < 1)    ring.style.stroke = '#2d9e5f';
-  else                 ring.style.stroke = '#1a7a45';
-
-  ringTaken.textContent = taken;
-  ringSub.textContent   = `of ${total} taken`;
-
-  // Greeting message
-  const hour = new Date().getHours();
-  const greet = hour < 12 ? 'Good Morning! ☀️' : hour < 17 ? 'Good Afternoon! 🌤️' : 'Good Evening! 🌙';
-  ringGreeting.textContent = greet;
-
-  if (total === 0)          ringMessage.textContent = 'Add your medicines below 💊';
-  else if (taken === 0)     ringMessage.textContent = 'Time to take your first medicine!';
-  else if (taken === total) {
-    ringMessage.textContent = '🎉 All medicines taken today! Great job!';
-    launchConfetti();
-  } else {
-    ringMessage.textContent = `${total - taken} medicine${total - taken > 1 ? 's' : ''} remaining today`;
-  }
-}
-
-// ══════════════════════════════════════════════
-// CONFETTI 🎉
-// ══════════════════════════════════════════════
-
-let confettiFired = false;
-
-function launchConfetti() {
-  if (confettiFired) return;
-  confettiFired = true;
-
-  const canvas = document.getElementById('confetti-canvas');
-  canvas.style.display = 'block';
-  const ctx    = canvas.getContext('2d');
-  canvas.width  = window.innerWidth;
-  canvas.height = window.innerHeight;
-
-  const colors  = ['#2d9e5f','#3dbf75','#e8a020','#4a90d9','#e05252','#f0cc80','#a8dfc0'];
-  const pieces  = Array.from({length: 120}, () => ({
-    x:   Math.random() * canvas.width,
-    y:   Math.random() * canvas.height - canvas.height,
-    r:   Math.random() * 8 + 4,
-    d:   Math.random() * 3 + 2,
-    color: colors[Math.floor(Math.random() * colors.length)],
-    tilt: Math.random() * 10 - 5,
-    tiltAngle: 0,
-    tiltSpeed: Math.random() * 0.1 + 0.05
-  }));
-
-  let frame = 0;
-  function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    pieces.forEach(p => {
-      p.tiltAngle += p.tiltSpeed;
-      p.y += p.d;
-      p.tilt = Math.sin(p.tiltAngle) * 12;
-      ctx.beginPath();
-      ctx.lineWidth = p.r;
-      ctx.strokeStyle = p.color;
-      ctx.moveTo(p.x + p.tilt, p.y);
-      ctx.lineTo(p.x + p.tilt + p.r * 0.8, p.y + p.r * 0.8);
-      ctx.stroke();
-    });
-    frame++;
-    if (frame < 200) requestAnimationFrame(draw);
-    else {
-      canvas.style.display = 'none';
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-  }
-  draw();
-  toast('🎉 Amazing! All medicines taken today!');
-}
-
-// ── 📄 PRESCRIPTION SCANNER ──────────────────────────────
-
-let scanImageData = null;
-
+let scanImageData=null;
 function handlePrescriptionScan(input){
-  const file = input.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    scanImageData = e.target.result;
-    const preview = document.getElementById('scan-preview');
-    preview.src   = scanImageData;
-    preview.style.display = 'block';
-    document.getElementById('scan-btn').style.display = 'block';
-    document.getElementById('scan-results').innerHTML = '';
-    toast('📸 Photo loaded! Tap "Scan & Add Medicines"');
-  };
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=(e)=>{scanImageData=e.target.result;const preview=document.getElementById('scan-preview');preview.src=scanImageData;preview.style.display='block';document.getElementById('scan-btn').style.display='block';document.getElementById('scan-results').innerHTML='';toast('Photo loaded. Tap Scan to continue.');};
   reader.readAsDataURL(file);
 }
 
 async function runPrescriptionScan(){
-  if(!scanImageData){ toast('❌ Please upload a photo first!','error'); return; }
-  const btn = document.getElementById('scan-btn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>AI is reading prescription...';
-  document.getElementById('scan-results').innerHTML = `
-    <div style="text-align:center;padding:24px;color:var(--muted)">
-      <div style="font-size:2.5rem;margin-bottom:10px">🤖</div>
-      <p style="font-weight:700">AI is reading your prescription...</p>
-      <p style="font-size:.82em;margin-top:6px">This may take a few seconds</p>
-    </div>`;
+  if(!scanImageData){toast('Please upload a photo first','error');return;}
+  const btn=document.getElementById('scan-btn');btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Reading prescription...';
+  document.getElementById('scan-results').innerHTML=`<div style="text-align:center;padding:24px;color:var(--muted)"><p style="font-weight:700">Reading your prescription...</p><p style="font-size:.82em;margin-top:6px">This may take a few seconds</p></div>`;
   try{
-    const res  = await fetch('/api/scan-prescription',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image_data: scanImageData})});
-    const data = await res.json();
+    const res=await fetch('/api/scan-prescription',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image_data:scanImageData})});
+    const data=await res.json();
     if(data.success){
-      if(data.found === 0){
-        document.getElementById('scan-results').innerHTML = `
-          <div style="text-align:center;padding:20px;color:var(--muted)">
-            <div style="font-size:2rem;margin-bottom:8px">😕</div>
-            <p style="font-weight:700">Could not read medicines from this image.</p>
-            <p style="font-size:.82em;margin-top:4px">Try a clearer or better-lit photo.</p>
-          </div>`;
-      } else {
-        const html = data.medicines.map(m=>`
-          <div class="scan-result">
-            <h4>💊 ${m.name}</h4>
-            <p>📏 Dosage: ${m.dosage} &nbsp;|&nbsp; ⏰ ${m.timing} &nbsp;|&nbsp; 📦 ${m.total} tablets</p>
-            ${m.notes?`<p>📝 ${m.notes}</p>`:''}
-          </div>`).join('');
-        document.getElementById('scan-results').innerHTML = `
-          <div style="background:linear-gradient(135deg,var(--green),var(--green2));border-radius:16px;padding:14px 18px;margin-bottom:12px;color:#fff;text-align:center">
-            <div style="font-size:1.8rem;margin-bottom:6px">✅</div>
-            <div style="font-weight:800;font-size:1.1em">Found & Added ${data.found} Medicine${data.found>1?'s':''}!</div>
-            <div style="font-size:.82em;opacity:.9;margin-top:4px">All medicines have been auto-added to your list</div>
-          </div>` + html;
-        toast(`✅ ${data.found} medicine${data.found>1?'s':''} scanned and added!`);
-        // Refresh medicines list
-        if(data.all_medicines) renderMedicines(data.all_medicines);
-        // Reset scanner
-        scanImageData = null;
-        document.getElementById('scan-preview').style.display = 'none';
-        btn.style.display = 'none';
-        document.getElementById('rx-scan-input').value = '';
+      if(data.found===0){document.getElementById('scan-results').innerHTML=`<div style="text-align:center;padding:20px;color:var(--muted)"><p style="font-weight:700">Could not read medicines from this image.</p><p style="font-size:.82em;margin-top:4px">Try a clearer photo.</p></div>`;}
+      else{
+        const html=data.medicines.map(m=>`<div class="scan-result"><h4>${m.name}</h4><p>Dosage: ${m.dosage} | ${m.timing} | ${m.total} tablets${m.notes?` | ${m.notes}`:''}</p></div>`).join('');
+        document.getElementById('scan-results').innerHTML=`<div style="background:linear-gradient(145deg,var(--blue2),var(--blue));border-radius:14px;padding:14px 18px;margin-bottom:12px;color:#fff;text-align:center"><div style="font-weight:800;font-size:1.05em">Found and Added ${data.found} Medicine${data.found>1?'s':''}</div></div>`+html;
+        toast(`${data.found} medicine${data.found>1?'s':''} scanned and added`);
+        if(data.all_medicines)renderMedicines(data.all_medicines);
+        scanImageData=null;document.getElementById('scan-preview').style.display='none';btn.style.display='none';document.getElementById('rx-scan-input').value='';
       }
-    } else {
-      document.getElementById('scan-results').innerHTML = `<div style="color:var(--red);font-weight:700;text-align:center;padding:16px">❌ ${data.error}</div>`;
-      toast('❌ Scan failed: ' + data.error, 'error');
-    }
-  }catch(e){
-    document.getElementById('scan-results').innerHTML = `<div style="color:var(--red);font-weight:700;text-align:center;padding:16px">❌ Server error. Is Flask running?</div>`;
-    toast('❌ Server error','error');
-  }
-  btn.disabled = false;
-  btn.innerHTML = '🤖 Scan & Add Medicines';
+    }else{document.getElementById('scan-results').innerHTML=`<div style="color:var(--red);font-weight:700;text-align:center;padding:16px">${data.error}</div>`;toast('Scan failed: '+data.error,'error');}
+  }catch(e){document.getElementById('scan-results').innerHTML=`<div style="color:var(--red);font-weight:700;text-align:center;padding:16px">Server error. Is Flask running?</div>`;toast('Server error','error');}
+  btn.disabled=false;btn.innerHTML='Scan & Add Medicines';
 }
-
-// ── ⚠️ DRUG INTERACTION CHECKER ──────────────────────────
 
 async function checkDrugInteractions(){
-  const btn = document.getElementById('check-interactions-btn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>Checking interactions...';
-  document.getElementById('interactions-result').innerHTML = `
-    <div style="text-align:center;padding:20px;color:var(--muted)">
-      <div style="font-size:2rem;margin-bottom:8px">🔬</div>
-      <p style="font-weight:700">AI is checking your medicines...</p>
-    </div>`;
+  const btn=document.getElementById('check-interactions-btn');btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Checking...';
+  document.getElementById('interactions-result').innerHTML=`<div style="text-align:center;padding:20px;color:var(--muted)"><p style="font-weight:700">Checking your medicines...</p></div>`;
   try{
-    const res  = await fetch('/api/check-interactions',{method:'POST'});
-    const data = await res.json();
+    const res=await fetch('/api/check-interactions',{method:'POST'});const data=await res.json();
     if(data.success){
-      const el = document.getElementById('interactions-result');
-      if(!data.has_interactions){
-        el.innerHTML = `
-          <div style="background:linear-gradient(135deg,#e8f8ef,#fff);border:1.5px solid var(--mint);border-radius:16px;padding:20px;text-align:center">
-            <div style="font-size:2.5rem;margin-bottom:8px">✅</div>
-            <p style="font-weight:800;color:var(--green-dark);font-size:1em">${data.safe_message||'No dangerous interactions found!'}</p>
-            <p style="color:var(--muted);font-size:.82em;margin-top:6px;font-weight:600">Your medicines appear safe to take together.</p>
-          </div>`;
-        toast('✅ No dangerous interactions found! 🌿');
-      } else {
-        const cards = (data.interactions||[]).map(interaction=>{
-          const sev = interaction.severity||'low';
-          const icon = sev==='high'?'🚨':sev==='medium'?'⚠️':'ℹ️';
-          return `
-          <div class="interaction-card interaction-${sev}">
-            <span class="severity-badge severity-${sev}">${sev.toUpperCase()} RISK</span>
-            <div class="interaction-meds">${icon} ${interaction.medicines.join(' + ')}</div>
-            <div class="interaction-warning">⚠️ ${interaction.warning}</div>
-            <div class="interaction-advice">💡 ${interaction.advice}</div>
-          </div>`;
-        }).join('');
-        el.innerHTML = `
-          <div style="background:#fff0f0;border:2px solid #ffb0b0;border-radius:16px;padding:14px 18px;margin-bottom:12px;text-align:center">
-            <div style="font-size:1.8rem;margin-bottom:6px">⚠️</div>
-            <div style="font-weight:800;color:#c23b3b">${data.interactions.length} Interaction${data.interactions.length>1?'s':''} Found!</div>
-            <div style="font-size:.82em;color:#c23b3b;margin-top:4px">Please consult your doctor</div>
-          </div>` + cards + `
-          <div style="background:#fff8e8;border:1px solid #f0cc80;border-radius:12px;padding:12px;text-align:center;margin-top:8px">
-            <p style="color:#a06010;font-size:.82em;font-weight:700">⚕️ Always consult your doctor before making any changes to your medicines.</p>
-          </div>`;
-        toast('⚠️ Drug interactions found! Please check MediBot tab.','error');
+      const el=document.getElementById('interactions-result');
+      if(!data.has_interactions){el.innerHTML=`<div style="background:var(--bg);border-radius:14px;padding:20px;text-align:center;box-shadow:var(--neu-raised)"><p style="font-weight:800;color:var(--green);font-size:.95em">${data.safe_message||'No dangerous interactions found!'}</p><p style="color:var(--muted);font-size:.82em;margin-top:6px;font-weight:600">Your medicines appear safe to take together.</p></div>`;toast('No dangerous interactions found!');}
+      else{
+        const cards=(data.interactions||[]).map(interaction=>{const sev=interaction.severity||'low';return `<div class="interaction-card interaction-${sev}"><span class="severity-badge severity-${sev}">${sev.toUpperCase()} RISK</span><div class="interaction-meds">${interaction.medicines.join(' + ')}</div><div class="interaction-warning">${interaction.warning}</div><div class="interaction-advice">${interaction.advice}</div></div>`;}).join('');
+        el.innerHTML=`<div style="background:var(--bg);border-radius:14px;padding:14px 18px;margin-bottom:12px;text-align:center;box-shadow:var(--neu-raised);border-left:4px solid var(--red)"><div style="font-weight:800;color:var(--red)">${data.interactions.length} Interaction${data.interactions.length>1?'s':''} Found</div><div style="font-size:.82em;color:var(--red);margin-top:4px">Please consult your doctor</div></div>`+cards;
+        toast('Drug interactions found! Check MediBot tab.','error');
       }
-    } else {
-      document.getElementById('interactions-result').innerHTML = `<div style="color:var(--red);font-weight:700;text-align:center;padding:16px">❌ ${data.error||'Could not check interactions'}</div>`;
-    }
-  }catch(e){
-    document.getElementById('interactions-result').innerHTML = `<div style="color:var(--red);font-weight:700;text-align:center;padding:16px">❌ Server error</div>`;
-  }
-  btn.disabled = false;
-  btn.innerHTML = '🔬 Check My Medicines for Interactions';
+    }else{document.getElementById('interactions-result').innerHTML=`<div style="color:var(--red);font-weight:700;text-align:center;padding:16px">${data.error||'Could not check interactions'}</div>`;}
+  }catch(e){document.getElementById('interactions-result').innerHTML=`<div style="color:var(--red);font-weight:700;text-align:center;padding:16px">Server error</div>`;}
+  btn.disabled=false;btn.innerHTML='Check My Medicines for Interactions';
 }
 
-// ── 🏆 REWARDS ────────────────────────────────────────────
-
-async function earnPoints(reason, points){
+async function earnPoints(reason,points){
   try{
-    const res  = await fetch('/api/rewards/earn', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({reason, points})});
-    const data = await res.json();
-    if(data.success){
-      // Show badge popup if new badges earned
-      if(data.newly_earned && data.newly_earned.length > 0){
-        setTimeout(()=>showBadgePopup(data.newly_earned[0]), 800);
-      }
-    }
+    const res=await fetch('/api/rewards/earn',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({reason,points})});
+    const data=await res.json();
+    if(data.success&&data.newly_earned&&data.newly_earned.length>0){setTimeout(()=>showBadgePopup(data.newly_earned[0]),800);}
   }catch(e){}
 }
 
 async function loadRewards(){
   try{
-    const res  = await fetch('/api/rewards');
-    const data = await res.json();
-    const r    = data.rewards;
-    const all  = data.badges;
-    const earnedIds = r.badges.map(b=>b.id);
-
-    // Summary card
-    const levelName = r.points < 50 ? 'Beginner 🌱' : r.points < 100 ? 'Regular 🌿' : r.points < 200 ? 'Champion ⭐' : 'Legend 👑';
-    document.getElementById('rewards-summary').innerHTML = `
+    const res=await fetch('/api/rewards');const data=await res.json();
+    const r=data.rewards;const all=data.badges;
+    const levelName=r.points<50?'Beginner':r.points<100?'Regular':r.points<200?'Champion':'Legend';
+    document.getElementById('rewards-summary').innerHTML=`
       <div class="reward-summary">
         <div class="reward-points">${r.points} pts</div>
-        <div class="reward-streak">🔥 ${r.streak}-Day Streak &nbsp;|&nbsp; ${levelName}</div>
-        <div style="margin-top:12px;background:rgba(255,255,255,.2);border-radius:12px;padding:8px 16px;font-size:.85em">
-          ${r.badges.length} / ${all.length} badges earned
-        </div>
+        <div class="reward-streak">${r.streak}-Day Streak &nbsp;|&nbsp; ${levelName}</div>
+        <div style="margin-top:12px;background:rgba(255,255,255,.15);border-radius:10px;padding:8px 16px;font-size:.83em">${r.badges.length} of ${all.length} badges earned</div>
       </div>`;
-
-    // Badges
-    const badgesEl = document.getElementById('badges-list');
-    if(!all.length){badgesEl.innerHTML='<div class="empty"><div class="icon">🏅</div><p>No badges yet!</p></div>';return;}
-    badgesEl.innerHTML = all.map(b=>{
-      const earned = r.badges.find(e=>e.id===b.id);
-      return `<div class="badge-card ${earned?'':'locked'}">
-        <div class="badge-emoji">${b.emoji}</div>
-        <div style="flex:1">
-          <div class="badge-name">${b.name}</div>
-          <div class="badge-desc">${b.desc}</div>
-          ${earned?`<div class="badge-date">✅ Earned on ${earned.date}</div>`:'<div style="color:var(--muted2);font-size:.72em;margin-top:2px">🔒 Not earned yet</div>'}
-        </div>
-        ${b.points?`<div class="badge-pts">+${b.points} pts</div>`:''}
-      </div>`;
-    }).join('');
-
-    // Points history
-    const histEl = document.getElementById('points-history');
-    const hist   = (r.history||[]).slice().reverse().slice(0,15);
-    if(!hist.length){histEl.innerHTML=`<div class="empty-state">
-  <svg width="140" height="120" viewBox="0 0 140 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <ellipse cx="70" cy="108" rx="45" ry="8" fill="var(--border)"/>
-    <path d="M70 20 L80 50 L112 50 L88 68 L96 98 L70 80 L44 98 L52 68 L28 50 L60 50 Z" fill="var(--green)" opacity=".15" stroke="var(--green)" stroke-width="1.5"/>
-    <text x="70" y="72" text-anchor="middle" font-size="28">🏆</text>
-  </svg>
-  <h3>No badges yet!</h3>
-  <p>Take your medicines daily<br>to earn points and badges! 🌿</p>
-</div>`;return;}
-    histEl.innerHTML = hist.map(h=>`
-      <div class="history-record taken" style="display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <p style="color:var(--text);font-size:.88em;font-weight:700">⭐ ${h.reason}</p>
-          <p style="color:var(--muted2);font-size:.76em;margin-top:2px">${h.date}</p>
-        </div>
-        <div style="color:var(--green);font-weight:900;font-family:var(--mono)">+${h.points}</div>
-      </div>`).join('');
-  }catch(e){console.log(e);}
-}
-
-function showBadgePopup(badge){
-  document.getElementById('badge-popup-emoji').textContent = badge.emoji;
-  document.getElementById('badge-popup-name').textContent  = badge.name;
-  document.getElementById('badge-popup-desc').textContent  = badge.desc;
-  document.getElementById('badge-overlay').classList.add('show');
-  document.getElementById('badge-popup').classList.add('show');
-  playAlarmSound();
-  setTimeout(closeBadgePopup, 6000);
-}
-
-function closeBadgePopup(){
-  document.getElementById('badge-overlay').classList.remove('show');
-  document.getElementById('badge-popup').classList.remove('show');
-  stopAlarmSound();
-}
-
-// ── 🏥 APPOINTMENTS ───────────────────────────────────────
-
-async function loadAppointments(){
-  try{
-    const res  = await fetch('/api/appointments');
-    const data = await res.json();
-    renderAppointments(data.appointments||[]);
+    const badgesEl=document.getElementById('badges-list');
+    if(!all.length){badgesEl.innerHTML='<div class="empty"><div class="icon">🏅</div><p>No badges yet</p></div>';return;}
+    badgesEl.innerHTML=all.map(b=>{const earned=r.badges.find(e=>e.id===b.id);return `<div class="badge-card ${earned?'':'locked'}"><div class="badge-emoji">${b.emoji}</div><div style="flex:1"><div class="badge-name">${b.name}</div><div class="badge-desc">${b.desc}</div>${earned?`<div class="badge-date">Earned on ${earned.date}</div>`:'<div style="color:var(--muted2);font-size:.72em;margin-top:2px">Not earned yet</div>'}</div>${b.points?`<div class="badge-pts">+${b.points} pts</div>`:''}</div>`;}).join('');
+    const histEl=document.getElementById('points-history');
+    const hist=(r.history||[]).slice().reverse().slice(0,15);
+    if(!hist.length){histEl.innerHTML='<div class="empty"><div class="icon">⭐</div><p>No points yet. Take medicines to earn!</p></div>';return;}
+    histEl.innerHTML=hist.map(h=>`<div class="history-record taken" style="display:flex;justify-content:space-between;align-items:center"><div><p style="color:var(--text);font-size:.87em;font-weight:700">${h.reason}</p><p style="color:var(--muted2);font-size:.74em;margin-top:2px">${h.date}</p></div><div style="color:var(--blue);font-weight:900;font-family:var(--mono)">+${h.points}</div></div>`).join('');
   }catch(e){}
 }
 
+function showBadgePopup(badge){
+  document.getElementById('badge-popup-emoji').textContent=badge.emoji;
+  document.getElementById('badge-popup-name').textContent=badge.name;
+  document.getElementById('badge-popup-desc').textContent=badge.desc;
+  document.getElementById('badge-overlay').classList.add('show');
+  document.getElementById('badge-popup').classList.add('show');
+  playAlarmSound();setTimeout(closeBadgePopup,6000);
+}
+function closeBadgePopup(){document.getElementById('badge-overlay').classList.remove('show');document.getElementById('badge-popup').classList.remove('show');stopAlarmSound();}
+
+async function loadAppointments(){
+  try{const res=await fetch('/api/appointments');const data=await res.json();renderAppointments(data.appointments||[]);}catch(e){}
+}
+
 function renderAppointments(appts){
-  const el = document.getElementById('appointments-list');
-  if(!appts.length){
-    el.innerHTML=`<div class="empty-state">
-  <svg width="140" height="120" viewBox="0 0 140 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <ellipse cx="70" cy="108" rx="45" ry="8" fill="var(--border)"/>
-    <rect x="25" y="28" width="90" height="75" rx="14" fill="var(--green3)" stroke="var(--border)" stroke-width="2"/>
-    <rect x="25" y="28" width="90" height="26" rx="14" fill="var(--green)" opacity=".2"/>
-    <rect x="25" y="42" width="90" height="12" fill="var(--green)" opacity=".2"/>
-    <rect x="46" y="18" width="20" height="18" rx="4" fill="var(--green)" opacity=".3" stroke="var(--green)" stroke-width="1.5"/>
-    <rect x="74" y="18" width="20" height="18" rx="4" fill="var(--green)" opacity=".3" stroke="var(--green)" stroke-width="1.5"/>
-    <text x="70" y="82" text-anchor="middle" font-size="22">🏥</text>
-    <rect x="40" y="96" width="60" height="5" rx="2.5" fill="var(--border)"/>
-  </svg>
-  <h3>No appointments yet!</h3>
-  <p>Add your doctor appointments<br>and get WhatsApp reminders!</p>
-</div>`;return;
-  }
-  el.innerHTML = appts.map(a=>{
-    const statusLabel = a.status==='today'?'Today!':a.status==='past'?'Past':`In ${a.days_left} day${a.days_left===1?'':'s'}`;
-    return `
-    <div class="appt-card ${a.status}">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
-        <div>
-          <div class="appt-name">👨‍⚕️ Dr. ${a.doctor}</div>
-          <div class="appt-meta">🏥 ${a.hospital||'N/A'} &nbsp;|&nbsp; 📅 ${a.date} ${a.time?'🕐 '+formatTime(a.time):''}</div>
-          ${a.notes?`<div class="appt-meta">📝 ${a.notes}</div>`:''}
-        </div>
-        <span class="appt-badge ${a.status}">${statusLabel}</span>
-      </div>
-      <button class="btn btn-outline btn-sm" onclick="deleteAppointment('${a.id}')" style="padding:7px 14px">🗑️ Remove</button>
-    </div>`;
+  const el=document.getElementById('appointments-list');
+  if(!appts.length){el.innerHTML='<div class="empty"><div class="icon">📅</div><p>No appointments yet.<br>Add doctor appointments above.</p></div>';return;}
+  el.innerHTML=appts.map(a=>{
+    const statusLabel=a.status==='today'?'Today':a.status==='past'?'Past':`In ${a.days_left} day${a.days_left===1?'':'s'}`;
+    return `<div class="appt-card ${a.status}"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px"><div><div class="appt-name">Dr. ${a.doctor}</div><div class="appt-meta">${a.hospital||'N/A'} &nbsp;|&nbsp; ${a.date} ${a.time?formatTime(a.time):''}</div>${a.notes?`<div class="appt-meta">${a.notes}</div>`:''}</div><span class="appt-badge ${a.status}">${statusLabel}</span></div><button class="btn btn-outline btn-sm" onclick="deleteAppointment('${a.id}')">Remove</button></div>`;
   }).join('');
 }
 
 async function addAppointment(){
-  const doctor   = document.getElementById('appt-doctor').value.trim();
-  const hospital = document.getElementById('appt-hospital').value.trim();
-  const date     = document.getElementById('appt-date').value;
-  const time     = document.getElementById('appt-time').value;
-  const notes    = document.getElementById('appt-notes').value.trim();
-  if(!doctor||!date){toast('❌ Fill Doctor name and Date!','error');return;}
-  const btn=document.getElementById('add-appt-btn');
-  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Adding...';
+  const doctor=document.getElementById('appt-doctor').value.trim();
+  const hospital=document.getElementById('appt-hospital').value.trim();
+  const date=document.getElementById('appt-date').value;
+  const time=document.getElementById('appt-time').value;
+  const notes=document.getElementById('appt-notes').value.trim();
+  if(!doctor||!date){toast('Fill Doctor name and Date','error');return;}
+  const btn=document.getElementById('add-appt-btn');btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Adding...';
   try{
-    const res  = await fetch('/api/appointments',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({doctor,hospital,date,time,notes})});
-    const data = await res.json();
-    if(data.success){
-      toast('✅ Appointment added! 📅');
-      document.getElementById('appt-doctor').value='';
-      document.getElementById('appt-hospital').value='';
-      document.getElementById('appt-date').value='';
-      document.getElementById('appt-time').value='';
-      document.getElementById('appt-notes').value='';
-      renderAppointments(data.appointments);
-    }else{toast('❌ '+data.error,'error');}
-  }catch(e){toast('❌ Server error','error');}
-  btn.disabled=false;btn.innerHTML='➕ Add Appointment';
+    const res=await fetch('/api/appointments',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({doctor,hospital,date,time,notes})});
+    const data=await res.json();
+    if(data.success){toast('Appointment added');document.getElementById('appt-doctor').value='';document.getElementById('appt-hospital').value='';document.getElementById('appt-date').value='';document.getElementById('appt-time').value='';document.getElementById('appt-notes').value='';renderAppointments(data.appointments);}
+    else{toast(data.error,'error');}
+  }catch(e){toast('Server error','error');}
+  btn.disabled=false;btn.innerHTML='Add Appointment';
 }
 
 async function deleteAppointment(id){
   if(!confirm('Remove this appointment?'))return;
-  try{
-    const res  = await fetch(`/api/appointments/${id}`,{method:'DELETE'});
-    const data = await res.json();
-    if(data.success){toast('🗑️ Appointment removed!');renderAppointments(data.appointments);}
-    else{toast('❌ '+data.error,'error');}
-  }catch(e){toast('❌ Server error','error');}
+  try{const res=await fetch(`/api/appointments/${id}`,{method:'DELETE'});const data=await res.json();if(data.success){toast('Appointment removed');renderAppointments(data.appointments);}else{toast(data.error,'error');}}catch(e){toast('Server error','error');}
 }
 
 async function checkApptReminders(){
-  const res  = await fetch('/api/appointments/check-reminders',{method:'POST'});
-  const data = await res.json();
-  if(data.sent&&data.sent.length>0)toast('📱 Reminder sent for: '+data.sent.join(', ')+'!');
-  else toast('No reminders due today!');
+  const res=await fetch('/api/appointments/check-reminders',{method:'POST'});const data=await res.json();
+  if(data.sent&&data.sent.length>0)toast('Reminder sent for: '+data.sent.join(', '));else toast('No reminders due today');
 }
 
+let regPhones=[];let settingsPhones=[];
 
-
-// ══════════════════════════════════════════════
-// 👨‍👩‍👧 FAMILY PHONE MANAGER
-// ══════════════════════════════════════════════
-
-let regPhones = [];      // phones during registration
-let settingsPhones = []; // phones in settings
-
-// ── Registration phones ───────────────────────
-
-function addRegPhone() {
-  const input = document.getElementById('reg-phone-input');
-  const num   = input.value.trim();
-  if (!num) { toast('❌ Enter a phone number!', 'error'); return; }
-  if (regPhones.includes(num)) { toast('❌ Already added!', 'error'); return; }
-  regPhones.push(num);
-  input.value = '';
-  renderRegPhones();
-  toast('✅ Phone number added!');
+function addRegPhone(){
+  const input=document.getElementById('reg-phone-input');const num=input.value.trim();
+  if(!num){toast('Enter a phone number','error');return;}
+  if(regPhones.includes(num)){toast('Already added','error');return;}
+  regPhones.push(num);input.value='';renderRegPhones();toast('Phone number added');
+}
+function removeRegPhone(index){regPhones.splice(index,1);renderRegPhones();}
+function renderRegPhones(){
+  const el=document.getElementById('reg-phone-list');
+  if(!regPhones.length){el.innerHTML='<p style="color:var(--muted2);font-size:.78em;text-align:center;padding:8px 0;font-weight:600">No family numbers added yet</p>';return;}
+  el.innerHTML=regPhones.map((p,i)=>`<div class="phone-item"><span class="phone-flag">📱</span><div style="flex:1"><div class="phone-num">${p}</div><div class="phone-name">Family Member ${i+1}</div></div><button class="remove-btn" onclick="removeRegPhone(${i})">✕</button></div>`).join('');
 }
 
-function removeRegPhone(index) {
-  regPhones.splice(index, 1);
-  renderRegPhones();
+async function loadSettingsPhones(){
+  try{const res=await fetch('/api/family-phones');const data=await res.json();if(data.success){settingsPhones=data.family_phones||[];renderSettingsPhones();}}catch(e){}
+}
+function addSettingsPhone(){
+  const input=document.getElementById('settings-phone-input');const num=input.value.trim();
+  if(!num){toast('Enter a phone number','error');return;}
+  if(settingsPhones.includes(num)){toast('Already added','error');return;}
+  settingsPhones.push(num);input.value='';renderSettingsPhones();
+}
+function removeSettingsPhone(index){settingsPhones.splice(index,1);renderSettingsPhones();}
+function renderSettingsPhones(){
+  const el=document.getElementById('settings-phone-list');
+  const counter=document.getElementById('phone-counter');
+  if(counter)counter.textContent=settingsPhones.length+' member'+(settingsPhones.length!==1?'s':'');
+  const names=['Dad','Mom','Son','Daughter','Sibling','Member'];
+  if(!settingsPhones.length){el.innerHTML='<div style="text-align:center;padding:16px;color:var(--muted2)"><p style="font-size:.84em;font-weight:600">No family members added yet.</p></div>';return;}
+  el.innerHTML=settingsPhones.map((p,i)=>`<div class="phone-item"><span class="phone-flag">📱</span><div style="flex:1"><div class="phone-num">${p}</div><div class="phone-name">${names[i]||'Family Member '+(i+1)}</div></div><button class="remove-btn" onclick="removeSettingsPhone(${i})">✕</button></div>`).join('');
+}
+async function saveSettingsPhones(){
+  try{
+    const res=await fetch('/api/family-phones',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({family_phones:settingsPhones})});
+    const data=await res.json();
+    if(data.success)toast('Family numbers saved. '+data.family_phones.length+' members will get alerts.');
+    else toast(data.error,'error');
+  }catch(e){toast('Server error','error');}
 }
 
-function renderRegPhones() {
-  const el = document.getElementById('reg-phone-list');
-  if (!regPhones.length) {
-    el.innerHTML = '<p style="color:var(--muted2);font-size:.8em;text-align:center;padding:8px 0;font-weight:600">No family numbers added yet</p>';
-    return;
-  }
-  el.innerHTML = regPhones.map((p, i) => `
-    <div class="phone-item">
-      <span class="phone-flag">📱</span>
-      <div style="flex:1">
-        <div class="phone-num">${p}</div>
-        <div class="phone-name">Family Member ${i + 1}</div>
-      </div>
-      <button class="remove-btn" onclick="removeRegPhone(${i})">✕</button>
-    </div>`).join('');
+function initTheme(){const saved=localStorage.getItem('medibridge-theme')||'light';setTheme(saved,false);}
+function setTheme(theme,save=true){document.documentElement.setAttribute('data-theme',theme);const btn=document.getElementById('theme-toggle');if(btn)btn.textContent=theme==='dark'?'☀️':'🌙';if(save)localStorage.setItem('medibridge-theme',theme);}
+function toggleTheme(){const current=document.documentElement.getAttribute('data-theme')||'light';setTheme(current==='dark'?'light':'dark');toast(document.documentElement.getAttribute('data-theme')==='dark'?'Dark mode on':'Light mode on');}
+
+let ptrStartY=0;let ptrDelta=0;let ptrActive=false;let ptrThreshold=80;
+function initPullToRefresh(){
+  document.addEventListener('touchstart',(e)=>{if(window.scrollY===0){ptrStartY=e.touches[0].clientY;ptrActive=true;}},{passive:true});
+  document.addEventListener('touchmove',(e)=>{if(!ptrActive)return;ptrDelta=e.touches[0].clientY-ptrStartY;if(ptrDelta>0&&window.scrollY===0){const indicator=document.getElementById('ptr-indicator');const icon=document.getElementById('ptr-icon');const text=document.getElementById('ptr-text');if(ptrDelta>20){indicator.classList.add('pulling');icon.textContent=ptrDelta>ptrThreshold?'✓':'↓';text.textContent=ptrDelta>ptrThreshold?'Release to refresh':'Pull to refresh...';icon.style.transform=`rotate(${Math.min(ptrDelta*2,180)}deg)`;}}},{passive:true});
+  document.addEventListener('touchend',async()=>{if(!ptrActive)return;ptrActive=false;const indicator=document.getElementById('ptr-indicator');const icon=document.getElementById('ptr-icon');const text=document.getElementById('ptr-text');if(ptrDelta>ptrThreshold){indicator.classList.add('refreshing');icon.innerHTML='<span class="ptr-spinner"></span>';text.textContent='Refreshing...';const activeSection=document.querySelector('.inner-section.active');if(activeSection){const id=activeSection.id;if(id==='inner-home')await loadMedicines();if(id==='inner-appointments')await loadAppointments();if(id==='inner-rewards')await loadRewards();if(id==='inner-settings'){await loadHistory('senior');await loadPrescription('senior');}}await new Promise(r=>setTimeout(r,600));toast('Refreshed!');}indicator.classList.remove('pulling','refreshing');icon.textContent='↓';icon.style.transform='';text.textContent='Pull to refresh';ptrDelta=0;});
 }
 
-// ── Settings phones ───────────────────────────
-
-async function loadSettingsPhones() {
-  try {
-    const res  = await fetch('/api/family-phones');
-    const data = await res.json();
-    if (data.success) {
-      settingsPhones = data.family_phones || [];
-      renderSettingsPhones();
-    }
-  } catch(e) {}
-}
-
-function addSettingsPhone() {
-  const input = document.getElementById('settings-phone-input');
-  const num   = input.value.trim();
-  if (!num) { toast('❌ Enter a phone number!', 'error'); return; }
-  if (settingsPhones.includes(num)) { toast('❌ Already added!', 'error'); return; }
-  settingsPhones.push(num);
-  input.value = '';
-  renderSettingsPhones();
-}
-
-function removeSettingsPhone(index) {
-  settingsPhones.splice(index, 1);
-  renderSettingsPhones();
-}
-
-function renderSettingsPhones() {
-  const el      = document.getElementById('settings-phone-list');
-  const counter = document.getElementById('phone-counter');
-  if (counter) counter.textContent = settingsPhones.length + ' member' + (settingsPhones.length !== 1 ? 's' : '');
-
-  const names = ['Dad 👴', 'Mom 👩', 'Son 👦', 'Daughter 👧', 'Sibling 🧑', 'Member 👤'];
-
-  if (!settingsPhones.length) {
-    el.innerHTML = `
-      <div style="text-align:center;padding:16px;color:var(--muted2)">
-        <div style="font-size:2rem;margin-bottom:6px">👨‍👩‍👧</div>
-        <p style="font-size:.85em;font-weight:600">No family members added yet.<br>Add phone numbers to send alerts!</p>
-      </div>`;
-    return;
-  }
-  el.innerHTML = settingsPhones.map((p, i) => `
-    <div class="phone-item">
-      <span class="phone-flag">📱</span>
-      <div style="flex:1">
-        <div class="phone-num">${p}</div>
-        <div class="phone-name">${names[i] || 'Family Member ' + (i+1)}</div>
-      </div>
-      <button class="remove-btn" onclick="removeSettingsPhone(${i})">✕</button>
-    </div>`).join('');
-}
-
-async function saveSettingsPhones() {
-  try {
-    const res  = await fetch('/api/family-phones', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ family_phones: settingsPhones })
-    });
-    const data = await res.json();
-    if (data.success) {
-      toast('✅ Family numbers saved! All ' + data.family_phones.length + ' members will get alerts 📱');
-    } else {
-      toast('❌ ' + data.error, 'error');
-    }
-  } catch(e) { toast('❌ Server error', 'error'); }
-}
-
-// ══════════════════════════════════════════════
-// 🌙 DARK / LIGHT MODE
-// ══════════════════════════════════════════════
-
-function initTheme() {
-  const saved = localStorage.getItem('medibridge-theme') || 'light';
-  setTheme(saved, false);
-}
-
-function setTheme(theme, save=true) {
-  document.documentElement.setAttribute('data-theme', theme);
-  const btn = document.getElementById('theme-toggle');
-  if (btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙';
-  if (save) localStorage.setItem('medibridge-theme', theme);
-}
-
-function toggleTheme() {
-  const current = document.documentElement.getAttribute('data-theme') || 'light';
-  setTheme(current === 'dark' ? 'light' : 'dark');
-  toast(document.documentElement.getAttribute('data-theme') === 'dark' ? '🌙 Dark mode on!' : '☀️ Light mode on!');
-}
-
-// ══════════════════════════════════════════════
-// 🔄 PULL TO REFRESH
-// ══════════════════════════════════════════════
-
-let ptrStartY    = 0;
-let ptrDelta     = 0;
-let ptrActive    = false;
-let ptrThreshold = 80;
-
-function initPullToRefresh() {
-  const page = document.getElementById('page-senior');
-  if (!page) return;
-
-  document.addEventListener('touchstart', (e) => {
-    if (window.scrollY === 0) {
-      ptrStartY = e.touches[0].clientY;
-      ptrActive = true;
-    }
-  }, { passive: true });
-
-  document.addEventListener('touchmove', (e) => {
-    if (!ptrActive) return;
-    ptrDelta = e.touches[0].clientY - ptrStartY;
-    if (ptrDelta > 0 && window.scrollY === 0) {
-      const indicator = document.getElementById('ptr-indicator');
-      const icon      = document.getElementById('ptr-icon');
-      const text      = document.getElementById('ptr-text');
-      if (ptrDelta > 20) {
-        indicator.classList.add('pulling');
-        icon.textContent = ptrDelta > ptrThreshold ? '✓' : '↓';
-        text.textContent = ptrDelta > ptrThreshold ? 'Release to refresh!' : 'Pull to refresh...';
-        icon.style.transform = `rotate(${Math.min(ptrDelta * 2, 180)}deg)`;
-      }
-    }
-  }, { passive: true });
-
-  document.addEventListener('touchend', async () => {
-    if (!ptrActive) return;
-    ptrActive = false;
-    const indicator = document.getElementById('ptr-indicator');
-    const icon      = document.getElementById('ptr-icon');
-    const text      = document.getElementById('ptr-text');
-
-    if (ptrDelta > ptrThreshold) {
-      indicator.classList.add('refreshing');
-      icon.innerHTML = '<span class="ptr-spinner"></span>';
-      text.textContent = 'Refreshing...';
-
-      // Refresh current section
-      const activeSection = document.querySelector('.inner-section.active');
-      if (activeSection) {
-        const id = activeSection.id;
-        if (id === 'inner-home')         await loadMedicines();
-        if (id === 'inner-appointments') await loadAppointments();
-        if (id === 'inner-rewards')      await loadRewards();
-        if (id === 'inner-settings')     { await loadHistory('senior'); await loadPrescription('senior'); }
-      }
-      await new Promise(r => setTimeout(r, 600));
-      toast('✅ Refreshed!');
-    }
-
-    indicator.classList.remove('pulling', 'refreshing');
-    icon.textContent = '↓';
-    icon.style.transform = '';
-    text.textContent = 'Pull to refresh';
-    ptrDelta = 0;
-  });
-}
-
-// ── Init ──────────────────────────────────════════════════
-loadLogoImage();
-initTheme();
-initPullToRefresh();
-renderRegPhones();
+loadLogoImage();initTheme();initPullToRefresh();renderRegPhones();
 setInterval(()=>{if(document.getElementById('page-family').classList.contains('active'))loadFamilyData();},30000);
 </script>
-</body>
-</html>
+
 <script>
-// ── 📸 Pill Photo Functions ───────────────────────────────
-
-function triggerPhotoUpload(index){
-  const input = document.getElementById(`photo-input-${index}`);
-  if(input) input.click();
-}
-
-async function uploadPillPhoto(index, input){
-  const file = input.files[0];
-  if(!file) return;
-  // Convert to base64
-  const reader = new FileReader();
-  reader.onload = async (e) => {
-    const image_data = e.target.result; // includes data:image/...;base64,
-    toast('📸 Uploading photo...');
+function triggerPhotoUpload(index){const input=document.getElementById(`photo-input-${index}`);if(input)input.click();}
+async function uploadPillPhoto(index,input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=async(e)=>{
+    const image_data=e.target.result;toast('Uploading photo...');
     try{
-      const res  = await fetch(`/api/medicines/${index}/photo`, {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({image_data})
-      });
-      const data = await res.json();
-      if(data.success){
-        toast('✅ Pill photo saved!');
-        renderMedicines(data.medicines);
-      } else {
-        toast('❌ ' + data.error, 'error');
-      }
-    }catch(e){ toast('❌ Upload failed', 'error'); }
+      const res=await fetch(`/api/medicines/${index}/photo`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image_data})});
+      const data=await res.json();
+      if(data.success){toast('Pill photo saved');renderMedicines(data.medicines);}
+      else{toast(data.error,'error');}
+    }catch(e){toast('Upload failed','error');}
   };
   reader.readAsDataURL(file);
 }
-
 async function deletePillPhoto(index){
-  if(!confirm('Remove pill photo?')) return;
+  if(!confirm('Remove pill photo?'))return;
   try{
-    const res  = await fetch(`/api/medicines/${index}/photo`, {method:'DELETE'});
-    const data = await res.json();
-    if(data.success){ toast('🗑️ Photo removed!'); renderMedicines(data.medicines); }
-    else toast('❌ ' + data.error, 'error');
-  }catch(e){ toast('❌ Server error', 'error'); }
+    const res=await fetch(`/api/medicines/${index}/photo`,{method:'DELETE'});
+    const data=await res.json();
+    if(data.success){toast('Photo removed');renderMedicines(data.medicines);}
+    else toast(data.error,'error');
+  }catch(e){toast('Server error','error');}
 }
-
-function viewPhoto(src){
-  document.getElementById('photo-viewer').src = src + '?t=' + Date.now();
-  document.getElementById('photo-overlay').classList.add('show');
-}
-
-function closePhotoViewer(){
-  document.getElementById('photo-overlay').classList.remove('show');
-}
+function viewPhoto(src){document.getElementById('photo-viewer').src=src+'?t='+Date.now();document.getElementById('photo-overlay').classList.add('show');}
+function closePhotoViewer(){document.getElementById('photo-overlay').classList.remove('show');}
 </script>
+</body>
+</html>
