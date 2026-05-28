@@ -8,6 +8,8 @@ from whatsapp import (send_medicine_taken, send_low_stock_alert,
                       send_daily_report, send_missed_daily_report)
 from chatbot import get_medicine_response
 import json, os, datetime, base64
+import bcrypt
+from functools import wraps
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -15,6 +17,14 @@ load_dotenv()
 app = Flask(__name__, template_folder='templates', static_folder='static')
 app.secret_key = os.getenv("SECRET_KEY", "medibridge_secret_2024")
 CORS(app)
+# ── Auth decorator ─────────────────────────────────────────────────────────
+def login_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if 'user' not in session:
+            return jsonify({'success': False, 'error': 'Please log in first'}), 401
+        return f(*args, **kwargs)
+    return decorated
 
 USERS_FILE = "users.json"
 
@@ -53,7 +63,8 @@ def register():
     if username in users:
         return jsonify({'success': False, 'error': 'Username already exists!'}), 400
 
-    users[username] = {'password': password, 'role': role, 'name': name}
+    hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    users[username] = {'password': hashed, 'role': role, 'name': name}
     save_users(users)
     return jsonify({'success': True, 'message': 'Registered successfully!'})
 
@@ -70,8 +81,8 @@ def login():
     users = load_users()
     if username not in users:
         return jsonify({'success': False, 'error': 'Username not found!'}), 401
-    if users[username]['password'] != password:
-        return jsonify({'success': False, 'error': 'Wrong password!'}), 401
+    if not bcrypt.checkpw(password.encode('utf-8'), users[username]['password'].encode('utf-8')):
+     return jsonify({'success': False, 'error': 'Wrong password!'}), 401
     if users[username]['role'] != role:
         return jsonify({'success': False, 'error': f"This account is for {users[username]['role']}!"}), 403
 
@@ -84,6 +95,7 @@ def login():
     return jsonify({'success': True, 'user': session['user']})
 
 @app.route('/api/logout', methods=['POST'])
+@login_required
 def logout():
     session.pop('user', None)
     return jsonify({'success': True})
@@ -119,11 +131,13 @@ def update_family_phones():
 # ── Medicines API ──────────────────────────────────────────────────────────────
 
 @app.route('/api/medicines', methods=['GET'])
+@login_required
 def get_medicines():
     medicines = reset_daily_status()
     return jsonify({'success': True, 'medicines': medicines})
 
 @app.route('/api/medicines', methods=['POST'])
+@login_required
 def add_medicine():
     data = request.get_json()
     name          = data.get('name', '').strip()
@@ -148,6 +162,7 @@ def add_medicine():
     return jsonify({'success': True, 'medicines': medicines}), 201
 
 @app.route('/api/medicines/<int:index>/take', methods=['POST'])
+@login_required
 def take_medicine(index):
     medicines = load_medicines()
     if index < 0 or index >= len(medicines):
@@ -186,6 +201,7 @@ def take_medicine(index):
     })
 
 @app.route('/api/medicines/<int:index>', methods=['DELETE'])
+@login_required
 def remove_medicine(index):
     medicines = load_medicines()
     if index < 0 or index >= len(medicines):
@@ -198,10 +214,12 @@ def remove_medicine(index):
 # ── History API ────────────────────────────────────────────────────────────────
 
 @app.route('/api/history', methods=['GET'])
+@login_required
 def get_history():
     return jsonify({'success': True, 'history': load_history()})
 
 @app.route('/api/history', methods=['DELETE'])
+@login_required
 def clear_history():
     with open('history.json', 'w') as f:
         json.dump([], f)
@@ -210,10 +228,12 @@ def clear_history():
 # ── Prescription API ───────────────────────────────────────────────────────────
 
 @app.route('/api/prescription', methods=['GET'])
+@login_required
 def get_prescription():
     return jsonify({'success': True, 'prescription': load_prescription()})
 
 @app.route('/api/prescription', methods=['POST'])
+@login_required
 def save_rx():
     data = request.get_json()
     if not data.get('patient_name') or not data.get('doctor_name'):
@@ -224,6 +244,7 @@ def save_rx():
 # ── Prescription Scanner API ───────────────────────────────────────────────────
 
 @app.route('/api/scan-prescription', methods=['POST'])
+@login_required
 def scan_prescription():
     data       = request.get_json()
     image_data = data.get('image_data', '')
@@ -328,6 +349,7 @@ If you cannot read the prescription clearly, return an empty array: []"""
 # ── Drug Interaction Checker API ────────────────────────────────────────────────
 
 @app.route('/api/check-interactions', methods=['POST'])
+@login_required
 def check_interactions():
     import re as _re
     medicines = load_medicines()
@@ -364,6 +386,7 @@ def check_interactions():
 # ── Chatbot API ────────────────────────────────────────────────────────────────
 
 @app.route('/api/chat', methods=['POST'])
+@login_required
 def chat():
     data     = request.get_json()
     question = data.get('question', '').strip()
@@ -379,6 +402,7 @@ def chat():
 # ── WhatsApp API ───────────────────────────────────────────────────────────────
 
 @app.route('/api/whatsapp/daily-report', methods=['POST'])
+@login_required
 def daily_report():
     medicines = load_medicines()
     try:
@@ -388,6 +412,7 @@ def daily_report():
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/api/whatsapp/emergency', methods=['POST'])
+@login_required
 def emergency():
     try:
         send_emergency(session.get('user',{}).get('username'))
@@ -396,6 +421,7 @@ def emergency():
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/api/whatsapp/check-missed', methods=['POST'])
+@login_required
 def check_missed():
     medicines = load_medicines()
     current_hour = datetime.datetime.now().hour
@@ -417,6 +443,7 @@ UPLOAD_FOLDER = os.path.join('static', 'pill_photos')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @app.route('/api/medicines/<int:index>/photo', methods=['POST'])
+@login_required
 def upload_pill_photo(index):
     medicines = load_medicines()
     if index < 0 or index >= len(medicines):
@@ -436,6 +463,7 @@ def upload_pill_photo(index):
     return jsonify({'success': True, 'photo': medicines[index]['photo'], 'medicines': medicines})
 
 @app.route('/api/medicines/<int:index>/photo', methods=['DELETE'])
+@login_required
 def delete_pill_photo(index):
     medicines = load_medicines()
     if index < 0 or index >= len(medicines):
@@ -452,6 +480,7 @@ def delete_pill_photo(index):
 # ── Refill Request API ─────────────────────────────────────────────────────────
 
 @app.route('/api/whatsapp/refill', methods=['POST'])
+@login_required
 def refill_request():
     data          = request.get_json()
     medicine_name = data.get('medicine_name', '')
@@ -490,10 +519,12 @@ BADGES = [
 ]
 
 @app.route('/api/rewards', methods=['GET'])
+@login_required
 def get_rewards():
     return jsonify({'success': True, 'rewards': load_rewards(), 'badges': BADGES})
 
 @app.route('/api/rewards/earn', methods=['POST'])
+@login_required
 def earn_points():
     data    = request.get_json()
     reason  = data.get('reason', 'Medicine taken')
@@ -530,6 +561,7 @@ def earn_points():
     return jsonify({'success': True, 'rewards': rewards, 'newly_earned': newly_earned})
 
 @app.route('/api/rewards/reset', methods=['POST'])
+@login_required
 def reset_rewards():
     save_rewards({'points': 0, 'streak': 0, 'last_date': '', 'badges': [], 'history': []})
     return jsonify({'success': True})
