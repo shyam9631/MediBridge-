@@ -1,8 +1,9 @@
 from flask import Flask, request, jsonify, render_template, session
 from flask_cors import CORS
 from database import (save_medicines, load_medicines, reset_daily_status,
-                      save_history, load_history, save_prescription,
-                      load_prescription, delete_medicine)
+                      save_history, load_history, clear_history,
+                      save_prescription, load_prescription, delete_medicine,
+                      load_rewards, save_rewards, load_appointments, save_appointments)
 from whatsapp import (send_medicine_taken, send_low_stock_alert,
                       send_missed_medicine, send_emergency,
                       send_daily_report, send_missed_daily_report)
@@ -17,6 +18,10 @@ app.secret_key = os.getenv("SECRET_KEY", "medibridge_secret_2024")
 CORS(app)
 
 USERS_FILE = "users.json"
+
+def get_username():
+    return session.get('user', {}).get('username', 'default')
+
 
 # ── User helpers ───────────────────────────────────────────────────────────────
 
@@ -120,7 +125,7 @@ def update_family_phones():
 
 @app.route('/api/medicines', methods=['GET'])
 def get_medicines():
-    medicines = reset_daily_status()
+    medicines = reset_daily_status(get_username())
     return jsonify({'success': True, 'medicines': medicines})
 
 @app.route('/api/medicines', methods=['POST'])
@@ -136,20 +141,22 @@ def add_medicine():
     if not name or not dosage:
         return jsonify({'success': False, 'error': 'Name and dosage required'}), 400
 
-    medicines = load_medicines()
+    u = get_username()
+    medicines = load_medicines(u)
     medicines.append({
         'name': name, 'dosage': dosage, 'timing': timing,
         'total': total, 'remaining': total,
         'taken_today': False, 'notes': notes,
-        'reminder_time': reminder_time              # ← NEW
+        'reminder_time': reminder_time
     })
-    save_medicines(medicines)
-    save_history(name, 'Added')
+    save_medicines(medicines, u)
+    save_history(name, 'Added', u)
     return jsonify({'success': True, 'medicines': medicines}), 201
 
 @app.route('/api/medicines/<int:index>/take', methods=['POST'])
 def take_medicine(index):
-    medicines = load_medicines()
+    u = get_username()
+    medicines = load_medicines(u)
     if index < 0 or index >= len(medicines):
         return jsonify({'success': False, 'error': 'Medicine not found'}), 404
 
@@ -159,8 +166,8 @@ def take_medicine(index):
 
     medicines[index]['taken_today'] = True
     medicines[index]['remaining'] = max(0, med['remaining'] - 1)
-    save_medicines(medicines)
-    save_history(med['name'], 'Taken')
+    save_medicines(medicines, u)
+    save_history(med['name'], 'Taken', u)
 
     whatsapp_status = 'not_sent'
     low_stock = False
@@ -187,38 +194,38 @@ def take_medicine(index):
 
 @app.route('/api/medicines/<int:index>', methods=['DELETE'])
 def remove_medicine(index):
-    medicines = load_medicines()
+    u = get_username()
+    medicines = load_medicines(u)
     if index < 0 or index >= len(medicines):
         return jsonify({'success': False, 'error': 'Medicine not found'}), 404
     name = medicines[index]['name']
-    save_history(name, 'Deleted')
-    updated = delete_medicine(index)
+    save_history(name, 'Deleted', u)
+    updated = delete_medicine(index, u)
     return jsonify({'success': True, 'medicines': updated})
 
 # ── History API ────────────────────────────────────────────────────────────────
 
 @app.route('/api/history', methods=['GET'])
 def get_history():
-    return jsonify({'success': True, 'history': load_history()})
+    return jsonify({'success': True, 'history': load_history(get_username())})
 
 @app.route('/api/history', methods=['DELETE'])
-def clear_history():
-    with open('history.json', 'w') as f:
-        json.dump([], f)
+def clear_history_api():
+    clear_history(get_username())
     return jsonify({'success': True})
 
 # ── Prescription API ───────────────────────────────────────────────────────────
 
 @app.route('/api/prescription', methods=['GET'])
 def get_prescription():
-    return jsonify({'success': True, 'prescription': load_prescription()})
+    return jsonify({'success': True, 'prescription': load_prescription(get_username())})
 
 @app.route('/api/prescription', methods=['POST'])
 def save_rx():
     data = request.get_json()
     if not data.get('patient_name') or not data.get('doctor_name'):
         return jsonify({'success': False, 'error': 'Patient and doctor name required'}), 400
-    save_prescription(data)
+    save_prescription(data, get_username())
     return jsonify({'success': True})
 
 # ── Prescription Scanner API ───────────────────────────────────────────────────
@@ -290,7 +297,8 @@ If you cannot read the prescription clearly, return an empty array: []"""
             return jsonify({'success': False, 'error': 'Could not read prescription'}), 400
 
         # Auto-add all found medicines
-        medicines = load_medicines()
+        u2 = get_username()
+        medicines = load_medicines(u2)
         added = []
         for med in medicines_found:
             if med.get('name') and med.get('dosage'):
@@ -306,11 +314,11 @@ If you cannot read the prescription clearly, return an empty array: []"""
                     'photo':         ''
                 }
                 medicines.append(new_med)
-                save_history(new_med['name'], 'Added via Prescription Scan')
+                save_history(new_med['name'], 'Added via Prescription Scan', u2)
                 added.append(new_med)
 
         if added:
-            save_medicines(medicines)
+            save_medicines(medicines, u2)
 
         return jsonify({
             'success':  True,
@@ -330,7 +338,7 @@ If you cannot read the prescription clearly, return an empty array: []"""
 @app.route('/api/check-interactions', methods=['POST'])
 def check_interactions():
     import re as _re
-    medicines = load_medicines()
+    medicines = load_medicines(get_username())
     if len(medicines) < 2:
         return jsonify({
             'success': True, 'has_interactions': False, 'interactions': [],
@@ -369,7 +377,7 @@ def chat():
     question = data.get('question', '').strip()
     if not question:
         return jsonify({'success': False, 'error': 'Empty question'}), 400
-    medicines = load_medicines()
+    medicines = load_medicines(get_username())
     try:
         response = get_medicine_response(question, medicines)
         return jsonify({'success': True, 'response': response})
@@ -380,7 +388,7 @@ def chat():
 
 @app.route('/api/whatsapp/daily-report', methods=['POST'])
 def daily_report():
-    medicines = load_medicines()
+    medicines = load_medicines(get_username())
     try:
         send_daily_report(medicines, session.get('user',{}).get('username'))
         return jsonify({'success': True, 'message': 'Daily report sent!'})
@@ -397,7 +405,7 @@ def emergency():
 
 @app.route('/api/whatsapp/check-missed', methods=['POST'])
 def check_missed():
-    medicines = load_medicines()
+    medicines = load_medicines(get_username())
     current_hour = datetime.datetime.now().hour
     missed_meds = []
     for med in medicines:
@@ -466,17 +474,7 @@ def refill_request():
 
 # ── Rewards & Points API ───────────────────────────────────────────────────────
 
-REWARDS_FILE = 'rewards.json'
-
-def load_rewards():
-    if os.path.exists(REWARDS_FILE):
-        with open(REWARDS_FILE, 'r') as f:
-            return json.load(f)
-    return {'points': 0, 'streak': 0, 'last_date': '', 'badges': [], 'history': []}
-
-def save_rewards(data):
-    with open(REWARDS_FILE, 'w') as f:
-        json.dump(data, f, indent=4)
+# rewards functions now in database.py
 
 BADGES = [
     {'id': 'first_dose',  'name': 'First Dose!',      'emoji': '🌱', 'desc': 'Took your first medicine',     'points': 5},
@@ -491,14 +489,15 @@ BADGES = [
 
 @app.route('/api/rewards', methods=['GET'])
 def get_rewards():
-    return jsonify({'success': True, 'rewards': load_rewards(), 'badges': BADGES})
+    return jsonify({'success': True, 'rewards': load_rewards(get_username()), 'badges': BADGES})
 
 @app.route('/api/rewards/earn', methods=['POST'])
 def earn_points():
     data    = request.get_json()
     reason  = data.get('reason', 'Medicine taken')
     pts     = int(data.get('points', 10))
-    rewards = load_rewards()
+    u = get_username()
+    rewards = load_rewards(u)
     today   = str(datetime.date.today())
     rewards['points'] += pts
     rewards['history'].append({'reason': reason, 'points': pts, 'date': today})
@@ -523,30 +522,20 @@ def earn_points():
     if rewards['streak'] >= 30:        award('streak_30')
     if rewards['points'] >= 50:        award('points_50')
     if rewards['points'] >= 100:       award('points_100')
-    medicines = load_medicines()
+    medicines = load_medicines(u)
     if medicines and all(m['taken_today'] for m in medicines):
         award('all_taken')
-    save_rewards(rewards)
+    save_rewards(rewards, u)
     return jsonify({'success': True, 'rewards': rewards, 'newly_earned': newly_earned})
 
 @app.route('/api/rewards/reset', methods=['POST'])
 def reset_rewards():
-    save_rewards({'points': 0, 'streak': 0, 'last_date': '', 'badges': [], 'history': []})
+    save_rewards({'points': 0, 'streak': 0, 'last_date': '', 'badges': [], 'history': []}, get_username())
     return jsonify({'success': True})
 
 # ── Appointments API ────────────────────────────────────────────────────────────
 
-APPOINTMENTS_FILE = 'appointments.json'
-
-def load_appointments():
-    if os.path.exists(APPOINTMENTS_FILE):
-        with open(APPOINTMENTS_FILE, 'r') as f:
-            return json.load(f)
-    return []
-
-def save_appointments(data):
-    with open(APPOINTMENTS_FILE, 'w') as f:
-        json.dump(data, f, indent=4)
+# appointments functions now in database.py
 
 @app.route('/api/appointments', methods=['GET'])
 def get_appointments():
@@ -572,23 +561,26 @@ def add_appointment():
     notes    = data.get('notes', '')
     if not doctor or not date:
         return jsonify({'success': False, 'error': 'Doctor name and date required'}), 400
-    appts = load_appointments()
+    u = get_username()
+    appts = load_appointments(u)
     appts.append({'id': str(len(appts)+1)+'_'+datetime.datetime.now().strftime('%H%M%S'),
                   'doctor': doctor, 'hospital': hospital, 'date': date,
                   'time': time, 'notes': notes, 'reminded': False})
     appts.sort(key=lambda x: x['date'])
-    save_appointments(appts)
+    save_appointments(appts, u)
     return jsonify({'success': True, 'appointments': appts}), 201
 
 @app.route('/api/appointments/<appt_id>', methods=['DELETE'])
 def delete_appointment(appt_id):
-    appts = [a for a in load_appointments() if a['id'] != appt_id]
-    save_appointments(appts)
+    u = get_username()
+    appts = [a for a in load_appointments(u) if a['id'] != appt_id]
+    save_appointments(appts, u)
     return jsonify({'success': True, 'appointments': appts})
 
 @app.route('/api/appointments/check-reminders', methods=['POST'])
 def check_appointment_reminders():
-    appts   = load_appointments()
+    u       = get_username()
+    appts   = load_appointments(u)
     today   = datetime.date.today()
     sent    = []
     updated = False
@@ -609,14 +601,14 @@ def check_appointment_reminders():
         except Exception as e:
             print(f"Appointment reminder error: {e}")
     if updated:
-        save_appointments(appts)
+        save_appointments(appts, u)
     return jsonify({'success': True, 'sent': sent})
 
 # ── Summary API ────────────────────────────────────────────────────────────────
 
 @app.route('/api/summary', methods=['GET'])
 def summary():
-    medicines = load_medicines()
+    medicines = load_medicines(get_username())
     total  = len(medicines)
     taken  = sum(1 for m in medicines if m['taken_today'])
     missed = total - taken
