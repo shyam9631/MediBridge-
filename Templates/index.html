@@ -674,7 +674,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
         <label>Confirm</label>
       </div>
     </div>
-    <div style="background:var(--bg);border-radius:16px;padding:16px;margin-bottom:16px;box-shadow:var(--neu-inset)">
+   <div id="reg-phones-section" style="background:var(--bg);border-radius:16px;padding:16px;margin-bottom:16px;box-shadow:var(--neu-inset)">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
         <div>
           <p style="font-weight:800;color:var(--blue-dark);font-size:.88em;margin:0">Family WhatsApp Numbers</p>
@@ -688,12 +688,18 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
       </div>
       <p style="color:var(--muted2);font-size:.73em;font-weight:600;margin-top:4px">India numbers auto-get +91. Include country code for others.</p>
     </div>
+   <div id="family-link-code-group" style="display:none">
+  <div class="float-group">
+    <input type="text" id="reg-link-code" placeholder=" "
+           style="text-transform:uppercase;letter-spacing:3px;font-family:var(--mono);font-weight:700"/>
+    <label>Senior's Link Code</label>
+    <p class="float-hint">e.g. MB-492817 — Ask your senior for this code</p>
+  </div>
+</div>
     <button class="btn btn-primary mb" id="register-btn" onclick="doRegister()">Create Account</button>
     <div id="register-error" style="color:var(--red);font-size:.86em;text-align:center;margin-bottom:12px;font-weight:700"></div>
   </div>
-  <div class="px"><button class="btn btn-outline" onclick="goTo('landing')">Go Back</button></div>
 </div>
-
 <!-- PAGE 3 — SENIOR -->
 <div class="page page-with-nav" id="page-senior">
   <div class="topbar">
@@ -704,7 +710,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     </div>
     <div class="topbar-badge">MediBridge</div>
   </div>
-
   <!-- HOME SECTION -->
   <div class="inner-section active" id="inner-home">
     <div class="progress-ring-wrap">
@@ -877,6 +882,31 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
   <div class="inner-section" id="inner-settings">
     <div style="padding:16px 0 0">
       <div class="card" id="senior-profile"></div>
+
+
+<!-- ADD THIS BELOW IT -->
+<div class="card" style="border-left:4px solid var(--blue);margin-bottom:14px" id="link-code-card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <div>
+      <p style="font-weight:800;color:var(--blue-dark);font-size:.95em;margin:0">Your Link Code</p>
+      <p style="color:var(--muted);font-size:.76em;font-weight:600;margin:0">Share this with family members</p>
+    </div>
+    <button class="btn btn-outline btn-sm" onclick="copyLinkCode()">Copy</button>
+  </div>
+  <div style="background:var(--bg);border-radius:14px;padding:16px;text-align:center;box-shadow:var(--neu-inset)">
+    <div id="link-code-display" style="font-family:var(--mono);font-size:1.8em;font-weight:900;color:var(--blue);letter-spacing:4px">
+      Loading...
+    </div>
+  </div>
+  <div style="margin-top:12px">
+    <p style="color:var(--muted);font-size:.8em;font-weight:700;margin-bottom:8px">Linked Family Members:</p>
+    <div id="linked-family-list">
+      <p style="color:var(--muted2);font-size:.78em;font-weight:600">No family members linked yet</p>
+    </div>
+  </div>
+</div>
+
+
       <p class="section-title">Prescription</p>
       <div id="rx-display"></div>
       <div class="card" style="margin-bottom:14px">
@@ -921,8 +951,15 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
       <div class="topbar-name" id="family-name">—</div>
       <div class="topbar-sub">Family Member</div>
     </div>
+
+    <div id="linked-senior-badge" style="display:none;background:rgba(255,255,255,.15);
+        border-radius:12px;padding:8px 14px;text-align:center">
+        <div style="color:rgba(255,255,255,.75);font-size:.68em;font-weight:700">MONITORING</div>
+        <div id="linked-senior-display" style="color:#fff;font-weight:800;font-size:.88em">—</div>
+    </div>
+
     <div class="topbar-badge">MediBridge</div>
-  </div>
+</div>
   <div class="metrics" style="grid-template-columns:repeat(4,1fr)">
     <div class="metric"><div class="metric-val" id="fm-total">0</div><div class="metric-label">Total</div></div>
     <div class="metric"><div class="metric-val" id="fm-taken" style="color:var(--green)">0</div><div class="metric-label">Taken</div></div>
@@ -1000,11 +1037,24 @@ function goTo(page){
 }
 
 function selectRole(role){
-  currentRole=role;
-  const emoji=role==='senior'?'👴':'👨‍👩‍👧';
-  const name=role==='senior'?'Senior Citizen':'Family Member';
-  document.getElementById('auth-hero').innerHTML=`<div class="hero-logo">${emoji}</div><h1>MediBridge</h1><p>${name}</p>`;
-  setAuthMode('login');goTo('auth');
+    currentRole=role;
+    const emoji=role==='senior'?'👴':'👨‍👩‍👧';
+    const name=role==='senior'?'Senior Citizen':'Family Member';
+    document.getElementById('auth-hero').innerHTML=
+        `<div class="hero-logo">${emoji}</div><h1>MediBridge</h1><p>${name}</p>`;
+    
+    // Show link code field only for family
+    const linkGroup=document.getElementById('family-link-code-group');
+    if(linkGroup){
+        linkGroup.style.display=role==='family'?'block':'none';
+    }
+    
+    const phonesSection=document.getElementById('reg-phones-section');
+    if(phonesSection){
+        phonesSection.style.display=role==='family'?'none':'block';
+    }
+    setAuthMode('login');
+    goTo('auth');
 }
 
 function setAuthMode(mode){
@@ -1036,23 +1086,47 @@ async function doLogin(){
 }
 
 async function doRegister(){
-  const name=document.getElementById('reg-name').value.trim();
-  const username=document.getElementById('reg-username').value.trim();
-  const password=document.getElementById('reg-password').value.trim();
-  const confirm=document.getElementById('reg-confirm').value.trim();
-  const errEl=document.getElementById('register-error');
-  if(!name||!username||!password||!confirm){errEl.textContent='Please fill all fields';return;}
-  if(password!==confirm){errEl.textContent='Passwords do not match';return;}
-  if(password.length<4){errEl.textContent='Password too short';return;}
-  const btn=document.getElementById('register-btn');
-  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Creating...';
-  try{
-    const res=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,username,password,role:currentRole,family_phones:regPhones})});
-    const data=await res.json();
-    if(data.success){toast('Account created! Please login.');regPhones=[];renderRegPhones();setAuthMode('login');}
-    else{errEl.textContent=data.error;}
-  }catch(e){errEl.textContent='Server error.';}
-  btn.disabled=false;btn.innerHTML='Create Account';
+    const name      = document.getElementById('reg-name').value.trim();
+    const username  = document.getElementById('reg-username').value.trim();
+    const password  = document.getElementById('reg-password').value.trim();
+    const confirm   = document.getElementById('reg-confirm').value.trim();
+    const link_code = currentRole==='family' ? 
+                      document.getElementById('reg-link-code').value.trim().toUpperCase() : '';
+    const errEl     = document.getElementById('register-error');
+
+    if(!name||!username||!password||!confirm){
+        errEl.textContent='Please fill all fields';return;
+    }
+    if(password!==confirm){errEl.textContent='Passwords do not match';return;}
+    if(password.length<4){errEl.textContent='Password too short';return;}
+    if(currentRole==='family' && !link_code){
+        errEl.textContent="Please enter the senior's link code";return;
+    }
+
+    const btn=document.getElementById('register-btn');
+    btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Creating...';
+    try{
+        const res=await fetch('/api/register',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({
+                name, username, password,
+                role: currentRole,
+                family_phones: regPhones,
+                link_code
+            })
+        });
+        const data=await res.json();
+        if(data.success){
+            if(data.link_code){
+                toast(`Account created! Your link code: ${data.link_code}`);
+            }else{
+                toast('Linked successfully! Please login.');
+            }
+            regPhones=[];renderRegPhones();setAuthMode('login');
+        }else{errEl.textContent=data.error;}
+    }catch(e){errEl.textContent='Server error.';}
+    btn.disabled=false;btn.innerHTML='Create Account';
 }
 
 async function doLogout(){
@@ -1346,8 +1420,17 @@ async function sendEmergency(){
 }
 
 function loadFamilyDashboard(){
-  document.getElementById('family-name').textContent=currentUser.name;
-  hideBottomNav();document.getElementById('theme-toggle').classList.add('visible');loadFamilyData();
+    document.getElementById('family-name').textContent=currentUser.name;
+    
+    // Show linked senior name
+    if(currentUser.linked_senior_name){
+        document.getElementById('linked-senior-badge').style.display='block';
+        document.getElementById('linked-senior-display').textContent=currentUser.linked_senior_name;
+    }
+    
+    hideBottomNav();
+    document.getElementById('theme-toggle').classList.add('visible');
+    loadFamilyData();
 }
 async function loadFamilyData(){
   try{
@@ -1407,7 +1490,8 @@ function navTo(section){
   currentNav=section;
   if(section==='rewards')loadRewards();
   if(section==='appointments')loadAppointments();
-  if(section==='settings'){loadHistory('senior');loadPrescription('senior');loadSettingsPhones();}
+  if(section==='settings'){loadHistory('senior');loadPrescription('senior');loadSettingsPhones();
+  }
   window.scrollTo(0,0);
 }
 
@@ -1662,6 +1746,8 @@ async function deletePillPhoto(index){
 }
 function viewPhoto(src){document.getElementById('photo-viewer').src=src+'?t='+Date.now();document.getElementById('photo-overlay').classList.add('show');}
 function closePhotoViewer(){document.getElementById('photo-overlay').classList.remove('show');}
+
+
 </script>
 </body>
 </html>
