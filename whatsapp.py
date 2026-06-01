@@ -4,11 +4,11 @@ import os
 
 load_dotenv()
 
-account_sid  = os.getenv("TWILIO_ACCOUNT_SID")
-auth_token   = os.getenv("TWILIO_AUTH_TOKEN")
-client       = Client(account_sid, auth_token)
+
 
 TWILIO_FROM  = "whatsapp:+14155238886"
+def _twilio():
+    return Client(os.getenv("TWILIO_ACCOUNT_SID"), os.getenv("TWILIO_AUTH_TOKEN"))
 
 # ── Helper: send to ALL family members ──────────────────────────────────────
 
@@ -30,8 +30,8 @@ def get_family_phones(username=None):
     return [env_phone] if env_phone else []
 
 def send_to_all(body, username=None):
-    """Send WhatsApp message to all family members"""
     phones  = get_family_phones(username)
+    client  = _twilio()                     # ← add this line
     results = []
     for phone in phones:
         try:

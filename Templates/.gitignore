@@ -1,0 +1,11 @@
+.env
+__pycache__/
+*.pyc
+*.pyo
+user_data/
+users.json
+static/pill_photos/
+.DS_Store
+venv/
+env/
+test_whatsapp.py
