@@ -245,6 +245,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .phone-counter{background:var(--bg);border-radius:20px;padding:4px 12px;font-size:.74em;font-weight:800;color:var(--blue);display:inline-block;margin-bottom:8px;box-shadow:var(--neu-inset);}
 .divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:16px 0}
 </style>
+<link rel="manifest" href="/static/manifest.json"/>
+<meta name="theme-color" content="#1565C0"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
 </head>
 <body>
 
@@ -1413,6 +1416,11 @@ function closePhotoViewer(){document.getElementById('photo-overlay').classList.r
 
 loadLogoImage();initTheme();initPullToRefresh();renderRegPhones();
 setInterval(()=>{if(document.getElementById('page-family').classList.contains('active'))loadFamilyData();},30000);
+</script>
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/static/sw.js')
+}
 </script>
 </body>
 </html>
