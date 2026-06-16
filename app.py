@@ -8,7 +8,6 @@ from whatsapp import (send_medicine_taken, send_low_stock_alert,
                       send_missed_medicine, send_emergency,
                       send_daily_report, send_refill_request)
 from chatbot import get_medicine_response
-from price_comparator import search_medicine, get_available_medicines
 import json, os, datetime, base64
 from dotenv import load_dotenv
 import re as _re
@@ -50,6 +49,9 @@ def save_users(users):
 @app.route('/')
 def index():
     return render_template('index.html')
+
+
+
 
 # ── Auth ───────────────────────────────────────────────────────────────────────
 
@@ -674,23 +676,7 @@ def summary():
         'last_updated': datetime.datetime.now().strftime('%I:%M %p')
     })
 
-# ── Price Comparator ──────────────────────────────────────────────────────────
 
-@app.route('/api/compare-prices', methods=['POST'])
-def compare_prices():
-    data        = request.get_json()
-    medicine    = data.get('medicine', '').strip()
-    
-    if not medicine:
-        return jsonify({'success': False, 'error': 'Please enter a medicine name'}), 400
-    
-    result = search_medicine(medicine)
-    return jsonify({'success': result.get('success', False), 'data': result})
-
-@app.route('/api/available-medicines', methods=['GET'])
-def available_medicines():
-    medicines = get_available_medicines()
-    return jsonify({'success': True, 'medicines': medicines})
 
 # ── Run ────────────────────────────────────────────────────────────────────────
 
