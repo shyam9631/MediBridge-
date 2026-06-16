@@ -675,9 +675,6 @@ def summary():
         'missed': missed, 'low_stock': low,
         'last_updated': datetime.datetime.now().strftime('%I:%M %p')
     })
-
-
-
 # ── Run ────────────────────────────────────────────────────────────────────────
 
 if __name__ == '__main__':
