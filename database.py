@@ -2,21 +2,25 @@ import json
 import os
 import datetime
 
-# ── Per-user data directory ────────────────────────────────────────────────────
 DATA_DIR = "user_data"
 os.makedirs(DATA_DIR, exist_ok=True)
 
+
+# ── Internal helper ───────────────────────────────────────────────────────────
+
 def _path(username, filename):
-    """Get file path for a specific user's data file."""
+    """Get the file path for a specific user's data file."""
     user_dir = os.path.join(DATA_DIR, username)
     os.makedirs(user_dir, exist_ok=True)
     return os.path.join(user_dir, filename)
 
-# ── Medicines ──────────────────────────────────────────────────────────────────
+
+# ── Medicines ─────────────────────────────────────────────────────────────────
 
 def save_medicines(medicines, username):
     with open(_path(username, "medicines.json"), "w") as f:
         json.dump(medicines, f, indent=4)
+
 
 def load_medicines(username):
     path = _path(username, "medicines.json")
@@ -25,7 +29,17 @@ def load_medicines(username):
             return json.load(f)
     return []
 
+
+def delete_medicine(index, username):
+    medicines = load_medicines(username)
+    if 0 <= index < len(medicines):
+        medicines.pop(index)
+        save_medicines(medicines, username)
+    return medicines
+
+
 def reset_daily_status(username):
+    """Reset taken_today to False if it's a new day."""
     medicines  = load_medicines(username)
     today      = str(datetime.date.today())
     reset_path = _path(username, "last_reset.txt")
@@ -42,16 +56,11 @@ def reset_daily_status(username):
     else:
         with open(reset_path, "w") as f:
             f.write(today)
+
     return medicines
 
-def delete_medicine(index, username):
-    medicines = load_medicines(username)
-    if 0 <= index < len(medicines):
-        medicines.pop(index)
-        save_medicines(medicines, username)
-    return medicines
 
-# ── History ────────────────────────────────────────────────────────────────────
+# ── History ───────────────────────────────────────────────────────────────────
 
 def save_history(medicine_name, action, username):
     history = load_history(username)
@@ -63,6 +72,7 @@ def save_history(medicine_name, action, username):
     with open(_path(username, "history.json"), "w") as f:
         json.dump(history, f, indent=4)
 
+
 def load_history(username):
     path = _path(username, "history.json")
     if os.path.exists(path):
@@ -70,15 +80,18 @@ def load_history(username):
             return json.load(f)
     return []
 
+
 def clear_history(username):
     with open(_path(username, "history.json"), "w") as f:
         json.dump([], f)
 
-# ── Prescription ───────────────────────────────────────────────────────────────
+
+# ── Prescription ──────────────────────────────────────────────────────────────
 
 def save_prescription(data, username):
     with open(_path(username, "prescription.json"), "w") as f:
         json.dump(data, f, indent=4)
+
 
 def load_prescription(username):
     path = _path(username, "prescription.json")
@@ -87,7 +100,8 @@ def load_prescription(username):
             return json.load(f)
     return None
 
-# ── Rewards ────────────────────────────────────────────────────────────────────
+
+# ── Rewards ───────────────────────────────────────────────────────────────────
 
 def load_rewards(username):
     path = _path(username, "rewards.json")
@@ -96,11 +110,13 @@ def load_rewards(username):
             return json.load(f)
     return {'points': 0, 'streak': 0, 'last_date': '', 'badges': [], 'history': []}
 
+
 def save_rewards(data, username):
     with open(_path(username, "rewards.json"), "w") as f:
         json.dump(data, f, indent=4)
 
-# ── Appointments ───────────────────────────────────────────────────────────────
+
+# ── Appointments ──────────────────────────────────────────────────────────────
 
 def load_appointments(username):
     path = _path(username, "appointments.json")
@@ -108,6 +124,7 @@ def load_appointments(username):
         with open(path, "r") as f:
             return json.load(f)
     return []
+
 
 def save_appointments(data, username):
     with open(_path(username, "appointments.json"), "w") as f:

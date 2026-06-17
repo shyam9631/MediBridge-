@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MediBridge · Price Comparator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #f5f7fa;
+      --surface:     #ffffff;
+      --border:      #e4e8ef;
+      --green:       #16a34a;
+      --green-dark:  #15803d;
+      --green-bg:    #f0fdf4;
+      --green-bd:    #bbf7d0;
+      --red:         #dc2626;
+      --amber:       #d97706;
+      --amber-bg:    #fffbeb;
+      --amber-bd:    #fde68a;
+      --text:        #0f172a;
+      --text-2:      #475569;
+      --text-3:      #94a3b8;
+      --pharmeasy:   #f97316;
+      --onemg:       #e11d48;
+      --netmeds:     #6366f1;
+      --shadow:      0 4px 16px rgba(0,0,0,.08);
+      --shadow-lg:   0 8px 32px rgba(0,0,0,.12);
+      --radius:      14px;
+      --font:        'Inter', sans-serif;
+      --mono:        'JetBrains Mono', monospace;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      max-width: 480px;
+      margin: 0 auto;
+      padding-bottom: 60px;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: var(--green);
+      padding: 52px 20px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -40px;
+      width: 200px; height: 200px;
+      background: rgba(255,255,255,.07);
+      border-radius: 50%;
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -40px; left: -30px;
+      width: 140px; height: 140px;
+      background: rgba(255,255,255,.05);
+      border-radius: 50%;
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: rgba(255,255,255,.8);
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+    .back-btn:hover { color: #fff; }
+    .header-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255,255,255,.9);
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+    }
+    .header-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -.5px;
+      line-height: 1.2;
+      position: relative;
+      z-index: 1;
+    }
+    .header-sub {
+      margin-top: 6px;
+      font-size: 14px;
+      color: rgba(255,255,255,.7);
+      font-weight: 500;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Search card (overlaps header) ── */
+    .search-card {
+      margin: -24px 16px 0;
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border);
+      position: relative;
+      z-index: 2;
+    }
+    .search-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-3);
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .search-row { display: flex; gap: 10px; }
+    .search-input {
+      flex: 1;
+      padding: 13px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-family: var(--font);
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text);
+      background: var(--bg);
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .search-input:focus {
+      border-color: var(--green);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(22,163,74,.12);
+    }
+    .search-input::placeholder { color: var(--text-3); font-weight: 400; }
+    .search-btn {
+      padding: 13px 20px;
+      background: var(--green);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .2s, transform .15s, box-shadow .2s;
+      white-space: nowrap;
+    }
+    .search-btn:hover:not(:disabled) {
+      background: var(--green-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(22,163,74,.3);
+    }
+    .search-btn:active:not(:disabled) { transform: scale(.97); }
+    .search-btn:disabled { opacity: .55; cursor: not-allowed; }
+
+    /* ── Quick chips ── */
+    .chips { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 14px; }
+    .chip {
+      padding: 5px 11px;
+      border: 1.5px solid var(--green-bd);
+      background: var(--green-bg);
+      color: var(--green);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .chip:hover { background: var(--green); color: #fff; border-color: var(--green); }
+
+    /* ── Loading ── */
+    .loading { display: none; text-align: center; padding: 48px 20px; }
+    .loading.active { display: block; }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid var(--green-bg);
+      border-top-color: var(--green);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 14px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { color: var(--text-2); font-size: 13px; font-weight: 500; }
+
+    /* ── Results ── */
+    .results { display: none; padding: 20px 16px 0; }
+    .results.active { display: block; }
+
+    /* Medicine badge */
+    .med-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.05);
+    }
+    .med-icon {
+      width: 44px; height: 44px;
+      background: var(--green-bg);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+    }
+    .med-name { font-size: 16px; font-weight: 700; }
+    .med-unit { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+
+    /* Best deal banner */
+    .best-deal {
+      background: linear-gradient(135deg, var(--green), var(--green-dark));
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+    .deal-label { font-size: 10px; font-weight: 700; opacity: .75; text-transform: uppercase; letter-spacing: .6px; }
+    .deal-platform { font-size: 17px; font-weight: 800; margin-top: 2px; }
+    .deal-price { font-family: var(--mono); font-size: 26px; font-weight: 700; }
+
+    /* Savings */
+    .savings {
+      background: var(--amber-bg);
+      border: 1px solid var(--amber-bd);
+      border-radius: var(--radius);
+      padding: 13px 16px;
+      margin-bottom: 16px;
+    }
+    .savings-label { font-size: 11px; font-weight: 700; color: var(--amber); text-transform: uppercase; letter-spacing: .5px; }
+    .savings-amount { font-family: var(--mono); font-size: 22px; font-weight: 700; color: var(--amber); margin-top: 2px; }
+    .savings-desc { font-size: 12px; color: #92400e; margin-top: 3px; font-weight: 500; }
+
+    .section-head {
+      font-size: 11px; font-weight: 700; color: var(--text-3);
+      text-transform: uppercase; letter-spacing: .7px; margin-bottom: 10px;
+    }
+
+    /* Platform cards */
+    .platform-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.05);
+      opacity: 0;
+      animation: rise .35s ease forwards;
+    }
+    .platform-card:nth-child(1) { animation-delay: .00s; }
+    .platform-card:nth-child(2) { animation-delay: .08s; }
+    .platform-card:nth-child(3) { animation-delay: .16s; }
+    .platform-card.best { border-color: var(--green); background: var(--green-bg); }
+    @keyframes rise { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:none; } }
+
+    .card-top { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .p-logo {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; font-weight: 800; color: #fff; flex-shrink: 0;
+    }
+    .logo-pe  { background: var(--pharmeasy); }
+    .logo-1mg { background: var(--onemg); }
+    .logo-nm  { background: var(--netmeds); }
+    .p-name { font-size: 15px; font-weight: 700; flex: 1; }
+    .tag {
+      font-size: 10px; font-weight: 700;
+      padding: 3px 8px; border-radius: 20px;
+      letter-spacing: .3px; text-transform: uppercase;
+    }
+    .tag-best  { background: var(--green); color: #fff; }
+    .tag-stock { background: #fee2e2; color: var(--red); }
+
+    .card-mid { display: flex; align-items: baseline; gap: 8px; margin-bottom: 12px; }
+    .price { font-family: var(--mono); font-size: 26px; font-weight: 700; }
+    .price-rs { font-size: 16px; }
+    .disc-tag {
+      font-size: 12px; font-weight: 600; color: var(--green);
+      background: var(--green-bg); border: 1px solid var(--green-bd);
+      padding: 2px 8px; border-radius: 6px;
+    }
+
+    .card-bot { display: flex; align-items: center; gap: 8px; }
+    .delivery { font-size: 12px; color: var(--text-2); font-weight: 500; flex: 1; }
+    .buy-btn {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-family: var(--font);
+      font-size: 13px; font-weight: 700;
+      text-decoration: none;
+      transition: all .2s;
+      border: none; cursor: pointer;
+    }
+    .buy-primary { background: var(--green); color: #fff; }
+    .buy-primary:hover { background: var(--green-dark); box-shadow: 0 3px 10px rgba(22,163,74,.3); }
+    .buy-outline { background: transparent; color: var(--green); border: 1.5px solid var(--green-bd); }
+    .buy-outline:hover { background: var(--green-bg); }
+
+    /* Error */
+    .error-box {
+      background: #fff5f5;
+      border: 1.5px solid #fecaca;
+      border-radius: var(--radius);
+      padding: 24px; text-align: center;
+      margin: 16px;
+    }
+    .error-icon { font-size: 36px; margin-bottom: 10px; }
+    .error-msg { color: var(--red); font-weight: 600; font-size: 14px; }
+
+    /* Disclaimer */
+    .disclaimer {
+      margin: 24px 16px 0;
+      padding: 13px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 11px;
+      color: var(--text-2);
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <a href="/" class="back-btn">← Back to Dashboard</a>
+    <div class="header-pill">💊 MediBridge</div>
+    <div class="header-title">Medicine Price<br>Comparator</div>
+    <div class="header-sub">Compare prices across PharmEasy, 1mg &amp; Netmeds</div>
+  </div>
+
+  <!-- Search card -->
+  <div class="search-card">
+    <div class="search-label">Search Medicine</div>
+    <div class="search-row">
+      <input
+        class="search-input"
+        id="medInput"
+        type="text"
+        placeholder="e.g. Azithromycin, Dolo 650..."
+        autocomplete="off"
+        autocorrect="off"
+      />
+      <button class="search-btn" id="searchBtn" onclick="doSearch()">Compare</button>
+    </div>
+    <div class="chips">
+      <div class="chip" onclick="quickSearch('Paracetamol')">Paracetamol</div>
+      <div class="chip" onclick="quickSearch('Dolo 650')">Dolo 650</div>
+      <div class="chip" onclick="quickSearch('Azithromycin')">Azithromycin</div>
+      <div class="chip" onclick="quickSearch('Metformin')">Metformin</div>
+      <div class="chip" onclick="quickSearch('Cetirizine')">Cetirizine</div>
+      <div class="chip" onclick="quickSearch('Omeprazole')">Omeprazole</div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <div class="loading-text">Comparing prices across platforms…</div>
+  </div>
+
+  <!-- Results -->
+  <div class="results" id="results"></div>
+
+  <!-- Disclaimer -->
+  <div class="disclaimer">
+    ⚠️ Prices shown are indicative and may vary. Always verify on the platform before purchasing.
+    MediBridge is not affiliated with any pharmacy.
+  </div>
+
+  <script>
+    const input   = document.getElementById('medInput');
+    const btn     = document.getElementById('searchBtn');
+    const loading = document.getElementById('loading');
+    const results = document.getElementById('results');
+
+    // Press Enter to search
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+
+    function quickSearch(name) {
+      input.value = name;
+      doSearch();
+    }
+
+    async function doSearch() {
+      const medicine = input.value.trim();
+      if (!medicine) { input.focus(); return; }
+
+      // Set loading state
+      btn.disabled    = true;
+      btn.textContent = '…';
+      loading.classList.add('active');
+      results.classList.remove('active');
+      results.innerHTML = '';
+
+      try {
+        const res  = await fetch('/api/compare-prices', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ medicine }),
+        });
+        const json = await res.json();
+        loading.classList.remove('active');
+
+        if (!json.success || !json.data?.platforms?.length) {
+          showError(json.error || 'Medicine not found. Try a different name.');
+          return;
+        }
+
+        renderResults(json.data);
+
+      } catch (_) {
+        loading.classList.remove('active');
+        showError('Connection error. Please check your network and try again.');
+      } finally {
+        btn.disabled    = false;
+        btn.textContent = 'Compare';
+      }
+    }
+
+    function showError(msg) {
+      results.innerHTML = `
+        <div class="error-box">
+          <div class="error-icon">😕</div>
+          <div class="error-msg">${esc(msg)}</div>
+        </div>`;
+      results.classList.add('active');
+    }
+
+    function renderResults(data) {
+      const platforms     = data.platforms || [];
+      const cheapest      = platforms.find(p => p.is_cheapest);
+      const inStock       = platforms.filter(p => p.in_stock);
+      const mostExpensive = inStock.length
+        ? inStock.reduce((a, b) => a.price > b.price ? a : b)
+        : platforms[0];
+      const savings = (cheapest && mostExpensive) ? mostExpensive.price - cheapest.price : 0;
+
+      const logoClass  = { PharmEasy: 'logo-pe', '1mg': 'logo-1mg', Netmeds: 'logo-nm' };
+      const logoLetter = { PharmEasy: 'P',        '1mg': '1',        Netmeds: 'N'       };
+
+      let html = `
+        <div class="med-badge">
+          <div class="med-icon">💊</div>
+          <div>
+            <div class="med-name">${esc(data.medicine)}</div>
+            <div class="med-unit">${esc(data.unit || '')}</div>
+          </div>
+        </div>`;
+
+      if (cheapest) {
+        html += `
+        <div class="best-deal">
+          <div>
+            <div class="deal-label">🏆 Best Deal</div>
+            <div class="deal-platform">${esc(cheapest.name)}</div>
+          </div>
+          <div class="deal-price">₹${cheapest.price.toFixed(2)}</div>
+        </div>`;
+      }
+
+      if (savings > 0.5) {
+        html += `
+        <div class="savings">
+          <div class="savings-label">💰 You Save</div>
+          <div class="savings-amount">₹${savings.toFixed(2)}</div>
+          <div class="savings-desc">vs ${esc(mostExpensive.name)} — buy on ${esc(cheapest.name)} instead</div>
+        </div>`;
+      }
+
+      html += `<div class="section-head">All Prices</div>`;
+
+      platforms.forEach(p => {
+        const lc = logoClass[p.name]  || 'logo-pe';
+        const ll = logoLetter[p.name] || p.name[0];
+        html += `
+          <div class="platform-card ${p.is_cheapest ? 'best' : ''}">
+            <div class="card-top">
+              <div class="p-logo ${lc}">${ll}</div>
+              <div class="p-name">${esc(p.name)}</div>
+              ${p.is_cheapest ? `<span class="tag tag-best">✓ Cheapest</span>` : ''}
+              ${!p.in_stock   ? `<span class="tag tag-stock">Out of Stock</span>` : ''}
+            </div>
+            <div class="card-mid">
+              <div class="price"><span class="price-rs">₹</span>${p.price.toFixed(2)}</div>
+              ${p.discount ? `<span class="disc-tag">${esc(p.discount)}</span>` : ''}
+            </div>
+            <div class="card-bot">
+              <div class="delivery">🚚 ${esc(p.delivery)}</div>
+              <a href="${esc(p.url)}" target="_blank" rel="noopener"
+                 class="buy-btn ${p.is_cheapest ? 'buy-primary' : 'buy-outline'}">
+                ${p.is_cheapest ? '🛒 Buy Now' : 'View'}
+              </a>
+            </div>
+          </div>`;
+      });
+
+      results.innerHTML = html;
+      results.classList.add('active');
+    }
+
+    // Prevent XSS
+    function esc(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+  </script>
+</body>
+</html>

@@ -50,8 +50,9 @@ def save_users(users):
 def index():
     return render_template('index.html')
 
-
-
+@app.route('/compare')
+def compare_page():
+    return render_template('compare_price.html')
 
 # ── Auth ───────────────────────────────────────────────────────────────────────
 

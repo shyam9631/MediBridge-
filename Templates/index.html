@@ -130,7 +130,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .appt-badge.upcoming{background:var(--bg);box-shadow:var(--neu-inset);color:var(--blue)}
 .appt-badge.today{background:var(--bg);box-shadow:var(--neu-inset);color:var(--red)}
 .appt-badge.past{background:var(--bg);box-shadow:var(--neu-inset);color:var(--muted2)}
-.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:460px;background:var(--bg);display:none;grid-template-columns:repeat(5,1fr);z-index:500;padding:10px 0 max(10px,env(safe-area-inset-bottom));box-shadow:0 -4px 20px rgba(163,177,198,.4),-0px -1px 0px rgba(255,255,255,.8);border-top:1px solid rgba(255,255,255,.6);}
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:460px;background:var(--bg);display:none;grid-template-columns:repeat(6,1fr);z-index:500;padding:10px 0 max(10px,env(safe-area-inset-bottom));box-shadow:0 -4px 20px rgba(163,177,198,.4),-0px -1px 0px rgba(255,255,255,.8);border-top:1px solid rgba(255,255,255,.6);}
 .bottom-nav.visible{display:grid}
 .nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 0;cursor:pointer;transition:all .2s;border:none;background:transparent;font-family:var(--font);}
 .nav-icon{font-size:1.3rem;transition:all .2s;opacity:.5}
@@ -674,6 +674,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
   </button>
   <button class="nav-item" id="nav-medibot" onclick="navTo('medibot')">
     <span class="nav-icon">🤖</span><span class="nav-label">MediBot</span>
+  </button>
+  <button class="nav-item" id="nav-price" onclick="window.location.href='/compare'">
+    <span class="nav-icon">💰</span><span class="nav-label">Prices</span>
   </button>
   <button class="nav-item" id="nav-settings" onclick="navTo('settings')">
     <span class="nav-icon">⚙️</span><span class="nav-label">Settings</span>
