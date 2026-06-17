@@ -60,14 +60,18 @@ def compare_page():
 def register():
     data          = request.get_json()
     name          = data.get('name', '').strip()
-    username      = data.get('username', '').strip()
+    email         = data.get('username', '').strip()  # Using username field for email
     password      = data.get('password', '').strip()
     role          = data.get('role', 'senior')
     family_phones = data.get('family_phones', [])
     link_code     = data.get('link_code', '').strip()
 
-    if not name or not username or not password:
+    if not name or not email or not password:
         return jsonify({'success': False, 'error': 'All fields are required'}), 400
+
+    # Validate email format
+    if not _re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
+        return jsonify({'success': False, 'error': 'Please enter a valid email address'}), 400
 
     cleaned_phones = []
     for p in family_phones:
@@ -78,8 +82,8 @@ def register():
             cleaned_phones.append(p)
 
     users = load_users()
-    if username in users:
-        return jsonify({'success': False, 'error': 'Username already exists!'}), 400
+    if email in users:
+        return jsonify({'success': False, 'error': 'Email already registered!'}), 400
 
     if role == 'senior':
         while True:
@@ -88,7 +92,7 @@ def register():
             if not code_exists:
                 break
 
-        users[username] = {
+        users[email] = {
             'password':       password,
             'role':           role,
             'name':           name,
@@ -101,67 +105,67 @@ def register():
         if not link_code:
             return jsonify({'success': False, 'error': 'Please enter the senior\'s link code!'}), 400
 
-        senior_username = None
-        for uname, udata in users.items():
+        senior_email = None
+        for uemail, udata in users.items():
             if udata.get('link_code') == link_code and udata.get('role') == 'senior':
-                senior_username = uname
+                senior_email = uemail
                 break
 
-        if not senior_username:
+        if not senior_email:
             return jsonify({'success': False, 'error': 'Invalid link code! Ask your senior for their code.'}), 400
 
-        users[username] = {
+        users[email] = {
             'password':       password,
             'role':           role,
             'name':           name,
             'family_phones':  cleaned_phones,
-            'linked_senior':  senior_username
+            'linked_senior':  senior_email
         }
 
-        if username not in users[senior_username]['linked_family']:
-            users[senior_username]['linked_family'].append(username)
+        if email not in users[senior_email]['linked_family']:
+            users[senior_email]['linked_family'].append(email)
 
     save_users(users)
     return jsonify({
         'success':   True,
         'message':   'Registered successfully!',
-        'link_code': users[username].get('link_code', '')
+        'link_code': users[email].get('link_code', '')
     })
 
 @app.route('/api/login', methods=['POST'])
 def login():
     data     = request.get_json()
-    username = data.get('username', '').strip()
+    email    = data.get('username', '').strip()  # Using username field for email
     password = data.get('password', '').strip()
     role     = data.get('role', 'senior')
 
-    if not username or not password:
+    if not email or not password:
         return jsonify({'success': False, 'error': 'Fill all fields!'}), 400
 
     users = load_users()
-    if username not in users:
-        return jsonify({'success': False, 'error': 'Username not found!'}), 401
-    if users[username]['password'] != password:
+    if email not in users:
+        return jsonify({'success': False, 'error': 'Email not found!'}), 401
+    if users[email]['password'] != password:
         return jsonify({'success': False, 'error': 'Wrong password!'}), 401
-    if users[username]['role'] != role:
-        return jsonify({'success': False, 'error': f"This account is for {users[username]['role']}!"}), 403
+    if users[email]['role'] != role:
+        return jsonify({'success': False, 'error': f"This account is for {users[email]['role']}!"}), 403
 
-    user_data = users[username]
+    user_data = users[email]
 
     linked_senior_name     = ''
-    linked_senior_username = ''
+    linked_senior_email    = ''
     if role == 'family':
-        linked_senior_username = user_data.get('linked_senior', '')
-        if linked_senior_username and linked_senior_username in users:
-            linked_senior_name = users[linked_senior_username]['name']
+        linked_senior_email = user_data.get('linked_senior', '')
+        if linked_senior_email and linked_senior_email in users:
+            linked_senior_name = users[linked_senior_email]['name']
 
     session['user'] = {
-        'username':           username,
+        'username':           email,
         'name':               user_data['name'],
         'role':               role,
         'family_phones':      user_data.get('family_phones', []),
         'link_code':          user_data.get('link_code', ''),
-        'linked_senior':      linked_senior_username,
+        'linked_senior':      linked_senior_email,
         'linked_senior_name': linked_senior_name,
         'linked_family':      user_data.get('linked_family', [])
     }
