@@ -8,5 +8,7 @@ static/pill_photos/
 .DS_Store
 venv/
 env/
-test_whatsapp.py__pycache__
+test_whatsapp.py
+__pycache__
 *.pyc
+.venv/
